@@ -96,6 +96,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         ReadTheBytes(view, mStartAddress, mNumberOfBytes);
 
 
+
     }
 
     /**
