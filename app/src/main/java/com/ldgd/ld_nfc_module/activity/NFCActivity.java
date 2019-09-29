@@ -1,6 +1,8 @@
 package com.ldgd.ld_nfc_module.activity;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.nfc.NfcAdapter;
@@ -12,9 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ldgd.ld_nfc_module.R;
@@ -27,6 +29,9 @@ import com.st.st25sdk.STException;
 import com.st.st25sdk.TagHelper;
 import com.st.st25sdk.type5.Type5Tag;
 import com.st.st25sdk.type5.st25dv.ST25DVTag;
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
+import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import java.util.Arrays;
 
@@ -35,6 +40,7 @@ import static com.st.st25sdk.MultiAreaInterface.AREA1;
 public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDiscoveryCompletedListener, View.OnClickListener {
 
     private static final String TAG = "NFCActivity";
+    public static final int REQUEST_CODE_ZXING = 10;
 
     /// static private NFCTag mTag;
     static private ST25DVTag mTag;
@@ -44,7 +50,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private ContentViewAsync contentView;
     private LinearLayout ll;
     private EditText ed_search;
-    private Button bt_read_nfc;
+    private EditText et_text_editor;
+    private TextView bt_read_nfc;
+    private TextView tv_deploy;
+    private TextView tv_write;
+    private TextView tv_edit_switch;
+    private boolean temp = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +70,25 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         setContentView(R.layout.activity_nfc);
 
 
-        ll = (LinearLayout) findViewById(R.id.ll_nfc);
-     //   bt_read_nfc = (Button) this.findViewById(R.id.bt_read_nfc);
+        initNFC();
 
+        initView();
+
+        // 初始化监听
+        initListening();
+
+
+    }
+
+    private void initNFC() {
         // 初始化NFC-onResume处理
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+    }
 
+    private void initListening() {
 
-        ed_search = (EditText) this.findViewById(R.id.ed_search);
         DrawableUtil drawableUtil = new DrawableUtil(ed_search, new DrawableUtil.OnDrawableListener() {
+
             @Override
             public void onLeft(View v, Drawable left) {
                 Toast.makeText(getApplicationContext(), "left", Toast.LENGTH_SHORT).show();
@@ -74,13 +96,92 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
             @Override
             public void onRight(View v, Drawable right) {
-                Toast.makeText(getApplicationContext(), "right", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(NFCActivity.this, CaptureActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ZXING);
+
             }
         });
+
+        tv_deploy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        // 写入
+        tv_write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                View view = View.inflate(NFCActivity.this, R.layout.alert_dialog_item, null);
+                new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
+                        .setView(view)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showToast("开始写入");
+
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showToast("已经取消");
+                    }
+                }).show();
+            }
+        });
+
+        // 编辑开关切换
+        tv_edit_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(temp == false){
+                    temp = true;
+                    v.setBackgroundResource(R.drawable.ico_nfc_off);
+                    et_text_editor.setEnabled(true);
+                }else{
+                    temp = false;
+                    v.setBackgroundResource(R.drawable.ico_nfc_on);
+                    et_text_editor.setEnabled(false);
+                }
+            }
+        });
+
+    }
+
+    private void initView() {
+        ZXingLibrary.initDisplayOpinion(this);
+        ll = (LinearLayout) findViewById(R.id.ll_nfc);
+        ed_search = (EditText) this.findViewById(R.id.ed_search);
+        bt_read_nfc = (TextView) this.findViewById(R.id.bt_read_nfc);
+        tv_deploy = (TextView) this.findViewById(R.id.tv_deploy);
+        tv_write = (TextView) this.findViewById(R.id.tv_write);
+        tv_edit_switch = (TextView) this.findViewById(R.id.tv_edit_switch);
+        et_text_editor = (EditText) this.findViewById(R.id.et_text_editor);
     }
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        // 处理二维码扫描结果
+        if (requestCode == REQUEST_CODE_ZXING) {
+            //处理扫描结果（在界面上显示）
+            if (null != intent) {
+                Bundle bundle = intent.getExtras();
+                if (bundle == null) {
+                    return;
+                }
+                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = bundle.getString(CodeUtils.RESULT_STRING);
+                    ed_search.setText(result);
+                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                    showToast("解析二维码失败");
+                }
+            }
+        }
     }
 
     /**
@@ -91,17 +192,16 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public void read(View view) {
 
-     if(mTag != null){
-         bt_read_nfc.setEnabled(false);
-         //设置为读取所有
-         mStartAddress = 0;
-         mNumberOfBytes = 508;
-         //   mNumberOfBytes = 508;
-         ReadTheBytes(view, mStartAddress, mNumberOfBytes);
-     }else{
-         showToast("标签不在场区内");
-     }
-
+        if (mTag != null) {
+            bt_read_nfc.setEnabled(false);
+            //设置为读取所有
+            mStartAddress = 0;
+            mNumberOfBytes = 508;
+            //   mNumberOfBytes = 508;
+            ReadTheBytes(view, mStartAddress, mNumberOfBytes);
+        } else {
+            showToast("标签不在场区内");
+        }
 
 
     }
@@ -168,7 +268,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     // Type 5
                     mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
                     // Warning: readBytes() may return less bytes than requested
-                   //调用publishProgress公布进度,最后onProgressUpdate方法将被执行
+                    //调用publishProgress公布进度,最后onProgressUpdate方法将被执行
                     //   publishProgress((int) ((count / (float) total) * 100));
                     int nbrOfBytesRead = 0;
                     if (mBuffer != null) {
@@ -183,7 +283,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     }
                 } catch (STException e) {
                     Log.e(TAG, e.getMessage());
-                   // showToast(R.string.Command_failed);
+                    // showToast(R.string.Command_failed);
                     showToast("读取失败，请您靠近NFC设备");
                     return false;
                 }
@@ -262,7 +362,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
         } else {
             // NFC not available on this phone!!!
-            showToast(getString(R.string.nfc_not_available));
+            //  showToast(getString(R.string.nfc_not_available));
         }
 
     }

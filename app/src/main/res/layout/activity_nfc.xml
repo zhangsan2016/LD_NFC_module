@@ -35,7 +35,7 @@
                 android:text="NFC" />
 
             <ToggleButton
-                android:id="@+id/toggleButton1"
+                android:id="@+id/tb_nfc_switch"
                 android:layout_width="55dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
@@ -69,7 +69,15 @@
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="下载" />
+                android:text="保存" />
+
+            <TextView
+                android:id="@+id/tv_deploy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ico_nfc_deploy" />
 
             <Button
                 android:layout_width="100dp"
@@ -81,38 +89,81 @@
 
         </RelativeLayout>
 
-        <EditText
-            android:id="@+id/ed_search"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/edit_background"
-            android:clickable="true"
-            android:drawableLeft="@drawable/ico_sousuo"
-            android:drawableRight="@drawable/ico_saoma"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/ed_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:background="@drawable/edit_background"
+                android:clickable="true"
+                android:drawableLeft="@drawable/ico_sousuo"
+                android:drawableRight="@drawable/ico_saoma"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingTop="3dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/bt_search_bg"
+                android:paddingBottom="6dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="6dp"
+                android:text="搜索"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
 
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="1"
-        android:background="@drawable/textview_border"
-        android:enabled="false"
-        android:scrollbars="vertical" />
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/et_text_editor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_border"
+            android:enabled="false"
+            android:gravity="top"
+            android:padding="5dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/tv_edit_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/ico_nfc_on"
+            android:textOff=""
+            android:textOn="" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -149,6 +200,7 @@
 
 
         <TextView
+            android:id="@+id/tv_write"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
