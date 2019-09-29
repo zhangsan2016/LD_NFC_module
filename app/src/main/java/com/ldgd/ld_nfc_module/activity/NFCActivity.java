@@ -58,7 +58,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
 
         ll = (LinearLayout) findViewById(R.id.ll_nfc);
-        bt_read_nfc = (Button) this.findViewById(R.id.bt_read_nfc);
+     //   bt_read_nfc = (Button) this.findViewById(R.id.bt_read_nfc);
 
         // 初始化NFC-onResume处理
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
