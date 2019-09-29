@@ -116,11 +116,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private void ReadTheBytes(View v, int mStartAddress, int mNumberOfBytes) {
 
 
-        Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
+      /*  Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
         snackbar.setAction(getString(R.string.reading_x_bytes_starting_y_address, mStartAddress, mNumberOfBytes), this);
-
         snackbar.setActionTextColor(getResources().getColor(R.color.white));
-        snackbar.show();
+        snackbar.show();*/
+
         // by defaut - read first area
         if (mTag instanceof Type5Tag) {
             startType5ReadingAndDisplaying(mStartAddress, mNumberOfBytes);
@@ -168,6 +168,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     // Type 5
                     mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
                     // Warning: readBytes() may return less bytes than requested
+                   //调用publishProgress公布进度,最后onProgressUpdate方法将被执行
+                    //   publishProgress((int) ((count / (float) total) * 100));
                     int nbrOfBytesRead = 0;
                     if (mBuffer != null) {
                         nbrOfBytesRead = mBuffer.length;
@@ -175,14 +177,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                           /*  CacheUtils.putString(ReadFragmentActivity.this,"nfcdata",Arrays.toString(mBuffer));
                             showToast(R.string.save_read_data);*/
 
-
                     }
                     if (nbrOfBytesRead != mNumberOfBytes) {
                         showToast(R.string.error_during_read_operation, nbrOfBytesRead);
                     }
                 } catch (STException e) {
                     Log.e(TAG, e.getMessage());
-                    showToast(R.string.Command_failed);
+                   // showToast(R.string.Command_failed);
+                    showToast("读取失败，请您靠近NFC设备");
                     return false;
                 }
 
@@ -203,6 +205,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
             }
             bt_read_nfc.setEnabled(true);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
         }
 
         private void snackBarUiThread() {
