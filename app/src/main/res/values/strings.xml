@@ -9,5 +9,6 @@
     <string name="reading_x_bytes_starting_y_address">从地址 %1$d 开始读 %2$d 个字节</string>
     <string name="error_during_read_operation">读操作出错。 读%d字节</string>
     <string name="Command_failed">命令失败！</string>
+    <string name="nfc_not_available">手机NFC不可用</string>
 
 </resources>

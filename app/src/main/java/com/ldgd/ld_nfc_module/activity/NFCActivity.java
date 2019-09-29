@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private ContentViewAsync contentView;
     private LinearLayout ll;
     private EditText ed_search;
+    private Button bt_read_nfc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
 
         ll = (LinearLayout) findViewById(R.id.ll_nfc);
+        bt_read_nfc = (Button) this.findViewById(R.id.bt_read_nfc);
 
         // 初始化NFC-onResume处理
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -88,12 +91,16 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public void read(View view) {
 
-        view.setEnabled(false);
-        //设置为读取所有
-        mStartAddress = 0;
-        mNumberOfBytes = 508;
-        //   mNumberOfBytes = 508;
-        ReadTheBytes(view, mStartAddress, mNumberOfBytes);
+     if(mTag != null){
+         bt_read_nfc.setEnabled(false);
+         //设置为读取所有
+         mStartAddress = 0;
+         mNumberOfBytes = 508;
+         //   mNumberOfBytes = 508;
+         ReadTheBytes(view, mStartAddress, mNumberOfBytes);
+     }else{
+         showToast("标签不在场区内");
+     }
 
 
 
@@ -195,7 +202,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
 
             }
-
+            bt_read_nfc.setEnabled(true);
         }
 
         private void snackBarUiThread() {
@@ -209,6 +216,13 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 }
             }));
         }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        // onResume gets called after this to handle the intent
+        Log.d(TAG, "onNewIntent " + intent);
+        setIntent(intent);
     }
 
     @Override
@@ -239,6 +253,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 // NFC disabled
             }
 
+        } else {
+            // NFC not available on this phone!!!
+            showToast(getString(R.string.nfc_not_available));
         }
 
     }
