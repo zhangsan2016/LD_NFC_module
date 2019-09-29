@@ -149,6 +149,7 @@
             android:background="@drawable/textview_border"
             android:enabled="false"
             android:gravity="top"
+            android:textColor="@drawable/edit_selector_color"
             android:padding="5dp"
             android:scrollbars="vertical" />
 
