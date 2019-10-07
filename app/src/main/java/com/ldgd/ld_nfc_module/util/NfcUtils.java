@@ -18,6 +18,7 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -174,6 +175,32 @@ public class NfcUtils {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    public static void IsToSet(final Activity activity, final ToggleButton tb) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("是否跳转到设置页面打开NFC功能");
+//        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                goToSet(activity);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if(tb.isChecked()){
+                    tb.setChecked(false);
+                }else{
+                    tb.setChecked(true);
+                }
+
             }
         });
         builder.create().show();

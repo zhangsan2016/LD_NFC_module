@@ -26,6 +26,7 @@ import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
+import com.ldgd.ld_nfc_module.util.XmlUtil;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
 import com.st.st25sdk.TagHelper;
@@ -161,7 +162,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tb_nfc_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NfcUtils.IsToSet(NFCActivity.this);
+                NfcUtils.IsToSet(NFCActivity.this,tb_nfc_switch);
             }
         });
 
@@ -321,6 +322,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 lv = (ListView) findViewById(R.id.readBlocksListView);
                 lv.setAdapter(mAdapter);*/
                 LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
+                // 解析成xml文件
+                XmlUtil.parseBytesToXml(mBuffer,"",NFCActivity.this);
 
             }
             bt_read_nfc.setEnabled(true);
@@ -447,7 +450,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
              /*   checkMailboxActivation();
                 startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*/
 
-                showToast("st25dv_menus");
+                showToast("NFC 识别成功");
                 break;
 
 

@@ -37,8 +37,10 @@ dependencies {
     /* 二维码扫描 */
    // compile 'cn.yipianfengye.android:zxing-library:2.2'
  //   compile 'com.github.yuzhiqiang1993:zxing:2.2.5'
-
     compile 'cn.yipianfengye.android:zxing-library:2.2'
+
+    compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
+
 
 
 }
