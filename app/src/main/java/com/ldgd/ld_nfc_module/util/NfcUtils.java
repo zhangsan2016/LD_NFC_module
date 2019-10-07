@@ -37,15 +37,25 @@ public class NfcUtils {
     public static String[][] mTechList = null;
 
     public NfcUtils(Activity activity) {
-        mNfcAdapter = NfcCheck(activity);
+       // mNfcAdapter = NfcCheck(activity);
         NfcInit(activity);
     }
 
     /**
      * 检查NFC是否打开
      */
-    public static NfcAdapter NfcCheck(Activity activity) {
+    public static void NfcCheck(Activity activity) {
+
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(activity);
+        if (mNfcAdapter == null) {
+            Toast.makeText(activity, "设备不支持NFC功能!", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!mNfcAdapter.isEnabled()) {
+                IsToSet(activity);
+            }
+        }
+
+        /*NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(activity);
         if (mNfcAdapter == null) {
             Toast.makeText(activity, "设备不支持NFC功能!", Toast.LENGTH_SHORT).show();
             return null;
@@ -56,7 +66,7 @@ public class NfcUtils {
                 Toast.makeText(activity, "NFC功能已打开!", Toast.LENGTH_SHORT).show();
             }
         }
-        return mNfcAdapter;
+        return mNfcAdapter;*/
     }
 
     /**
@@ -149,7 +159,7 @@ public class NfcUtils {
         return out;
     }
 
-    private static void IsToSet(final Activity activity) {
+    public static void IsToSet(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("是否跳转到设置页面打开NFC功能");
 //        builder.setTitle("提示");

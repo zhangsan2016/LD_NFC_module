@@ -18,11 +18,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
+import com.ldgd.ld_nfc_module.util.NfcUtils;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
@@ -55,6 +57,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private TextView tv_deploy;
     private TextView tv_write;
     private TextView tv_edit_switch;
+    private ToggleButton tb_nfc_switch;
     private boolean temp = false;
 
 
@@ -84,6 +87,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // 初始化NFC-onResume处理
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        // 检测nfc权限
+        NfcUtils.NfcCheck(this);
     }
 
     private void initListening() {
@@ -151,6 +156,17 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             }
         });
 
+
+        // nfc切换开关
+        tb_nfc_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NfcUtils.IsToSet(NFCActivity.this);
+            }
+        });
+
+
+
     }
 
     private void initView() {
@@ -162,6 +178,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tv_write = (TextView) this.findViewById(R.id.tv_write);
         tv_edit_switch = (TextView) this.findViewById(R.id.tv_edit_switch);
         et_text_editor = (EditText) this.findViewById(R.id.et_text_editor);
+        tb_nfc_switch = (ToggleButton) this.findViewById(R.id.tb_nfc_switch);
+
     }
 
 
@@ -357,8 +375,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
             if (mNfcAdapter.isEnabled()) {
                 // NFC enabled
+                tb_nfc_switch.setChecked(true);
             } else {
                 // NFC disabled
+                tb_nfc_switch.setChecked(false);
             }
 
         } else {
