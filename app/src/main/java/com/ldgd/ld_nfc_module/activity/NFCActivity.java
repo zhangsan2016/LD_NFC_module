@@ -82,6 +82,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     private void initNFC() {
         // 初始化NFC-onResume处理
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
