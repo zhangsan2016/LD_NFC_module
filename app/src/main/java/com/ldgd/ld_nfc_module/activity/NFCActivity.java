@@ -22,6 +22,7 @@ import android.widget.ToggleButton;
 
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
+import com.ldgd.ld_nfc_module.util.BytesUtil;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
@@ -322,8 +323,16 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 lv = (ListView) findViewById(R.id.readBlocksListView);
                 lv.setAdapter(mAdapter);*/
                 LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
-                // 解析成xml文件
-                XmlUtil.parseBytesToXml(mBuffer,"",NFCActivity.this);
+
+                // 判断nfc硬件类型
+                byte[] typeByte = new byte[2];
+                System.arraycopy(mBuffer, 0, typeByte, 0, 2);
+                if(BytesUtil.bytesIntHL(typeByte) == 1){
+                    // 解析成xml文件
+                    XmlUtil.parseBytesToXml(mBuffer,"0001_83140000.xls",NFCActivity.this);
+                }
+
+
 
             }
             bt_read_nfc.setEnabled(true);

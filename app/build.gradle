@@ -39,6 +39,7 @@ dependencies {
  //   compile 'com.github.yuzhiqiang1993:zxing:2.2.5'
     compile 'cn.yipianfengye.android:zxing-library:2.2'
 
+    /* Excel 框架 */
     compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
 
 
