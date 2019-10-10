@@ -19,8 +19,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -86,6 +84,7 @@ public class XmlUtil {
 
                 byte[] byteData = new byte[dictionaries.getTakeByte()];
                 System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
+
                 LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
@@ -102,7 +101,7 @@ public class XmlUtil {
                     } else if (dictionaries.getFormat().equals("STR")) {
                         StringBuffer sb = new StringBuffer();
                         for (int i = 0; i < byteData.length; i++) {
-                            sb.append(byteData[i] + " ");
+                            sb.append(new String(new byte[]{byteData[i]}) + " " );
                         }
                         value = sb.toString();
                     } else if (dictionaries.getFormat().equals("DEC")) {
@@ -128,6 +127,8 @@ public class XmlUtil {
                                         int factorValue = transitionValue * factor;
                                         value = factorValue + "";
                                     }
+                                }else{
+                                    value = transitionValue + "";
                                 }
                             }
                         } else {
@@ -145,6 +146,8 @@ public class XmlUtil {
                 xmlData.setName(dictionaries.getName());
                 xmlData.setValue(value);
                 xmlDataList.add(xmlData);
+
+                LogUtil.e("xxx value = " +  value);
             }
 
             // 3.转换成xml文件并保存
@@ -203,6 +206,7 @@ public class XmlUtil {
             return file;
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtil.e("xxx" + e.getMessage().toString());
             return null;
         }
     }

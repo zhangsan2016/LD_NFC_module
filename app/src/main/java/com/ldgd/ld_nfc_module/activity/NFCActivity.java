@@ -148,7 +148,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tv_edit_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (temp == false) {
+                if (temp == true) {
                     temp = true;
                     v.setBackgroundResource(R.drawable.ico_nfc_off);
                     et_text_editor.setEnabled(true);
