@@ -116,7 +116,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
 
-                 LogUtil.e(" xxx tv_deploy = " + et_text_editor.getText().toString().trim());
+                LogUtil.e(" xxx tv_deploy = " + et_text_editor.getText().toString().trim());
             }
         });
 
@@ -149,13 +149,19 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
                 if (temp == true) {
-                    temp = true;
-                    v.setBackgroundResource(R.drawable.ico_nfc_off);
-                    et_text_editor.setEnabled(true);
-                } else {
                     temp = false;
                     v.setBackgroundResource(R.drawable.ico_nfc_on);
-                    et_text_editor.setEnabled(false);
+                    //    et_text_editor.setEnabled(true);
+                    et_text_editor.setFocusable(false);
+                    et_text_editor.setCursorVisible(false);
+                    et_text_editor.setFocusableInTouchMode(false);
+                } else {
+                    temp = true;
+                    v.setBackgroundResource(R.drawable.ico_nfc_off);
+                    //   et_text_editor.setEnabled(false);
+                    et_text_editor.setFocusable(true);
+                    et_text_editor.setCursorVisible(true);
+                    et_text_editor.setFocusableInTouchMode(true);
                 }
             }
         });
@@ -219,7 +225,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     }
 
 
-    private void readNfc(){
+    private void readNfc() {
 
         if (mTag != null) {
             //     bt_read_nfc.setEnabled(false);
@@ -227,7 +233,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             mStartAddress = 0;
             mNumberOfBytes = 508;
             //   mNumberOfBytes = 508;
-            ReadTheBytes( mStartAddress, mNumberOfBytes);
+            ReadTheBytes(mStartAddress, mNumberOfBytes);
         } else {
             showToast("标签不在场区内");
         }
@@ -240,7 +246,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      * @param mStartAddress
      * @param mNumberOfBytes
      */
-    private void ReadTheBytes( int mStartAddress, int mNumberOfBytes) {
+    private void ReadTheBytes(int mStartAddress, int mNumberOfBytes) {
 
 
       /*  Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
@@ -347,13 +353,13 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             fis.read(buffer);
                             String txt = new String(buffer, 0, buffer.length);
                             LogUtil.e("xxx XmlUtil.formatXml(txt) =" + XmlUtil.formatXml(txt));
-                         et_text_editor.setText(XmlUtil.formatXml(txt));
+                            et_text_editor.setText(XmlUtil.formatXml(txt));
                             fis.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }else{
-                        Toast.makeText(NFCActivity.this,"读取失败！",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -385,7 +391,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // onResume gets called after this to handle the intent
         Log.e(TAG, "onNewIntent " + intent);
         setIntent(intent);
-        readNfc();
+      //  readNfc();
     }
 
     @Override
@@ -422,6 +428,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             // NFC not available on this phone!!!
             //  showToast(getString(R.string.nfc_not_available));
         }
+
+        readNfc();
 
     }
 
