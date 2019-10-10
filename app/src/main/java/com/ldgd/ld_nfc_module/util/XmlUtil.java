@@ -5,15 +5,22 @@ import android.content.Context;
 import com.ldgd.ld_nfc_module.entity.DataDictionaries;
 import com.ldgd.ld_nfc_module.entity.XmlData;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.kxml2.io.KXmlSerializer;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -27,7 +34,7 @@ import jxl.Workbook;
 public class XmlUtil {
 
 
-    public static void parseBytesToXml(byte[] mBuffer, String excelName, Context context) {
+    public static File parseBytesToXml(byte[] mBuffer, String excelName, Context context) {
 
         InputStream is = null;
         try {
@@ -77,51 +84,61 @@ public class XmlUtil {
             String value = null;
             for (DataDictionaries dictionaries : dataDictionaries) {
 
-                byte[] deviceTypeBytes = new byte[dictionaries.getTakeByte()];
-                System.arraycopy(mBuffer, dictionaries.getStartAddress(), deviceTypeBytes, 0, dictionaries.getTakeByte());
-                LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(deviceTypeBytes));
+                byte[] byteData = new byte[dictionaries.getTakeByte()];
+                System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
+                LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
-                if (deviceTypeBytes.length > 0) {
+                if (byteData.length > 0) {
 
                     XmlData xmlData = new XmlData();
                     xmlData.setName(dictionaries.getName());
 
-                    int transitionValue = 0;
-
-                    // 获取转换格式
-                    if (dictionaries.getConvertFormat().equals("HL")) {
-                        // 高低位转换
-                        transitionValue = BytesUtil.bytesIntHL(deviceTypeBytes);
-                    }
-
-                    // 拿到系数
-                    int factor = dictionaries.getFactor();
-                    if (factor != 0) {
-                        if (dictionaries.getOperator().trim().equals("/")) {
-                            int factorValue = transitionValue / factor;
-                            value = factorValue + "";
-                        } else if (dictionaries.getOperator().trim().equals("+")) {
-                            int factorValue = transitionValue + factor;
-                            value = factorValue + "";
-                        } else if (dictionaries.getOperator().trim().equals("-")) {
-                            int factorValue = transitionValue - factor;
-                            value = factorValue + "";
-                        } else if (dictionaries.getOperator().trim().equals("*")) {
-                            int factorValue = transitionValue * factor;
-                            value = factorValue + "";
-                        }
-                    }
 
                     // 获取显示类型
                     if (dictionaries.getFormat().equals("HEX")) {
+                        int transitionValue = BytesUtil.bytesIntHL(byteData);
                         value = Integer.toHexString(transitionValue);
                     } else if (dictionaries.getFormat().equals("STR")) {
-                        value = transitionValue + "";
+                        StringBuffer sb = new StringBuffer();
+                        for (int i = 0; i < byteData.length; i++) {
+                            sb.append(byteData[i] + " ");
+                        }
+                        value = sb.toString();
+                    } else if (dictionaries.getFormat().equals("DEC")) {
+                        // 长度为1直接赋值
+                        if (dictionaries.getTakeByte() != 1) {
+                            // 获取转换格式
+                            if (dictionaries.getConvertFormat().equals("HL")) {
+                                // 高低位转换
+                                int transitionValue = BytesUtil.bytesIntHL(byteData);
+                                // 拿到系数
+                                int factor = dictionaries.getFactor();
+                                if (factor != 0) {
+                                    if (dictionaries.getOperator().trim().equals("/")) {
+                                        int factorValue = transitionValue / factor;
+                                        value = factorValue + "";
+                                    } else if (dictionaries.getOperator().trim().equals("+")) {
+                                        int factorValue = transitionValue + factor;
+                                        value = factorValue + "";
+                                    } else if (dictionaries.getOperator().trim().equals("-")) {
+                                        int factorValue = transitionValue - factor;
+                                        value = factorValue + "";
+                                    } else if (dictionaries.getOperator().trim().equals("*")) {
+                                        int factorValue = transitionValue * factor;
+                                        value = factorValue + "";
+                                    }
+                                }
+                            }
+                        } else {
+                            value = byteData[0] + "";
+                        }
+
+
                     }
 
                     // 单位
-                    value = value + dictionaries.getUnits();
+                    // value = value + dictionaries.getUnits();
                 }
 
                 XmlData xmlData = new XmlData();
@@ -131,19 +148,20 @@ public class XmlUtil {
             }
 
             // 3.转换成xml文件并保存
-            boolean createStart = createXML(xmlDataList, new File(context.getCacheDir(), "NfcDataCache.xml"));
-            LogUtil.e("xxx createStart = " + createStart);
+            File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), "NfcDataCache.xml"));
 
             // 4.返回xml文件地址
+            return cacheFile;
 
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("xxx Exception = " + e.getMessage().toString());
+            return null;
         }
 
     }
 
-    private static boolean createXML(List<XmlData> xmlDataList, File file) {
+    private static File createXML(List<XmlData> xmlDataList, File file) {
 
         // 文件存在先删除
         if (file.exists()) {
@@ -173,7 +191,6 @@ public class XmlUtil {
                 serializer.text(xmlData.getValue());
                 serializer.endTag(null, xmlData.getName());
 
-
             }
 
             // 设置文件结束标签
@@ -183,12 +200,29 @@ public class XmlUtil {
 
             serializer.flush();
             fos.close();
-            return true;
+            return file;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
-
-
     }
+
+
+    public static String formatXml(String str) throws Exception {
+        Document document = null;
+        document = DocumentHelper.parseText(str);
+        // 格式化输出格式
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("utf-8");
+        StringWriter writer = new StringWriter();
+        // 格式化输出流
+        XMLWriter xmlWriter = new XMLWriter(writer, format);
+        // 将document写入到输出流
+        xmlWriter.write(document);
+        xmlWriter.close();
+
+        return writer.toString();
+    }
+
+
 }

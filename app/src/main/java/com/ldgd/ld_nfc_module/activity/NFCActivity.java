@@ -37,6 +37,8 @@ import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
 
 import static com.st.st25sdk.MultiAreaInterface.AREA1;
@@ -61,7 +63,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private TextView tv_edit_switch;
     private ToggleButton tb_nfc_switch;
     private boolean temp = false;
-
 
 
     @Override
@@ -115,6 +116,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
 
+                 LogUtil.e(" xxx tv_deploy = " + et_text_editor.getText().toString().trim());
             }
         });
 
@@ -146,11 +148,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tv_edit_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(temp == false){
+                if (temp == false) {
                     temp = true;
                     v.setBackgroundResource(R.drawable.ico_nfc_off);
                     et_text_editor.setEnabled(true);
-                }else{
+                } else {
                     temp = false;
                     v.setBackgroundResource(R.drawable.ico_nfc_on);
                     et_text_editor.setEnabled(false);
@@ -163,10 +165,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tb_nfc_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NfcUtils.IsToSet(NFCActivity.this,tb_nfc_switch);
+                NfcUtils.IsToSet(NFCActivity.this, tb_nfc_switch);
             }
         });
-
 
 
     }
@@ -327,11 +328,29 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 // 判断nfc硬件类型
                 byte[] typeByte = new byte[2];
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
-                if(BytesUtil.bytesIntHL(typeByte) == 1){
+                if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 解析成xml文件
-                    XmlUtil.parseBytesToXml(mBuffer,"0001_83140000.xls",NFCActivity.this);
-                }
+                    File cacheFile = XmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFCActivity.this);
 
+                    if (cacheFile != null) {
+                        try {
+                            //读取文件流
+                            FileInputStream fis = new FileInputStream(cacheFile);
+                            int size = fis.available();
+                            System.out.println("可读取的字节数 " + size);
+                            byte[] buffer = new byte[size];
+                            fis.read(buffer);
+                            String txt = new String(buffer, 0, buffer.length);
+                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + XmlUtil.formatXml(txt));
+                         et_text_editor.setText(XmlUtil.formatXml(txt));
+                            fis.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Toast.makeText(NFCActivity.this,"读取失败！",Toast.LENGTH_SHORT).show();
+                    }
+                }
 
 
             }

@@ -33,15 +33,12 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile project(':st25.android.reader.interface')
     compile files('libs/kxml2-2.2.3.jar')
-
     /* 二维码扫描 */
-   // compile 'cn.yipianfengye.android:zxing-library:2.2'
- //   compile 'com.github.yuzhiqiang1993:zxing:2.2.5'
+    // compile 'cn.yipianfengye.android:zxing-library:2.2'
+    //   compile 'com.github.yuzhiqiang1993:zxing:2.2.5'
     compile 'cn.yipianfengye.android:zxing-library:2.2'
-
     /* Excel 框架 */
     compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
-
-
-
+    /* 用于java格式化xml字符串 */
+    compile files('libs/dom4j-1.6.1.jar')
 }
