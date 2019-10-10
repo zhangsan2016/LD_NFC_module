@@ -99,11 +99,29 @@ public class XmlUtil {
                         int transitionValue = BytesUtil.bytesIntHL(byteData);
                         value = Integer.toHexString(transitionValue);
                     } else if (dictionaries.getFormat().equals("STR")) {
+
                         StringBuffer sb = new StringBuffer();
+                        int statistics = 0;
                         for (int i = 0; i < byteData.length; i++) {
-                            sb.append(new String(new byte[]{byteData[i]}) + " " );
+                            statistics += byteData[i];
+                            String str = new String(new byte[]{byteData[i]},"utf-8");
+                            sb.append(str + " ");
                         }
-                        value = sb.toString();
+                        if(statistics <= 0){
+                            value = "0";
+                        }else{
+                            value = sb.toString();
+                        }
+
+
+                     /*   StringBuffer sb = new StringBuffer();
+                        for (int i = 0; i < byteData.length; i++) {
+                            String str = new String(new byte[]{byteData[i]},"utf-8");
+                            sb.append(str + " ");
+                        }
+                        value = sb.toString();*/
+
+
                     } else if (dictionaries.getFormat().equals("DEC")) {
                         // 长度为1直接赋值
                         if (dictionaries.getTakeByte() != 1) {
@@ -127,7 +145,7 @@ public class XmlUtil {
                                         int factorValue = transitionValue * factor;
                                         value = factorValue + "";
                                     }
-                                }else{
+                                } else {
                                     value = transitionValue + "";
                                 }
                             }
@@ -147,7 +165,6 @@ public class XmlUtil {
                 xmlData.setValue(value);
                 xmlDataList.add(xmlData);
 
-                LogUtil.e("xxx value = " +  value);
             }
 
             // 3.转换成xml文件并保存
@@ -164,7 +181,7 @@ public class XmlUtil {
 
     }
 
-    private static File createXML(List<XmlData> xmlDataList, File file) {
+    private static File createXML(List<XmlData> xmlDataList, File file) throws Exception {
 
         // 文件存在先删除
         if (file.exists()) {
@@ -178,37 +195,32 @@ public class XmlUtil {
         XmlSerializer serializer = new KXmlSerializer();
         // 文件写入流实例
         FileOutputStream fos = null;
-        try {
-            // 根据文件对象创建一个文件的输出流对象
-            fos = new FileOutputStream(file);
-            // 设置输出的流及编码
-            serializer.setOutput(fos, "utf-8");
-            // 设置文件的开始
-            serializer.startDocument("UTF-8", true);
-            // 设置文件开始标签
-            serializer.startTag(null, "当前读取信息");
-            for (XmlData xmlData : xmlDataList) {
+        // 根据文件对象创建一个文件的输出流对象
+        fos = new FileOutputStream(file);
+        // 设置输出的流及编码
+        serializer.setOutput(fos, "utf-8");
+        // 设置文件的开始
+        serializer.startDocument("UTF-8", true);
+        // 设置文件开始标签
+        serializer.startTag(null, "当前读取信息");
+        for (XmlData xmlData : xmlDataList) {
 
-                // 设置标签
-                serializer.startTag(null, xmlData.getName());
-                serializer.text(xmlData.getValue());
-                serializer.endTag(null, xmlData.getName());
+            // 设置标签
+            serializer.startTag(null, xmlData.getName());
+            serializer.text(xmlData.getValue());
+            serializer.endTag(null, xmlData.getName());
 
-            }
-
-            // 设置文件结束标签
-            serializer.endTag(null, "当前读取信息");
-            // 文件的结束
-            serializer.endDocument();
-
-            serializer.flush();
-            fos.close();
-            return file;
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogUtil.e("xxx" + e.getMessage().toString());
-            return null;
         }
+
+        // 设置文件结束标签
+        serializer.endTag(null, "当前读取信息");
+        // 文件的结束
+        serializer.endDocument();
+
+        serializer.flush();
+        fos.close();
+        return file;
+
     }
 
 

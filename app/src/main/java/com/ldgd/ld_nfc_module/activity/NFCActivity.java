@@ -214,28 +214,33 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public void read(View view) {
 
+        readNfc();
+
+    }
+
+
+    private void readNfc(){
+
         if (mTag != null) {
-            bt_read_nfc.setEnabled(false);
+            //     bt_read_nfc.setEnabled(false);
             //设置为读取所有
             mStartAddress = 0;
             mNumberOfBytes = 508;
             //   mNumberOfBytes = 508;
-            ReadTheBytes(view, mStartAddress, mNumberOfBytes);
+            ReadTheBytes( mStartAddress, mNumberOfBytes);
         } else {
             showToast("标签不在场区内");
         }
-
 
     }
 
     /**
      * 从 mNumberOfBytes
      *
-     * @param v
      * @param mStartAddress
      * @param mNumberOfBytes
      */
-    private void ReadTheBytes(View v, int mStartAddress, int mNumberOfBytes) {
+    private void ReadTheBytes( int mStartAddress, int mNumberOfBytes) {
 
 
       /*  Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
@@ -378,8 +383,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     @Override
     public void onNewIntent(Intent intent) {
         // onResume gets called after this to handle the intent
-        Log.d(TAG, "onNewIntent " + intent);
+        Log.e(TAG, "onNewIntent " + intent);
         setIntent(intent);
+        readNfc();
     }
 
     @Override
