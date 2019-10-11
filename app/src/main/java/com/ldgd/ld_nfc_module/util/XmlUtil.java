@@ -100,25 +100,6 @@ public class XmlUtil {
                         value = Integer.toHexString(transitionValue);
                     } else if (dictionaries.getFormat().equals("STR")) {
 
-                     /*   StringBuffer sb = new StringBuffer();
-                        int statistics = 0;
-                        for (int i = 0; i < byteData.length; i++) {
-                            statistics += byteData[i];
-                            String str = new String(new byte[]{byteData[i]},"utf-8");
-                            if (str == null){
-                                LogUtil.e("xxx str == null" + str);
-                            }else {
-                                LogUtil.e("xxx str ！= null " + str);
-                            }
-                            sb.append(str + " ");
-                        }
-                        if(statistics <= 0){
-                            value = "0";
-                        }else{
-                            value = sb.toString();
-                        }*/
-
-
                         StringBuffer sb = new StringBuffer();
                         for (int i = 0; i < byteData.length; i++) {
                             String str = new String(new byte[]{byteData[i]},"utf-8");
@@ -167,7 +148,7 @@ public class XmlUtil {
                     }
 
                     // 单位
-                    // value = value + dictionaries.getUnits();
+                     value = value + "(" + dictionaries.getUnits() + ")";
                 }
 
                 XmlData xmlData = new XmlData();
