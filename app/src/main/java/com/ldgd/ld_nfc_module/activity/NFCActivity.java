@@ -391,11 +391,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // onResume gets called after this to handle the intent
         Log.e(TAG, "onNewIntent " + intent);
         setIntent(intent);
-       String str = et_text_editor.getText().toString().trim();
-        LogUtil.e("xxx  str == null"  + (str == null));
-        LogUtil.e("xxx  str == \"\""  +( str == ""));
-        LogUtil.e("xxx  str.equals(\"\")" + str.equals(""));
-       // readNfc();
+
     }
 
     @Override
@@ -433,7 +429,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             //  showToast(getString(R.string.nfc_not_available));
         }
 
-        readNfc();
+    //    readNfc();
 
     }
 
@@ -496,7 +492,12 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
              /*   checkMailboxActivation();
                 startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*/
 
-                showToast("NFC 识别成功");
+             //   showToast("NFC 识别成功");
+
+                String str = et_text_editor.getText().toString().trim();
+                if(str.equals("")){
+                    readNfc();
+                }
                 break;
 
 
