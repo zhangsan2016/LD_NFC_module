@@ -66,11 +66,11 @@
 
 
             <Button
+                android:id="@+id/bt_clear"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:enabled="false"
-                android:text="保存" />
+                android:text="清空" />
 
             <TextView
                 android:id="@+id/tv_deploy"
@@ -185,7 +185,7 @@
             android:background="@drawable/ico_nfc_read"
             android:gravity="center"
             android:onClick="read"
-            android:text="read" />
+            android:text="save" />
 
         <!-- android:progressDrawable="@drawable/progressBarStyleHorizontal" -->
 

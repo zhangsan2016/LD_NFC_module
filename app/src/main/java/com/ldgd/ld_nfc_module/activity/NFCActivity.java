@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,6 +70,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private TextView tv_edit_switch;
     private ToggleButton tb_nfc_switch;
     private boolean temp = false;
+    private Button bt_clear;
 
 
     @Override
@@ -187,6 +189,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             }
         });
 
+        // 清除
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et_text_editor.setText("");
+            }
+        });
+
 
     }
 
@@ -207,6 +217,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tv_edit_switch = (TextView) this.findViewById(R.id.tv_edit_switch);
         et_text_editor = (EditText) this.findViewById(R.id.et_text_editor);
         tb_nfc_switch = (ToggleButton) this.findViewById(R.id.tb_nfc_switch);
+        bt_clear = (Button) this.findViewById(R.id.bt_clear);
 
     }
 
