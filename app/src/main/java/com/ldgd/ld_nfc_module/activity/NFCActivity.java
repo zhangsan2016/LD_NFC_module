@@ -391,7 +391,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // onResume gets called after this to handle the intent
         Log.e(TAG, "onNewIntent " + intent);
         setIntent(intent);
-      //  readNfc();
+       String str = et_text_editor.getText().toString().trim();
+        LogUtil.e("xxx  str == null"  + (str == null));
+        LogUtil.e("xxx  str == \"\""  +( str == ""));
+        LogUtil.e("xxx  str.equals(\"\")" + str.equals(""));
+       // readNfc();
     }
 
     @Override

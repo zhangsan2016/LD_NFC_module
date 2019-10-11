@@ -108,11 +108,46 @@ public class BytesUtil {
 
 
     /**
-     *  判断String中是否包含乱码
+     *判断字符串是否为乱码
      * @param strName
      * @return
      */
     public static boolean isMessyCode(String strName) {
+        Pattern p = Pattern.compile("\\s*|\t*|\r*|\n*");
+        Matcher m = p.matcher(strName);
+        String after = m.replaceAll("");
+        String temp = after.replaceAll("\\p{P}", "");
+        char[] ch = temp.toCharArray();
+        float chLength = ch.length;
+        float count = 0;
+        for (char c : ch) {
+            if (!Character.isLetterOrDigit(c)) {
+                if (!isChinese(c)) {
+                    count = count + 1;
+                }
+            }
+        }
+        float result = count / chLength;
+        return result > 0.4;
+
+    }
+    public static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        return ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS;
+    }
+
+
+    /**
+     *  判断String中是否包含乱码
+     * @param strName
+     * @return
+     */
+    public static boolean isMessyCode2(String strName) {
         try {
             Pattern p = Pattern.compile("\\s*|\t*|\r*|\n*");
             Matcher m = p.matcher(strName);
