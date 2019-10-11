@@ -33,14 +33,12 @@ import com.ldgd.ld_nfc_module.util.LogUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
 import com.ldgd.ld_nfc_module.util.XmlUtil;
+import com.ldgd.ld_nfc_module.zbar.CaptureActivity;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
 import com.st.st25sdk.TagHelper;
 import com.st.st25sdk.type5.Type5Tag;
 import com.st.st25sdk.type5.st25dv.ST25DVTag;
-import com.uuzuche.lib_zxing.activity.CaptureActivity;
-import com.uuzuche.lib_zxing.activity.CodeUtils;
-import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,7 +49,7 @@ import static com.st.st25sdk.MultiAreaInterface.AREA1;
 public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDiscoveryCompletedListener, View.OnClickListener {
 
     private static final String TAG = "NFCActivity";
-    public static final int REQUEST_CODE_ZXING = 10;
+    public static final int REQUEST_CODE_QR = 10;
     // 请求权限的code
     public static final int REQUEST_CODE_CAMERA = 21;
 
@@ -197,11 +195,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      */
     private void goScan() {
         Intent intent = new Intent(NFCActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_ZXING);
+        startActivityForResult(intent, REQUEST_CODE_QR);
     }
 
     private void initView() {
-        ZXingLibrary.initDisplayOpinion(this);
         ll = (LinearLayout) findViewById(R.id.ll_nfc);
         ed_search = (EditText) this.findViewById(R.id.ed_search);
         bt_read_nfc = (TextView) this.findViewById(R.id.bt_read_nfc);
@@ -216,7 +213,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        // 处理二维码扫描结果
+       /* // 处理二维码扫描结果
         if (requestCode == REQUEST_CODE_ZXING) {
             //处理扫描结果（在界面上显示）
             if (null != intent) {
@@ -231,6 +228,23 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     showToast("解析二维码失败");
                 }
             }
+        }*/
+
+
+        switch (requestCode) {
+            case REQUEST_CODE_QR:// 二维码
+                // 扫描二维码回传
+                if (resultCode == RESULT_OK) {
+                    if (intent != null) {
+                        //获取扫描结果
+                        Bundle bundle = intent.getExtras();
+                        String result = bundle.getString(CaptureActivity.EXTRA_STRING);
+                        ed_search.setText(result);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -451,7 +465,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             //  showToast(getString(R.string.nfc_not_available));
         }
 
-    //    readNfc();
+        //    readNfc();
 
     }
 
@@ -514,10 +528,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
              /*   checkMailboxActivation();
                 startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*/
 
-             //   showToast("NFC 识别成功");
+                //   showToast("NFC 识别成功");
 
                 String str = et_text_editor.getText().toString().trim();
-                if(str.equals("")){
+                if (str.equals("")) {
                     readNfc();
                 }
                 break;

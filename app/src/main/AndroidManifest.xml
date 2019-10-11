@@ -86,8 +86,9 @@
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/filter_nfc" />
-        </activity>
 
+        </activity>
+        <activity android:name=".zbar.CaptureActivity" />
 
     </application>
 
