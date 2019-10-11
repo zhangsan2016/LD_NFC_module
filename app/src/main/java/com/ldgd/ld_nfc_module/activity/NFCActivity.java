@@ -64,7 +64,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private LinearLayout ll;
     private EditText ed_search;
     private EditText et_text_editor;
-    private TextView bt_read_nfc;
+    private TextView bt_save_config;
     private TextView tv_deploy;
     private TextView tv_write;
     private TextView tv_edit_switch;
@@ -197,6 +197,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             }
         });
 
+        // 缓存当前数据
+        bt_save_config.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
     }
 
@@ -211,7 +219,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private void initView() {
         ll = (LinearLayout) findViewById(R.id.ll_nfc);
         ed_search = (EditText) this.findViewById(R.id.ed_search);
-        bt_read_nfc = (TextView) this.findViewById(R.id.bt_read_nfc);
+        bt_save_config = (TextView) this.findViewById(R.id.bt_save_config);
         tv_deploy = (TextView) this.findViewById(R.id.tv_deploy);
         tv_write = (TextView) this.findViewById(R.id.tv_write);
         tv_edit_switch = (TextView) this.findViewById(R.id.tv_edit_switch);
@@ -264,18 +272,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      */
     private int mStartAddress;
     private int mNumberOfBytes;
-
-    public void read(View view) {
-
-        readNfc();
-
-    }
-
-
     private void readNfc() {
 
         if (mTag != null) {
-            //     bt_read_nfc.setEnabled(false);
             //设置为读取所有
             mStartAddress = 0;
             mNumberOfBytes = 508;
@@ -412,7 +411,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
 
             }
-            bt_read_nfc.setEnabled(true);
         }
 
         @Override

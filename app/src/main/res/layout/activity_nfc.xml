@@ -178,13 +178,12 @@
 
 
         <TextView
-            android:id="@+id/bt_read_nfc"
+            android:id="@+id/bt_save_config"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:background="@drawable/ico_nfc_read"
             android:gravity="center"
-            android:onClick="read"
             android:text="save" />
 
         <!-- android:progressDrawable="@drawable/progressBarStyleHorizontal" -->

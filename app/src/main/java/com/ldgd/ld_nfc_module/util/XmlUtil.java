@@ -32,6 +32,13 @@ import jxl.Workbook;
 public class XmlUtil {
 
 
+    /**
+     *  将当前byte数组解析成xml文件
+     * @param mBuffer
+     * @param excelName
+     * @param context
+     * @return
+     */
     public static File parseBytesToXml(byte[] mBuffer, String excelName, Context context) {
 
         InputStream is = null;
