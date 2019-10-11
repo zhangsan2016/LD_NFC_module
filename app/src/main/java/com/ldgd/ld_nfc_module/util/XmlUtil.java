@@ -148,7 +148,10 @@ public class XmlUtil {
                     }
 
                     // 单位
-                     value = value + "(" + dictionaries.getUnits() + ")";
+                    if(!dictionaries.getUnits().equals("")){
+                        value = value + "(" + dictionaries.getUnits() + ")";
+                    }
+
                 }
 
                 XmlData xmlData = new XmlData();
