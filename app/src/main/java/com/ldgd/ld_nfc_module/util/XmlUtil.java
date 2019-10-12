@@ -31,15 +31,16 @@ import jxl.Workbook;
 
 public class XmlUtil {
 
-
     /**
-     *  将当前byte数组解析成xml文件
+     * 将当前byte数组解析成xml文件
+     *
      * @param mBuffer
-     * @param excelName
+     * @param excelName    析的文件类型
+     * @param saveFileName 保存的文件名
      * @param context
      * @return
      */
-    public static File parseBytesToXml(byte[] mBuffer, String excelName, Context context) {
+    public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
         InputStream is = null;
         try {
@@ -109,15 +110,14 @@ public class XmlUtil {
 
                         StringBuffer sb = new StringBuffer();
                         for (int i = 0; i < byteData.length; i++) {
-                            String str = new String(new byte[]{byteData[i]},"utf-8");
+                            String str = new String(new byte[]{byteData[i]}, "utf-8");
                             sb.append(str + " ");
                         }
-                       if( BytesUtil.isMessyCode(sb.toString())){
-                           value = "0";
-                       }else{
-                           value = sb.toString();
-                       }
-
+                        if (BytesUtil.isMessyCode(sb.toString())) {
+                            value = "0";
+                        } else {
+                            value = sb.toString();
+                        }
 
 
                     } else if (dictionaries.getFormat().equals("DEC")) {
@@ -155,7 +155,7 @@ public class XmlUtil {
                     }
 
                     // 单位
-                    if(!dictionaries.getUnits().equals("")){
+                    if (!dictionaries.getUnits().equals("")) {
                         value = value + "(" + dictionaries.getUnits() + ")";
                     }
 
@@ -169,7 +169,7 @@ public class XmlUtil {
             }
 
             // 3.转换成xml文件并保存
-            File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), "NfcDataCache.xml"));
+            File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
 
             // 4.返回xml文件地址
             return cacheFile;
@@ -182,6 +182,14 @@ public class XmlUtil {
 
     }
 
+    /**
+     * 创建xml文件
+     *
+     * @param xmlDataList
+     * @param file
+     * @return
+     * @throws Exception
+     */
     private static File createXML(List<XmlData> xmlDataList, File file) throws Exception {
 
         // 文件存在先删除
@@ -224,7 +232,42 @@ public class XmlUtil {
 
     }
 
+    /**
+     * 写入一个xml文件
+     *
+     * @param strXml xml字符串
+     * @param file   xml的绝对地址
+     * @throws Exception
+     */
+    public static void saveXml(String strXml, File file) throws Exception {
+        // 文件写入流实例
+        FileOutputStream fos = null;
+        // 根据文件对象创建一个文件的输出流对象
+        fos = new FileOutputStream(file, true);
+        fos.write(strXml.getBytes("utf-8"));//对内容进行编码并写入文件
+        fos.close();//关闭文件输出流
 
+    }
+
+    /**
+     * 删除文件
+     * @param file 绝对路径
+     */
+    public static void deleFile( File file) {
+        // 文件存在先删除
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+
+    /**
+     * 格式化xml的显示
+     *
+     * @param str
+     * @return
+     * @throws Exception
+     */
     public static String formatXml(String str) throws Exception {
         Document document = null;
         document = DocumentHelper.parseText(str);

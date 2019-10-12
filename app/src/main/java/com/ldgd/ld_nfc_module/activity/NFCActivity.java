@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -54,6 +55,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     // 请求权限的code
     public static final int REQUEST_CODE_CAMERA = 21;
 
+    // xml缓存的name
+    private static final String NFC_DATA_CACHE = "NfcDataCache.xml";
+    // xml编辑缓存的name
+    private static final String NFC_EIDT_DATA_CACHE = "NfcEidtDataCache.xml";
+
 
     /// static private NFCTag mTag;
     static private ST25DVTag mTag;
@@ -71,6 +77,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private ToggleButton tb_nfc_switch;
     private boolean temp = false;
     private Button bt_clear;
+    private ProgressBar progressbar;
 
 
     @Override
@@ -194,6 +201,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
                 et_text_editor.setText("");
+                // 初始化进度条
+                initProgressBar();
+                // 删除编辑的缓存文件
+                XmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(),NFC_EIDT_DATA_CACHE));
             }
         });
 
@@ -201,7 +212,17 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         bt_save_config.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String xmlStr = et_text_editor.getText().toString();
+                File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
+                try {
+                    XmlUtil.saveXml(xmlStr, file);
+                    showToast("保存成功");
+                    progressbar.setSecondaryProgress(100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showToast("保存出错");
+                    progressbar.setSecondaryProgress(0);
+                }
             }
         });
 
@@ -226,6 +247,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         et_text_editor = (EditText) this.findViewById(R.id.et_text_editor);
         tb_nfc_switch = (ToggleButton) this.findViewById(R.id.tb_nfc_switch);
         bt_clear = (Button) this.findViewById(R.id.bt_clear);
+        progressbar = (ProgressBar) this.findViewById(R.id.progressbar);
 
     }
 
@@ -272,6 +294,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      */
     private int mStartAddress;
     private int mNumberOfBytes;
+
     private void readNfc() {
 
         if (mTag != null) {
@@ -282,6 +305,17 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             ReadTheBytes(mStartAddress, mNumberOfBytes);
         } else {
             showToast("标签不在场区内");
+        }
+
+    }
+
+    /**
+     * 初始化进度条
+     */
+    private void initProgressBar() {
+        if(progressbar != null){
+            progressbar.setProgress(0);
+            progressbar.setSecondaryProgress(0);
         }
 
     }
@@ -387,7 +421,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 解析成xml文件
-                    File cacheFile = XmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFCActivity.this);
+                    File cacheFile = XmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
 
                     if (cacheFile != null) {
                         try {
@@ -400,6 +434,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             String txt = new String(buffer, 0, buffer.length);
                             LogUtil.e("xxx XmlUtil.formatXml(txt) =" + XmlUtil.formatXml(txt));
                             et_text_editor.setText(XmlUtil.formatXml(txt));
+                            // 初始化进度条
+                            initProgressBar();
                             fis.close();
                         } catch (Exception e) {
                             e.printStackTrace();
