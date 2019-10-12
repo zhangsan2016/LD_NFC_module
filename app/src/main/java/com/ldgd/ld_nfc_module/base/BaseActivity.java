@@ -46,7 +46,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Resources resources = getResources();
                 if (resources != null) {
                     String message = resources.getString(resource_id, formatArgs);
-                    Toast.makeText(BaseActivity.this, message, Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(BaseActivity.this, message, Toast.LENGTH_LONG).show();
+                    if (toast == null) {
+                        toast = Toast.makeText(BaseActivity.this, null, Toast.LENGTH_LONG);
+                        toast.setText(message);
+                    } else {
+                        toast.setText(message);
+                    }
+                    toast.show();
+
                 }
             }
         });

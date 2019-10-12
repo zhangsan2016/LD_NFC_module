@@ -9,10 +9,12 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import jxl.read.biff.BiffException;
  * 说明：xml解析工具
  */
 
-public class XmlUtil {
+public class NfcXmlUtil {
 
     /**
      * 将当前byte数组解析成xml文件
@@ -52,7 +54,7 @@ public class XmlUtil {
             List<DataDictionaries> dataDictionaries = parseExcel(excelName, context);
 
             // 2.根据字典格式解析数据
-            ArrayList<XmlData>  xmlDataList = parseXml(mBuffer, dataDictionaries);
+            ArrayList<XmlData> xmlDataList = parseBuffer(mBuffer, dataDictionaries);
 
             // 3.转换成xml文件并保存
             File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
@@ -68,7 +70,7 @@ public class XmlUtil {
 
     }
 
-    private static ArrayList<XmlData> parseXml(byte[] mBuffer, List<DataDictionaries> dataDictionaries) throws UnsupportedEncodingException {
+    private static ArrayList<XmlData> parseBuffer(byte[] mBuffer, List<DataDictionaries> dataDictionaries) throws UnsupportedEncodingException {
         ArrayList<XmlData> xmlDataList = new ArrayList<>();
         String value = null;
         for (DataDictionaries dictionaries : dataDictionaries) {
@@ -151,6 +153,62 @@ public class XmlUtil {
 
         }
         return xmlDataList;
+    }
+
+
+    public static void parseXml(FileInputStream is) throws Exception {
+        KXmlParser parser = new KXmlParser();
+        parser.setInput(is, "UTF-8");
+
+        boolean parsing = true;
+        int eventType = parser.getEventType();
+        boolean keepParsing = true;
+        while (keepParsing) {
+            int type = parser.next();
+            switch (type) {
+                case KXmlParser.START_DOCUMENT:
+                    //startDocument(parser);//这里总是执行不到，可以去掉
+                    break;
+                case KXmlParser.START_TAG:
+                    if ("contacts".equals(parser.getName())) {
+                        System.out.println("contacts");
+                    } else if ("root".equals(parser.getName())) {
+                        System.out.println("root");
+                    } else if ("send".equals(parser.getName())) {
+                        System.out.println("send");
+
+                    } else if ("receive".equals(parser.getName())) {
+                        System.out.println("receive");
+
+                    } else if ("contact".equals(parser.getName())) {
+                        System.out.println("contact");
+                    }
+                    break;
+                case KXmlParser.END_TAG:
+                    if ("contacts".equals(parser.getName())) {
+                        System.out.println("contacts");
+                    } else if ("root".equals(parser.getName())) {
+                        System.out.println("root");
+                    } else if ("send".equals(parser.getName())) {
+                        System.out.println("send");
+
+                    } else if ("receive".equals(parser.getName())) {
+                        System.out.println("receive");
+
+                    } else if ("contact".equals(parser.getName())) {
+                        System.out.println("contact");
+                    }
+                    break;
+                case KXmlParser.TEXT:
+                    String content = parser.getText();
+                    System.out.println(content + " TEXT:" + content);
+                    break;
+                case KXmlParser.END_DOCUMENT:
+                    break;
+            }
+        }
+
+
     }
 
     /**

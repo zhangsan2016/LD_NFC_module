@@ -33,8 +33,8 @@ import com.ldgd.ld_nfc_module.util.BytesUtil;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
+import com.ldgd.ld_nfc_module.util.NfcXmlUtil;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
-import com.ldgd.ld_nfc_module.util.XmlUtil;
 import com.ldgd.ld_nfc_module.zbar.CaptureActivity;
 import com.st.st25sdk.NFCTag;
 import com.st.st25sdk.STException;
@@ -78,7 +78,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private boolean temp = false;
     private Button bt_clear;
     private ProgressBar progressbar;
-    private AlertDialog.Builder writeAlertDialog;
+    private AlertDialog writeAlertDialog;
 
 
     @Override
@@ -108,6 +108,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         // 检测nfc权限
         NfcUtils.NfcCheck(this);
+
     }
 
     private void initListening() {
@@ -192,11 +193,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         bt_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                et_text_editor.setText("");
-                // 初始化进度条
-                initProgressBar();
-                // 删除编辑的缓存文件
-                XmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+                clearInterface();
             }
         });
 
@@ -208,7 +205,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 if (!xmlStr.equals("")) {
                     File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
                     try {
-                        XmlUtil.saveXml(xmlStr, file);
+                        NfcXmlUtil.saveXml(xmlStr, file);
                         showToast("保存成功");
                         progressbar.setSecondaryProgress(100);
                     } catch (Exception e) {
@@ -217,12 +214,23 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         progressbar.setSecondaryProgress(0);
                     }
                 } else {
-                   showToast("当前内容为空,请您触碰NFC设备，读取设备信息");
+                    showToast("当前内容为空,请您触碰NFC设备，读取设备信息");
                 }
             }
         });
 
 
+    }
+
+    /**
+     * 清理界面
+     */
+    private void clearInterface() {
+        et_text_editor.setText("");
+        // 初始化进度条
+        initProgressBar();
+        // 删除编辑的缓存文件
+        NfcXmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
     }
 
     /**
@@ -245,24 +253,40 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         bt_clear = (Button) this.findViewById(R.id.bt_clear);
         progressbar = (ProgressBar) this.findViewById(R.id.progressbar);
 
+        // 清除当前界面信息
+        clearInterface();
+
 
         // 写入提示框
         View view = View.inflate(NFCActivity.this, R.layout.alert_dialog_item, null);
         writeAlertDialog = new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
                 .setView(view)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        showToast("开始写入");
-
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setCancelable(false)
+                .setPositiveButton("确定",null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         showToast("已经取消");
+                        dialog.dismiss();
                     }
-                });
+                }).create();
+
+        writeAlertDialog.show();
+        writeAlertDialog.dismiss();
+        writeAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("开始写入");
+                // 1.解析xml文件，得到所有参数
+                try {
+               //     writeAlertDialog.findViewById(R.id.tv_dialog);
+                    FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(),NFC_EIDT_DATA_CACHE));
+                    NfcXmlUtil.parseXml(inputStream);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
@@ -436,7 +460,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 解析成xml文件
-                    File cacheFile = XmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
+                    File cacheFile = NfcXmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
 
                     if (cacheFile != null) {
                         try {
@@ -447,8 +471,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             byte[] buffer = new byte[size];
                             fis.read(buffer);
                             String txt = new String(buffer, 0, buffer.length);
-                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + XmlUtil.formatXml(txt));
-                            et_text_editor.setText(XmlUtil.formatXml(txt));
+                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcXmlUtil.formatXml(txt));
+                            et_text_editor.setText(NfcXmlUtil.formatXml(txt));
                             // 初始化进度条
                             initProgressBar();
                             fis.close();

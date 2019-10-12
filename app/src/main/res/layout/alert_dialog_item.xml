@@ -5,27 +5,44 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="缓存设备UUID:"/>
+        android:layout_gravity="center"
+        android:text="缓存设备UUID:" />
 
     <TextView
-        android:layout_gravity="center"
+        android:id="@+id/tv_cache_nfcuid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="564564564654654654"/>
+        android:layout_gravity="center"
+        android:text="" />
 
     <TextView
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NFC设备UUID:"/>
+        android:layout_gravity="center"
+        android:text="当前NFC设备UUID:" />
 
     <TextView
-        android:layout_gravity="center"
+        android:id="@+id/tv_read_nfcuid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="缓存配置将覆盖NFC设备信息"/>
+        android:layout_gravity="center"
+        android:text="" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="缓存配置将覆盖NFC设备信息" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="请触碰nfc设备"
+        android:textColor="@android:color/holo_red_dark" />
 
 </LinearLayout>
