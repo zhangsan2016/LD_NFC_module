@@ -14,18 +14,27 @@ import android.widget.Toast;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected ProgressDialog mProgress;
+    private static Toast toast;
 
     protected void showToast(final String msg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(BaseActivity.this, msg, Toast.LENGTH_LONG).show();
+
+                if (toast == null) {
+                    toast = Toast.makeText(BaseActivity.this, null, Toast.LENGTH_LONG);
+                    toast.setText(msg);
+                } else {
+                    toast.setText(msg);
+                }
+                toast.show();
             }
         });
     }
 
     /**
      * Helper function to display a Toast from non UI thread
+     *
      * @param resource_id
      * @param formatArgs
      */
@@ -35,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // This function can be called from a background thread so it may happen after the
                 // destruction of the activity. In such case, getResmessageources() may be null.
                 Resources resources = getResources();
-                if(resources != null) {
+                if (resources != null) {
                     String message = resources.getString(resource_id, formatArgs);
                     Toast.makeText(BaseActivity.this, message, Toast.LENGTH_LONG).show();
                 }

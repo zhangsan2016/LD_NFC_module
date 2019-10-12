@@ -78,6 +78,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private boolean temp = false;
     private Button bt_clear;
     private ProgressBar progressbar;
+    private AlertDialog.Builder writeAlertDialog;
 
 
     @Override
@@ -146,22 +147,13 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
 
-                View view = View.inflate(NFCActivity.this, R.layout.alert_dialog_item, null);
-                new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
-                        .setView(view)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                showToast("开始写入");
+                File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
+                if (file.exists()) {
+                    writeAlertDialog.show();
+                } else {
+                    showToast("xml文件不存在，请先保存文件");
+                }
 
-                            }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        showToast("已经取消");
-                    }
-                }).show();
             }
         });
 
@@ -204,7 +196,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 // 初始化进度条
                 initProgressBar();
                 // 删除编辑的缓存文件
-                XmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(),NFC_EIDT_DATA_CACHE));
+                XmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
             }
         });
 
@@ -213,15 +205,19 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
                 String xmlStr = et_text_editor.getText().toString();
-                File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
-                try {
-                    XmlUtil.saveXml(xmlStr, file);
-                    showToast("保存成功");
-                    progressbar.setSecondaryProgress(100);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast("保存出错");
-                    progressbar.setSecondaryProgress(0);
+                if (!xmlStr.equals("")) {
+                    File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
+                    try {
+                        XmlUtil.saveXml(xmlStr, file);
+                        showToast("保存成功");
+                        progressbar.setSecondaryProgress(100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast("保存出错");
+                        progressbar.setSecondaryProgress(0);
+                    }
+                } else {
+                   showToast("当前内容为空,请您触碰NFC设备，读取设备信息");
                 }
             }
         });
@@ -248,6 +244,25 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tb_nfc_switch = (ToggleButton) this.findViewById(R.id.tb_nfc_switch);
         bt_clear = (Button) this.findViewById(R.id.bt_clear);
         progressbar = (ProgressBar) this.findViewById(R.id.progressbar);
+
+
+        // 写入提示框
+        View view = View.inflate(NFCActivity.this, R.layout.alert_dialog_item, null);
+        writeAlertDialog = new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
+                .setView(view)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showToast("开始写入");
+
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showToast("已经取消");
+                    }
+                });
 
     }
 
@@ -313,7 +328,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      * 初始化进度条
      */
     private void initProgressBar() {
-        if(progressbar != null){
+        if (progressbar != null) {
             progressbar.setProgress(0);
             progressbar.setSecondaryProgress(0);
         }
