@@ -14,14 +14,17 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 /**
  * Created by ldgd on 2019/10/7.
@@ -42,131 +45,14 @@ public class XmlUtil {
      */
     public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
-        InputStream is = null;
+
         try {
             // 1.获取assets包中的 Excel 文件，得到字典格式
-            is = context.getAssets().open(excelName);
-            Workbook book = Workbook.getWorkbook(is);
-            book.getNumberOfSheets();
-            Sheet sheet = book.getSheet(0);
-            int Rows = sheet.getRows();
-
-            List<DataDictionaries> dataDictionaries = new ArrayList<>();
-            for (int i = 1; i < Rows; ++i) {
-
-                DataDictionaries dictionaries = new DataDictionaries();
-
-                String name = (sheet.getCell(0, i)).getContents();
-                int startAddress = Integer.parseInt((sheet.getCell(1, i)).getContents());
-                int endAddress = Integer.parseInt((sheet.getCell(2, i)).getContents());
-                int takeByte = Integer.parseInt((sheet.getCell(3, i)).getContents()); // 占用字节
-                String format = (sheet.getCell(4, i)).getContents(); // 格式
-                String units = (sheet.getCell(5, i)).getContents();  // 单位
-                int factor = Integer.parseInt((sheet.getCell(6, i)).getContents());  // 系数
-                String operator = (sheet.getCell(7, i)).getContents();  // 运算符
-                String permission = (sheet.getCell(8, i)).getContents();  // 权限
-                String convertFormat = (sheet.getCell(9, i)).getContents();  // 转换格式
-
-                dictionaries.setName(name.trim());
-                dictionaries.setStartAddress(startAddress);
-                dictionaries.setEndAddress(endAddress);
-                dictionaries.setTakeByte(takeByte);
-                dictionaries.setFormat(format.trim());
-                dictionaries.setUnits(units.trim());
-                dictionaries.setFactor(factor);
-                dictionaries.setOperator(operator.trim());
-                dictionaries.setPermission(permission.trim());
-                dictionaries.setConvertFormat(convertFormat.trim());
-
-                dataDictionaries.add(dictionaries);
-
-                //  System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + Permission );
-            }
-            book.close();
-
+            // 解析excel
+            List<DataDictionaries> dataDictionaries = parseExcel(excelName, context);
 
             // 2.根据字典格式解析数据
-            ArrayList<XmlData> xmlDataList = new ArrayList<>();
-            String value = null;
-            for (DataDictionaries dictionaries : dataDictionaries) {
-
-                byte[] byteData = new byte[dictionaries.getTakeByte()];
-                System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
-
-                LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
-
-
-                if (byteData.length > 0) {
-
-                    XmlData xmlData = new XmlData();
-                    xmlData.setName(dictionaries.getName());
-
-
-                    // 获取显示类型
-                    if (dictionaries.getFormat().equals("HEX")) {
-                        int transitionValue = BytesUtil.bytesIntHL(byteData);
-                        value = Integer.toHexString(transitionValue);
-                    } else if (dictionaries.getFormat().equals("STR")) {
-
-                        StringBuffer sb = new StringBuffer();
-                        for (int i = 0; i < byteData.length; i++) {
-                            String str = new String(new byte[]{byteData[i]}, "utf-8");
-                            sb.append(str + " ");
-                        }
-                        if (BytesUtil.isMessyCode(sb.toString())) {
-                            value = "0";
-                        } else {
-                            value = sb.toString();
-                        }
-
-
-                    } else if (dictionaries.getFormat().equals("DEC")) {
-                        // 长度为1直接赋值
-                        if (dictionaries.getTakeByte() != 1) {
-                            // 获取转换格式
-                            if (dictionaries.getConvertFormat().equals("HL")) {
-                                // 高低位转换
-                                int transitionValue = BytesUtil.bytesIntHL(byteData);
-                                // 拿到系数
-                                int factor = dictionaries.getFactor();
-                                if (factor != 0) {
-                                    if (dictionaries.getOperator().trim().equals("/")) {
-                                        int factorValue = transitionValue / factor;
-                                        value = factorValue + "";
-                                    } else if (dictionaries.getOperator().trim().equals("+")) {
-                                        int factorValue = transitionValue + factor;
-                                        value = factorValue + "";
-                                    } else if (dictionaries.getOperator().trim().equals("-")) {
-                                        int factorValue = transitionValue - factor;
-                                        value = factorValue + "";
-                                    } else if (dictionaries.getOperator().trim().equals("*")) {
-                                        int factorValue = transitionValue * factor;
-                                        value = factorValue + "";
-                                    }
-                                } else {
-                                    value = transitionValue + "";
-                                }
-                            }
-                        } else {
-                            value = byteData[0] + "";
-                        }
-
-
-                    }
-
-                    // 单位
-                    if (!dictionaries.getUnits().equals("")) {
-                        value = value + "(" + dictionaries.getUnits() + ")";
-                    }
-
-                }
-
-                XmlData xmlData = new XmlData();
-                xmlData.setName(dictionaries.getName());
-                xmlData.setValue(value);
-                xmlDataList.add(xmlData);
-
-            }
+            ArrayList<XmlData>  xmlDataList = parseXml(mBuffer, dataDictionaries);
 
             // 3.转换成xml文件并保存
             File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
@@ -180,6 +66,143 @@ public class XmlUtil {
             return null;
         }
 
+    }
+
+    private static ArrayList<XmlData> parseXml(byte[] mBuffer, List<DataDictionaries> dataDictionaries) throws UnsupportedEncodingException {
+        ArrayList<XmlData> xmlDataList = new ArrayList<>();
+        String value = null;
+        for (DataDictionaries dictionaries : dataDictionaries) {
+
+            byte[] byteData = new byte[dictionaries.getTakeByte()];
+            System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
+
+            LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
+
+
+            if (byteData.length > 0) {
+
+                XmlData xmlData = new XmlData();
+                xmlData.setName(dictionaries.getName());
+
+
+                // 获取显示类型
+                if (dictionaries.getFormat().equals("HEX")) {
+                    int transitionValue = BytesUtil.bytesIntHL(byteData);
+                    value = Integer.toHexString(transitionValue);
+                } else if (dictionaries.getFormat().equals("STR")) {
+
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < byteData.length; i++) {
+                        String str = new String(new byte[]{byteData[i]}, "utf-8");
+                        sb.append(str + " ");
+                    }
+                    if (BytesUtil.isMessyCode(sb.toString())) {
+                        value = "0";
+                    } else {
+                        value = sb.toString();
+                    }
+
+
+                } else if (dictionaries.getFormat().equals("DEC")) {
+                    // 长度为1直接赋值
+                    if (dictionaries.getTakeByte() != 1) {
+                        // 获取转换格式
+                        if (dictionaries.getConvertFormat().equals("HL")) {
+                            // 高低位转换
+                            int transitionValue = BytesUtil.bytesIntHL(byteData);
+                            // 拿到系数
+                            int factor = dictionaries.getFactor();
+                            if (factor != 0) {
+                                if (dictionaries.getOperator().trim().equals("/")) {
+                                    int factorValue = transitionValue / factor;
+                                    value = factorValue + "";
+                                } else if (dictionaries.getOperator().trim().equals("+")) {
+                                    int factorValue = transitionValue + factor;
+                                    value = factorValue + "";
+                                } else if (dictionaries.getOperator().trim().equals("-")) {
+                                    int factorValue = transitionValue - factor;
+                                    value = factorValue + "";
+                                } else if (dictionaries.getOperator().trim().equals("*")) {
+                                    int factorValue = transitionValue * factor;
+                                    value = factorValue + "";
+                                }
+                            } else {
+                                value = transitionValue + "";
+                            }
+                        }
+                    } else {
+                        value = byteData[0] + "";
+                    }
+
+
+                }
+
+                // 单位
+                if (!dictionaries.getUnits().equals("")) {
+                    value = value + "(" + dictionaries.getUnits() + ")";
+                }
+
+            }
+
+            XmlData xmlData = new XmlData();
+            xmlData.setName(dictionaries.getName());
+            xmlData.setValue(value);
+            xmlDataList.add(xmlData);
+
+        }
+        return xmlDataList;
+    }
+
+    /**
+     * 解析Excel文件
+     *
+     * @param excelName 文件名称
+     * @param context   上下文
+     * @throws IOException
+     * @throws BiffException
+     */
+    private static List<DataDictionaries> parseExcel(String excelName, Context context) throws IOException, BiffException {
+        InputStream is = null;
+        is = context.getAssets().open(excelName);
+        Workbook book = Workbook.getWorkbook(is);
+        book.getNumberOfSheets();
+        Sheet sheet = book.getSheet(0);
+        int Rows = sheet.getRows();
+
+        List<DataDictionaries> dataDictionaries = new ArrayList<>();
+        for (int i = 1; i < Rows; ++i) {
+
+            DataDictionaries dictionaries = new DataDictionaries();
+
+            String name = (sheet.getCell(0, i)).getContents();
+            int startAddress = Integer.parseInt((sheet.getCell(1, i)).getContents());
+            int endAddress = Integer.parseInt((sheet.getCell(2, i)).getContents());
+            int takeByte = Integer.parseInt((sheet.getCell(3, i)).getContents()); // 占用字节
+            String format = (sheet.getCell(4, i)).getContents(); // 格式
+            String units = (sheet.getCell(5, i)).getContents();  // 单位
+            int factor = Integer.parseInt((sheet.getCell(6, i)).getContents());  // 系数
+            String operator = (sheet.getCell(7, i)).getContents();  // 运算符
+            String permission = (sheet.getCell(8, i)).getContents();  // 权限
+            String convertFormat = (sheet.getCell(9, i)).getContents();  // 转换格式
+
+            dictionaries.setName(name.trim());
+            dictionaries.setStartAddress(startAddress);
+            dictionaries.setEndAddress(endAddress);
+            dictionaries.setTakeByte(takeByte);
+            dictionaries.setFormat(format.trim());
+            dictionaries.setUnits(units.trim());
+            dictionaries.setFactor(factor);
+            dictionaries.setOperator(operator.trim());
+            dictionaries.setPermission(permission.trim());
+            dictionaries.setConvertFormat(convertFormat.trim());
+
+            dataDictionaries.add(dictionaries);
+
+            //  System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + Permission );
+        }
+        book.close();
+        is.close();
+        return dataDictionaries;
     }
 
     /**
@@ -251,9 +274,10 @@ public class XmlUtil {
 
     /**
      * 删除文件
+     *
      * @param file 绝对路径
      */
-    public static void deleFile( File file) {
+    public static void deleFile(File file) {
         // 文件存在先删除
         if (file.exists()) {
             file.delete();
