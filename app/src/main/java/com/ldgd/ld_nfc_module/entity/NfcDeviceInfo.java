@@ -539,4 +539,66 @@ public class NfcDeviceInfo {
     public void setBaseplateId(String baseplateId) {
         this.baseplateId = baseplateId;
     }
+
+    @Override
+    public String toString() {
+        return "NfcDeviceInfo{" +
+                "deviceType='" + deviceType + '\'' +
+                ", updateIndex='" + updateIndex + '\'' +
+                ", crc='" + crc + '\'' +
+                ", mainLight1Hour='" + mainLight1Hour + '\'' +
+                ", mainLight2Hour='" + mainLight2Hour + '\'' +
+                ", mainLight3Hour='" + mainLight3Hour + '\'' +
+                ", mainLight4Hour='" + mainLight4Hour + '\'' +
+                ", mainLight5Hour='" + mainLight5Hour + '\'' +
+                ", mainLight6Hour='" + mainLight6Hour + '\'' +
+                ", mainLight1Minute='" + mainLight1Minute + '\'' +
+                ", mainLight2Minute='" + mainLight2Minute + '\'' +
+                ", mainLight3Minute='" + mainLight3Minute + '\'' +
+                ", mainLight4Minute='" + mainLight4Minute + '\'' +
+                ", mainLight5Minute='" + mainLight5Minute + '\'' +
+                ", mainLight6Minute='" + mainLight6Minute + '\'' +
+                ", mainLight1Brightness='" + mainLight1Brightness + '\'' +
+                ", mainLight2Brightness='" + mainLight2Brightness + '\'' +
+                ", mainLight3Brightness='" + mainLight3Brightness + '\'' +
+                ", mainLight4Brightness='" + mainLight4Brightness + '\'' +
+                ", mainLight5Brightness='" + mainLight5Brightness + '\'' +
+                ", mainLight6Brightness='" + mainLight6Brightness + '\'' +
+                ", auxiliaryLight1Hour='" + auxiliaryLight1Hour + '\'' +
+                ", auxiliaryLight2Hour='" + auxiliaryLight2Hour + '\'' +
+                ", auxiliaryLight3Hour='" + auxiliaryLight3Hour + '\'' +
+                ", auxiliaryLight4Hour='" + auxiliaryLight4Hour + '\'' +
+                ", auxiliaryLight5Hour='" + auxiliaryLight5Hour + '\'' +
+                ", auxiliaryLight6Hour='" + auxiliaryLight6Hour + '\'' +
+                ", auxiliaryLight1Minute='" + auxiliaryLight1Minute + '\'' +
+                ", auxiliaryLight2Minute='" + auxiliaryLight2Minute + '\'' +
+                ", auxiliaryLight3Minute='" + auxiliaryLight3Minute + '\'' +
+                ", auxiliaryLight4Minute='" + auxiliaryLight4Minute + '\'' +
+                ", auxiliaryLight5Minute='" + auxiliaryLight5Minute + '\'' +
+                ", auxiliaryLight6Minute='" + auxiliaryLight6Minute + '\'' +
+                ", auxiliaryLight1Brightness='" + auxiliaryLight1Brightness + '\'' +
+                ", auxiliaryLight2Brightness='" + auxiliaryLight2Brightness + '\'' +
+                ", auxiliaryLight3Brightness='" + auxiliaryLight3Brightness + '\'' +
+                ", auxiliaryLight4Brightness='" + auxiliaryLight4Brightness + '\'' +
+                ", auxiliaryLight5Brightness='" + auxiliaryLight5Brightness + '\'' +
+                ", auxiliaryLight6Brightness='" + auxiliaryLight6Brightness + '\'' +
+                ", overcurrentProtectionWwitch='" + overcurrentProtectionWwitch + '\'' +
+                ", earthLeakageCircuitBreaker='" + earthLeakageCircuitBreaker + '\'' +
+                ", illuminationLightSwitch='" + illuminationLightSwitch + '\'' +
+                ", overvoltageProtectionThreshold='" + overvoltageProtectionThreshold + '\'' +
+                ", undervoltageProtectionThreshold='" + undervoltageProtectionThreshold + '\'' +
+                ", overcurrentProtectionThreshold='" + overcurrentProtectionThreshold + '\'' +
+                ", undercurrentProtectionThreshold='" + undercurrentProtectionThreshold + '\'' +
+                ", alarmSwitch='" + alarmSwitch + '\'' +
+                ", leakageProtectionThreshold='" + leakageProtectionThreshold + '\'' +
+                ", illuminationLightThreshold='" + illuminationLightThreshold + '\'' +
+                ", lightOffThreshold='" + lightOffThreshold + '\'' +
+                ", LampPoleCollapseAlarmSwitch='" + LampPoleCollapseAlarmSwitch + '\'' +
+                ", projectArea='" + projectArea + '\'' +
+                ", projectNumber='" + projectNumber + '\'' +
+                ", Imei='" + Imei + '\'' +
+                ", maintainImei='" + maintainImei + '\'' +
+                ", baseplateId='" + baseplateId + '\'' +
+                '}';
+    }
 }

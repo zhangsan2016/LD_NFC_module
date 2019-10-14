@@ -262,7 +262,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         writeAlertDialog = new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
                 .setView(view)
                 .setCancelable(false)
-                .setPositiveButton("确定",null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setPositiveButton("确定", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -276,17 +276,49 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         writeAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("开始写入");
-                // 1.解析xml文件，得到所有参数
+
+                // 写入数据到NFC
+                  /*  new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String str = "2019A0142200001200000006";
+                            try {
+                                mTag.writeBytes(100,str.getBytes());
+                                LogUtil.e("xxx 写入成功 = " );
+                            } catch (STException e) {
+                                showToast("写入错误");
+                                LogUtil.e("xxx 写入错误 = " + e.getMessage().toString());
+                            }
+
+                        }
+                    }).start();*/
+
+                // 写入nfc
+                writeNfc();
+
+            }
+        });
+
+    }
+
+    private void writeNfc() {
+
+        // 1.解析xml文件，得到所有参数
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //     writeAlertDialog.findViewById(R.id.tv_dialog);
                 try {
-               //     writeAlertDialog.findViewById(R.id.tv_dialog);
-                    FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(),NFC_EIDT_DATA_CACHE));
+                    FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcXmlUtil.parseXml(inputStream);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
-        });
+        }).start();
+
 
     }
 

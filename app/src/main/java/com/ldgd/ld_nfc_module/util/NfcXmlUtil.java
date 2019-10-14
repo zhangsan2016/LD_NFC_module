@@ -3,6 +3,7 @@ package com.ldgd.ld_nfc_module.util;
 import android.content.Context;
 
 import com.ldgd.ld_nfc_module.entity.DataDictionaries;
+import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_module.entity.XmlData;
 
 import org.dom4j.Document;
@@ -11,6 +12,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
+import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
@@ -157,58 +159,151 @@ public class NfcXmlUtil {
 
 
     public static void parseXml(FileInputStream is) throws Exception {
+
         KXmlParser parser = new KXmlParser();
         parser.setInput(is, "UTF-8");
+        NfcDeviceInfo nfcDeviceInfo = null;
 
-        boolean parsing = true;
         int eventType = parser.getEventType();
-        boolean keepParsing = true;
-        while (keepParsing) {
-            int type = parser.next();
-            switch (type) {
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            String tagName = parser.getName();
+            switch (eventType) {
                 case KXmlParser.START_DOCUMENT:
-                    //startDocument(parser);//这里总是执行不到，可以去掉
+                    //解析开始的时候初始化list
+                    //    students=new ArrayList<>();
+                    nfcDeviceInfo = new NfcDeviceInfo();
+
                     break;
                 case KXmlParser.START_TAG:
-                    if ("contacts".equals(parser.getName())) {
-                        System.out.println("contacts");
-                    } else if ("root".equals(parser.getName())) {
-                        System.out.println("root");
-                    } else if ("send".equals(parser.getName())) {
-                        System.out.println("send");
-
-                    } else if ("receive".equals(parser.getName())) {
-                        System.out.println("receive");
-
-                    } else if ("contact".equals(parser.getName())) {
-                        System.out.println("contact");
+                    if ("设备类型".equals(parser.getName())) {
+                        // parser.getAttributeValue(0)
+                        nfcDeviceInfo.setDeviceType(parser.nextText());
+                    } else if ("更新标志位".equals(parser.getName())) {
+                        nfcDeviceInfo.setUpdateIndex(parser.nextText());
+                    } else if ("CRC".equals(parser.getName())) {
+                        nfcDeviceInfo.setCrc(parser.nextText());
+                    } else if ("主灯1段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight1Hour(parser.nextText());
+                    } else if ("主灯1段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight1Minute(parser.nextText());
+                    } else if ("主灯1段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight1Brightness(parser.nextText());
+                    } else if ("主灯2段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight2Hour(parser.nextText());
+                    } else if ("主灯2段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight2Minute(parser.nextText());
+                    } else if ("主灯2段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight2Brightness(parser.nextText());
+                    } else if ("主灯3段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight3Hour(parser.nextText());
+                    } else if ("主灯3段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight3Minute(parser.nextText());
+                    } else if ("主灯3段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight3Brightness(parser.nextText());
+                    } else if ("主灯4段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight4Hour(parser.nextText());
+                    } else if ("主灯4段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight4Minute(parser.nextText());
+                    } else if ("主灯4段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight4Brightness(parser.nextText());
+                    } else if ("主灯5段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight5Hour(parser.nextText());
+                    } else if ("主灯5段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight5Minute(parser.nextText());
+                    } else if ("主灯5段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight5Brightness(parser.nextText());
+                    } else if ("主灯6段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight6Hour(parser.nextText());
+                    } else if ("主灯6段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight5Minute(parser.nextText());
+                    } else if ("主灯6段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setMainLight6Brightness(parser.nextText());
+                    } else if ("副灯1段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight1Hour(parser.nextText());
+                    } else if ("副灯1段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight1Minute(parser.nextText());
+                    } else if ("副灯1段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight1Brightness(parser.nextText());
+                    } else if ("副灯2段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight2Hour(parser.nextText());
+                    } else if ("副灯2段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight2Minute(parser.nextText());
+                    } else if ("副灯2段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight1Brightness(parser.nextText());
+                    } else if ("副灯3段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight3Hour(parser.nextText());
+                    } else if ("副灯3段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight3Minute(parser.nextText());
+                    } else if ("副灯3段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight4Brightness(parser.nextText());
+                    } else if ("副灯4段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight4Hour(parser.nextText());
+                    } else if ("副灯4段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight4Minute(parser.nextText());
+                    } else if ("副灯4段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight4Brightness(parser.nextText());
+                    } else if ("副灯5段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight5Hour(parser.nextText());
+                    } else if ("副灯5段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight5Minute(parser.nextText());
+                    } else if ("副灯5段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight5Brightness(parser.nextText());
+                    } else if ("副灯6段调光时".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight6Hour(parser.nextText());
+                    } else if ("副灯6段调光分".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight6Minute(parser.nextText());
+                    } else if ("副灯6段调光亮度".equals(parser.getName())) {
+                        nfcDeviceInfo.setAuxiliaryLight6Brightness(parser.nextText());
+                    } else if ("过流保护开关".equals(parser.getName())) {
+                        nfcDeviceInfo.setOvercurrentProtectionWwitch(parser.nextText());
+                    } else if ("漏电保护开关".equals(parser.getName())) {
+                        nfcDeviceInfo.setEarthLeakageCircuitBreaker(parser.nextText());
+                    } else if ("照度开灯开关".equals(parser.getName())) {
+                        nfcDeviceInfo.setIlluminationLightSwitch(parser.nextText());
+                    } else if ("过压保护阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setOvervoltageProtectionThreshold(parser.nextText());
+                    } else if ("欠压保护阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setUndervoltageProtectionThreshold(parser.nextText());
+                    } else if ("过流保护阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setOvercurrentProtectionThreshold(parser.nextText());
+                    } else if ("欠流保护阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setUndercurrentProtectionThreshold(parser.nextText());
+                    } else if ("报警开关".equals(parser.getName())) {
+                        nfcDeviceInfo.setAlarmSwitch(parser.nextText());
+                    } else if ("漏电保护阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setLeakageProtectionThreshold(parser.nextText());
+                    } else if ("照度开灯阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setIlluminationLightThreshold(parser.nextText());
+                    } else if ("照度关灯阈值".equals(parser.getName())) {
+                        nfcDeviceInfo.setLightOffThreshold(parser.nextText());
+                    } else if ("灯杆倒塌报警开关".equals(parser.getName())) {
+                        nfcDeviceInfo.setLampPoleCollapseAlarmSwitch(parser.nextText());
+                    } else if ("项目地区".equals(parser.getName())) {
+                        nfcDeviceInfo.setProjectArea(parser.nextText());
+                    } else if ("项目编号".equals(parser.getName())) {
+                        nfcDeviceInfo.setProjectNumber(parser.nextText());
+                    } else if ("IMEI".equals(parser.getName())) {
+                        nfcDeviceInfo.setImei(parser.nextText());
+                    } else if ("维修IMEI".equals(parser.getName())) {
+                        nfcDeviceInfo.setMaintainImei(parser.nextText());
+                    }else if ("执行底板ID".equals(parser.getName())) {
+                        nfcDeviceInfo.setBaseplateId(parser.nextText());
                     }
-                    break;
-                case KXmlParser.END_TAG:
-                    if ("contacts".equals(parser.getName())) {
-                        System.out.println("contacts");
-                    } else if ("root".equals(parser.getName())) {
-                        System.out.println("root");
-                    } else if ("send".equals(parser.getName())) {
-                        System.out.println("send");
 
-                    } else if ("receive".equals(parser.getName())) {
-                        System.out.println("receive");
-
-                    } else if ("contact".equals(parser.getName())) {
-                        System.out.println("contact");
-                    }
                     break;
-                case KXmlParser.TEXT:
+                /*  case KXmlParser.END_TAG:
+                    break;
+                    case KXmlParser.TEXT:
                     String content = parser.getText();
                     System.out.println(content + " TEXT:" + content);
-                    break;
+                    break;*/
                 case KXmlParser.END_DOCUMENT:
                     break;
             }
+            eventType = parser.next();
         }
 
-
+     LogUtil.e("xxx nfcDeviceInfo = " + nfcDeviceInfo.toString());
     }
 
     /**
