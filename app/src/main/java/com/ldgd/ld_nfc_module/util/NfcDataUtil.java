@@ -36,7 +36,7 @@ import jxl.read.biff.BiffException;
  * 说明：xml解析工具
  */
 
-public class NfcXmlUtil {
+public class NfcDataUtil {
 
     /**
      * 将当前byte数组解析成xml文件
@@ -85,14 +85,21 @@ public class NfcXmlUtil {
 
             if (byteData.length > 0) {
 
+                // 创建xml数据对象
                 XmlData xmlData = new XmlData();
                 xmlData.setName(dictionaries.getName());
 
 
                 // 获取显示类型
                 if (dictionaries.getFormat().equals("HEX")) {
-                    int transitionValue = BytesUtil.bytesIntHL(byteData);
-                    value = Integer.toHexString(transitionValue);
+                    int transitionValue = 0;
+                    if (dictionaries.getTakeByte() == 1) {
+                        transitionValue = byteData[0];
+                    } else {
+                        transitionValue = BytesUtil.bytesIntHL(byteData);
+                    }
+                    value = Integer.toHexString(transitionValue).toUpperCase();
+
                 } else if (dictionaries.getFormat().equals("STR")) {
 
                     StringBuffer sb = new StringBuffer();
@@ -158,7 +165,14 @@ public class NfcXmlUtil {
     }
 
 
-    public static void parseXml(FileInputStream is) throws Exception {
+    /**
+     * 解析xml文件，获取数据对象
+     *
+     * @param is xml文件
+     * @return
+     * @throws Exception
+     */
+    public static NfcDeviceInfo parseXml(FileInputStream is) throws Exception {
 
         KXmlParser parser = new KXmlParser();
         parser.setInput(is, "UTF-8");
@@ -286,7 +300,7 @@ public class NfcXmlUtil {
                         nfcDeviceInfo.setImei(parser.nextText());
                     } else if ("维修IMEI".equals(parser.getName())) {
                         nfcDeviceInfo.setMaintainImei(parser.nextText());
-                    }else if ("执行底板ID".equals(parser.getName())) {
+                    } else if ("执行底板ID".equals(parser.getName())) {
                         nfcDeviceInfo.setBaseplateId(parser.nextText());
                     }
 
@@ -303,7 +317,8 @@ public class NfcXmlUtil {
             eventType = parser.next();
         }
 
-     LogUtil.e("xxx nfcDeviceInfo = " + nfcDeviceInfo.toString());
+        LogUtil.e("xxx nfcDeviceInfo = " + nfcDeviceInfo.toString());
+        return nfcDeviceInfo;
     }
 
     /**
@@ -462,4 +477,101 @@ public class NfcXmlUtil {
     }
 
 
+    /**
+     * 检测设备信息的正确性
+     */
+    public static void checkNfcDeviceInfo(NfcDeviceInfo nfcDeviceInfo, OnNfcDataListening listening, Context context) {
+
+        if (nfcDeviceInfo.getDeviceType().equals(1)) {
+            // 解析excel
+            try {
+                List<DataDictionaries> dataDictionaries = parseExcel("0001_83140000.xls", context);
+                for (DataDictionaries dictionaries : dataDictionaries) {
+                    String name = dictionaries.getName();
+                    // 判断是否存在读写权限
+                    if (dictionaries.getPermission().equals("RW")) {
+                        if ("设备类型".equals(name)) {
+                        } else if ("更新标志位".equals(name)) {
+                            // 更新标志位 转int
+                            int updateIndex = Integer.valueOf(nfcDeviceInfo.getUpdateIndex(), 16);
+
+                        } else if ("CRC".equals(name)) {
+                        } else if ("主灯1段调光时".equals(name)) {
+                        } else if ("主灯1段调光分".equals(name)) {
+                        } else if ("主灯1段调光亮度".equals(name)) {
+                        } else if ("主灯2段调光时".equals(name)) {
+                        } else if ("主灯2段调光分".equals(name)) {
+                        } else if ("主灯2段调光亮度".equals(name)) {
+                        } else if ("主灯3段调光时".equals(name)) {
+                        } else if ("主灯3段调光分".equals(name)) {
+                        } else if ("主灯3段调光亮度".equals(name)) {
+                        } else if ("主灯4段调光时".equals(name)) {
+                        } else if ("主灯4段调光分".equals(name)) {
+                        } else if ("主灯4段调光亮度".equals(name)) {
+                        } else if ("主灯5段调光时".equals(name)) {
+                        } else if ("主灯5段调光分".equals(name)) {
+                        } else if ("主灯5段调光亮度".equals(name)) {
+                        } else if ("主灯6段调光时".equals(name)) {
+                        } else if ("主灯6段调光分".equals(name)) {
+                        } else if ("主灯6段调光亮度".equals(name)) {
+                        } else if ("副灯1段调光时".equals(name)) {
+                        } else if ("副灯1段调光分".equals(name)) {
+                        } else if ("副灯1段调光亮度".equals(name)) {
+                        } else if ("副灯2段调光时".equals(name)) {
+                        } else if ("副灯2段调光分".equals(name)) {
+                        } else if ("副灯2段调光亮度".equals(name)) {
+                        } else if ("副灯3段调光时".equals(name)) {
+                        } else if ("副灯3段调光分".equals(name)) {
+                        } else if ("副灯3段调光亮度".equals(name)) {
+                        } else if ("副灯4段调光时".equals(name)) {
+                        } else if ("副灯4段调光分".equals(name)) {
+                        } else if ("副灯4段调光亮度".equals(name)) {
+                        } else if ("副灯5段调光时".equals(name)) {
+                        } else if ("副灯5段调光分".equals(name)) {
+                        } else if ("副灯5段调光亮度".equals(name)) {
+                        } else if ("副灯6段调光时".equals(name)) {
+                        } else if ("副灯6段调光分".equals(name)) {
+                        } else if ("副灯6段调光亮度".equals(name)) {
+                        } else if ("过流保护开关".equals(name)) {
+                        } else if ("漏电保护开关".equals(name)) {
+                        } else if ("照度开灯开关".equals(name)) {
+                        } else if ("过压保护阈值".equals(name)) {
+                        } else if ("欠压保护阈值".equals(name)) {
+                        } else if ("过流保护阈值".equals(name)) {
+                        } else if ("欠流保护阈值".equals(name)) {
+                        } else if ("报警开关".equals(name)) {
+                        } else if ("漏电保护阈值".equals(name)) {
+                        } else if ("照度开灯阈值".equals(name)) {
+                        } else if ("照度关灯阈值".equals(name)) {
+                        } else if ("灯杆倒塌报警开关".equals(name)) {
+                        } else if ("项目地区".equals(name)) {
+                        } else if ("项目编号".equals(name)) {
+                        } else if ("IMEI".equals(name)) {
+                        } else if ("维修IMEI".equals(name)) {
+                        } else if ("执行底板ID".equals(name)) {
+                        }
+                    }
+
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                listening.failure("设备参数错误！");
+            }
+
+        } else {
+            listening.failure("设备类型错误！");
+        }
+
+    }
+
+
+    public interface OnNfcDataListening {
+
+        void succeed();
+
+        void failure(String error);
+
+    }
 }

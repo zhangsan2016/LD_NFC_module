@@ -16,7 +16,7 @@ public class DataDictionaries {
     private String units;  // 单位
     private int factor;  // 系数
     private String operator;  // 运算符
-    private String Permission;  // 权限
+    private String permission;  // 权限
     private String convertFormat; // 转换格式
 
 
@@ -94,10 +94,10 @@ public class DataDictionaries {
     }
 
     public String getPermission() {
-        return Permission;
+        return permission;
     }
 
     public void setPermission(String permission) {
-        Permission = permission;
+        this.permission = permission;
     }
 }

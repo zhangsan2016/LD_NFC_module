@@ -29,11 +29,12 @@ import android.widget.ToggleButton;
 
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
+import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_module.util.BytesUtil;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
+import com.ldgd.ld_nfc_module.util.NfcDataUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
-import com.ldgd.ld_nfc_module.util.NfcXmlUtil;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
 import com.ldgd.ld_nfc_module.zbar.CaptureActivity;
 import com.st.st25sdk.NFCTag;
@@ -205,7 +206,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 if (!xmlStr.equals("")) {
                     File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
                     try {
-                        NfcXmlUtil.saveXml(xmlStr, file);
+                        NfcDataUtil.saveXml(xmlStr, file);
                         showToast("保存成功");
                         progressbar.setSecondaryProgress(100);
                     } catch (Exception e) {
@@ -230,7 +231,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // 初始化进度条
         initProgressBar();
         // 删除编辑的缓存文件
-        NfcXmlUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+        NfcDataUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
     }
 
     /**
@@ -303,15 +304,29 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     private void writeNfc() {
 
-        // 1.解析xml文件，得到所有参数
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //     writeAlertDialog.findViewById(R.id.tv_dialog);
                 try {
+                    // 1.解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-                    NfcXmlUtil.parseXml(inputStream);
+                    NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                    // 校验获取的参数是否符合规定
+                    NfcDataUtil.checkNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
+                        @Override
+                        public void succeed() {
 
+                        }
+
+                        @Override
+                        public void failure(String error) {
+
+                        }
+
+
+                    },NFCActivity.this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -492,7 +507,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 解析成xml文件
-                    File cacheFile = NfcXmlUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
+                    File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
 
                     if (cacheFile != null) {
                         try {
@@ -503,8 +518,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             byte[] buffer = new byte[size];
                             fis.read(buffer);
                             String txt = new String(buffer, 0, buffer.length);
-                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcXmlUtil.formatXml(txt));
-                            et_text_editor.setText(NfcXmlUtil.formatXml(txt));
+                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
+                            et_text_editor.setText(NfcDataUtil.formatXml(txt));
                             // 初始化进度条
                             initProgressBar();
                             fis.close();
