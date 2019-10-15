@@ -1040,11 +1040,11 @@ public class NfcDataUtil {
                 mTag.writeBytes(dictionaries.getStartAddress(), data);
             } catch (STException e) {
                 e.printStackTrace();
-                listening.failure(tagName + "，写入失败");
+                listening.failure(tagName + "，写入失败（请保持nfc设备的距离）");
                 return false;
             }
         } else {
-            listening.failure(tagName + "，占用字节出错");
+            listening.failure(tagName + "，占用字节出错（请检查当前参数是否正常）");
             return false;
         }
         return true;
