@@ -231,7 +231,7 @@ public class NfcDataUtil {
                     } else if ("主灯6段调光时".equals(parser.getName())) {
                         nfcDeviceInfo.setMainLight6Hour(parser.nextText());
                     } else if ("主灯6段调光分".equals(parser.getName())) {
-                        nfcDeviceInfo.setMainLight5Minute(parser.nextText());
+                        nfcDeviceInfo.setMainLight6Minute(parser.nextText());
                     } else if ("主灯6段调光亮度".equals(parser.getName())) {
                         nfcDeviceInfo.setMainLight6Brightness(parser.nextText());
                     } else if ("副灯1段调光时".equals(parser.getName())) {
@@ -645,7 +645,6 @@ public class NfcDataUtil {
                                 flag = false;
                                 break;
                             }
-                            break;
 
                         } else if ("主灯5段调光亮度".equals(name)) {
 
@@ -1014,11 +1013,12 @@ public class NfcDataUtil {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                listening.failure("设备参数错误！");
+                LogUtil.e("xxx 参数错误 = " + e.getMessage().toString());
+                listening.failure("参数错误！");
             }
 
         } else {
-            listening.failure("设备类型错误！");
+            listening.failure("类型错误！");
         }
 
     }

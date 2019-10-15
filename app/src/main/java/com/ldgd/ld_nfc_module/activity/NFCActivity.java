@@ -333,7 +333,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 } catch (Exception e) {
                     e.printStackTrace();
                     showToast("" +  e.getMessage().toString());
-                    LogUtil.e("xxx Exception = " + e.getMessage().toString());
                 }
 
             }
