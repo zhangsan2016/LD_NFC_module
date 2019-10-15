@@ -45,6 +45,7 @@ import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import static com.st.st25sdk.MultiAreaInterface.AREA1;
@@ -263,42 +264,41 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         writeAlertDialog = new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
                 .setView(view)
                 .setCancelable(false)
-                .setPositiveButton("写入", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setPositiveButton("写入", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        try {
+                            Field field = dialog.getClass().getSuperclass()
+                                    .getDeclaredField("mShowing");
+                            field.setAccessible(true);
+                            field.set(dialog, false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        LogUtil.e("xxx  写入");
+
+                        writeNfc();
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        try {
+                            Field field = dialog.getClass().getSuperclass()
+                                    .getDeclaredField("mShowing");
+                            field.setAccessible(true);
+                            field.set(dialog, true);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         showToast("已经取消");
-                        dialog.dismiss();
                     }
                 }).create();
 
-        writeAlertDialog.show();
-        writeAlertDialog.dismiss();
-        writeAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // 写入数据到NFC
-                  /*  new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String str = "2019A0142200001200000006";
-                            try {
-                                mTag.writeBytes(100,str.getBytes());
-                                LogUtil.e("xxx 写入成功 = " );
-                            } catch (STException e) {
-                                showToast("写入错误");
-                                LogUtil.e("xxx 写入错误 = " + e.getMessage().toString());
-                            }
-
-                        }
-                    }).start();*/
-
-                // 写入nfc
-                writeNfc();
-
-            }
-        });
 
     }
 
@@ -317,7 +317,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     NfcDataUtil.writeNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
-                             LogUtil.e("写入成功");
+                            LogUtil.e("写入成功");
                             showToast("写入成功");
                         }
 
@@ -329,9 +329,11 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         }
 
 
-                    },NFCActivity.this,mTag);
+                    }, NFCActivity.this, mTag);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    showToast("" +  e.getMessage().toString());
+                    LogUtil.e("xxx Exception = " + e.getMessage().toString());
                 }
 
             }

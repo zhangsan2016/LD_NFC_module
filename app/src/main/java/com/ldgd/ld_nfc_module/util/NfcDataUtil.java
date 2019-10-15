@@ -177,7 +177,7 @@ public class NfcDataUtil {
     public static NfcDeviceInfo parseXml(FileInputStream is) throws Exception {
 
         KXmlParser parser = new KXmlParser();
-        parser.setInput(is, "UTF-8");
+        parser.setInput(is, "utf-8");
         NfcDeviceInfo nfcDeviceInfo = null;
 
         int eventType = parser.getEventType();
@@ -402,7 +402,7 @@ public class NfcDataUtil {
         // 设置输出的流及编码
         serializer.setOutput(fos, "utf-8");
         // 设置文件的开始
-        serializer.startDocument("UTF-8", true);
+        serializer.startDocument("utf-8", true);
         // 设置文件开始标签
         serializer.startTag(null, "当前读取信息");
         for (XmlData xmlData : xmlDataList) {
@@ -433,6 +433,10 @@ public class NfcDataUtil {
      * @throws Exception
      */
     public static void saveXml(String strXml, File file) throws Exception {
+
+        if (file.exists()) {
+            file.delete();
+        }
         // 文件写入流实例
         FileOutputStream fos = null;
         // 根据文件对象创建一个文件的输出流对象
@@ -498,777 +502,519 @@ public class NfcDataUtil {
                         if ("设备类型".equals(name)) {
                         } else if ("更新标志位".equals(name)) {
 
-                            if (writeNfc(nfcDeviceInfo.getUpdateIndex(), listening, mTag, dictionaries,"更新标志位"))
+                            if (writeNfc(nfcDeviceInfo.getUpdateIndex(), listening, mTag, dictionaries, "更新标志位")) {
                                 flag = true;
+                            } else {
+                                flag = false;
                                 break;
+                            }
+
 
                         } else if ("CRC".equals(name)) {
 
-                            if (writeNfc(nfcDeviceInfo.getCrc(), listening, mTag, dictionaries,"CRC"))
+                            if (writeNfc(nfcDeviceInfo.getCrc(), listening, mTag, dictionaries, "CRC")) {
                                 flag = true;
-                            break;
+                            } else {
+                                flag = false;
+                                break;
+                            }
 
                         } else if ("主灯1段调光时".equals(name)) {
 
-                            if (writeNfc(nfcDeviceInfo.getMainLight1Hour(), listening, mTag, dictionaries,"主灯1段调光时"))
+                            if (writeNfc(nfcDeviceInfo.getMainLight1Hour(), listening, mTag, dictionaries, "主灯1段调光时")) {
                                 flag = true;
-                            break;
+                            } else {
+                                flag = false;
+                                break;
+                            }
 
                         } else if ("主灯1段调光分".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight1Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯1段调光分，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight1Minute(), listening, mTag, dictionaries, "主灯1段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯1段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯1段调光亮度".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight1Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯1段调光亮度，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight1Brightness(), listening, mTag, dictionaries, "主灯1段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯1段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
 
                         } else if ("主灯2段调光时".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight2Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯2段调光时，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight2Hour(), listening, mTag, dictionaries, "主灯2段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯2段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯2段调光分".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight2Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯2段调光分，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight2Minute(), listening, mTag, dictionaries, "主灯2段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯2段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯2段调光亮度".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight2Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯2段调光亮度，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight2Brightness(), listening, mTag, dictionaries, "主灯2段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯2段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
-
 
                         } else if ("主灯3段调光时".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight3Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯3段调光时，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight3Hour(), listening, mTag, dictionaries, "主灯3段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯3段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯3段调光分".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight3Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯3段调光分，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight3Minute(), listening, mTag, dictionaries, "主灯3段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯3段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯3段调光亮度".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight3Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯3段调光亮度，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight3Brightness(), listening, mTag, dictionaries, "主灯3段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯3段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯4段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight4Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯4段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight4Hour(), listening, mTag, dictionaries, "主灯4段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯4段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯4段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight4Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯4段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight4Minute(), listening, mTag, dictionaries, "主灯4段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯4段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯4段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight4Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯4段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight4Brightness(), listening, mTag, dictionaries, "主灯4段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯4段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+                            ;
+
                         } else if ("主灯5段调光时".equals(name)) {
 
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight5Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯5段调光时，写入失败");
-                                    break;
-                                }
+                            if (writeNfc(nfcDeviceInfo.getMainLight5Hour(), listening, mTag, dictionaries, "主灯5段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯5段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯5段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight5Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯5段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight5Minute(), listening, mTag, dictionaries, "主灯5段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯5段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+                            break;
+
                         } else if ("主灯5段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight5Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯5段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight5Brightness(), listening, mTag, dictionaries, "主灯5段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯5段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯6段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight6Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯6段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight6Hour(), listening, mTag, dictionaries, "主灯6段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯6段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯6段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight6Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯6段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight6Minute(), listening, mTag, dictionaries, "主灯6段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯6段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("主灯6段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight6Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯6段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight6Brightness(), listening, mTag, dictionaries, "主灯6段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("主灯6段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯1段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight1Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯1段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight1Hour(), listening, mTag, dictionaries, "副灯1段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯1段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
+
                         } else if ("副灯1段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight1Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯1段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight1Minute(), listening, mTag, dictionaries, "副灯1段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯1段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯1段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight1Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯1段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight1Brightness(), listening, mTag, dictionaries, "副灯1段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯1段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
+
                         } else if ("副灯2段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight2Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯2段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight2Hour(), listening, mTag, dictionaries, "副灯2段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯2段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯2段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight2Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯2段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight2Minute(), listening, mTag, dictionaries, "副灯2段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯2段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+                            ;
+
                         } else if ("副灯2段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight2Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯2段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight2Brightness(), listening, mTag, dictionaries, "副灯2段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯2段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯3段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight3Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯3段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight3Hour(), listening, mTag, dictionaries, "副灯3段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯3段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯3段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight3Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯3段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight3Minute(), listening, mTag, dictionaries, "副灯3段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯3段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯3段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight3Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯3段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight3Brightness(), listening, mTag, dictionaries, "副灯3段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯3段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯4段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight4Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯4段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight4Hour(), listening, mTag, dictionaries, "副灯4段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯4段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯4段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight4Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯4段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight4Minute(), listening, mTag, dictionaries, "副灯4段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯4段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯4段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight4Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯4段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight4Brightness(), listening, mTag, dictionaries, "副灯4段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯4段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯5段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight5Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯5段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight5Hour(), listening, mTag, dictionaries, "副灯5段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯5段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯5段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight5Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯5段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight5Minute(), listening, mTag, dictionaries, "副灯5段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯5段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯5段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight5Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯5段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight5Brightness(), listening, mTag, dictionaries, "副灯5段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯5段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯6段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight6Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯6段调光时，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight6Hour(), listening, mTag, dictionaries, "副灯6段调光时")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯6段调光时，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯6段调光分".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight6Minute());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯6段调光分，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight6Minute(), listening, mTag, dictionaries, "副灯6段调光分")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯6段调光分，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("副灯6段调光亮度".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAuxiliaryLight6Brightness());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("副灯6段调光亮度，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAuxiliaryLight6Brightness(), listening, mTag, dictionaries, "副灯6段调光亮度")) {
+                                flag = true;
                             } else {
-                                listening.failure("副灯6段调光亮度，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
+
                         } else if ("过流保护开关".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getOvercurrentProtectionWwitch());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("过流保护开关，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getOvercurrentProtectionWwitch(), listening, mTag, dictionaries, "过流保护开关")) {
+                                flag = true;
                             } else {
-                                listening.failure("过流保护开关，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("漏电保护开关".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getEarthLeakageCircuitBreaker());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("漏电保护开关，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getEarthLeakageCircuitBreaker(), listening, mTag, dictionaries, "漏电保护开关")) {
+                                flag = true;
                             } else {
-                                listening.failure("漏电保护开关，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("照度开灯开关".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getIlluminationLightSwitch());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("照度开灯开关，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getIlluminationLightSwitch(), listening, mTag, dictionaries, "照度开灯开关")) {
+                                flag = true;
                             } else {
-                                listening.failure("照度开灯开关，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("过压保护阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getOvervoltageProtectionThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("过压保护阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getOvervoltageProtectionThreshold(), listening, mTag, dictionaries, "过压保护阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("过压保护阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("欠压保护阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getUndervoltageProtectionThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("欠压保护阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getUndervoltageProtectionThreshold(), listening, mTag, dictionaries, "欠压保护阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("欠压保护阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("过流保护阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getOvercurrentProtectionThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("过流保护阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getOvercurrentProtectionThreshold(), listening, mTag, dictionaries, "过流保护阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("过流保护阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("欠流保护阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getUndercurrentProtectionThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("欠流保护阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getUndercurrentProtectionThreshold(), listening, mTag, dictionaries, "欠流保护阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("欠流保护阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("报警开关".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getAlarmSwitch());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("报警开关，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getAlarmSwitch(), listening, mTag, dictionaries, "报警开关")) {
+                                flag = true;
                             } else {
-                                listening.failure("报警开关，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("漏电保护阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getLeakageProtectionThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("漏电保护阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getLeakageProtectionThreshold(), listening, mTag, dictionaries, "漏电保护阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("漏电保护阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("照度开灯阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getIlluminationLightThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("照度开灯阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getIlluminationLightThreshold(), listening, mTag, dictionaries, "照度开灯阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("照度开灯阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("照度关灯阈值".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getLightOffThreshold());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("照度关灯阈值，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getLightOffThreshold(), listening, mTag, dictionaries, "照度关灯阈值")) {
+                                flag = true;
                             } else {
-                                listening.failure("照度关灯阈值，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("灯杆倒塌报警开关".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getLampPoleCollapseAlarmSwitch());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("灯杆倒塌报警开关，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getLampPoleCollapseAlarmSwitch(), listening, mTag, dictionaries, "灯杆倒塌报警开关")) {
+                                flag = true;
                             } else {
-                                listening.failure("灯杆倒塌报警开关，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("项目地区".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getProjectArea());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("项目地区，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getProjectArea(), listening, mTag, dictionaries, "项目地区")) {
+                                flag = true;
                             } else {
-                                listening.failure("项目地区，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("项目编号".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getProjectNumber());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("项目编号，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getProjectNumber(), listening, mTag, dictionaries, "项目编号")) {
+                                flag = true;
                             } else {
-                                listening.failure("项目编号，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("IMEI".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getImei());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("IMEI，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getImei(), listening, mTag, dictionaries, "IMEI")) {
+                                flag = true;
                             } else {
-                                listening.failure("IMEI，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("维修IMEI".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMaintainImei());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("维修IMEI，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getMaintainImei(), listening, mTag, dictionaries, "维修IMEI")) {
+                                flag = true;
                             } else {
-                                listening.failure("维修IMEI，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         } else if ("执行底板ID".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getBaseplateId());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("执行底板ID，写入失败");
-                                    break;
-                                }
+
+                            if (writeNfc(nfcDeviceInfo.getBaseplateId(), listening, mTag, dictionaries, "执行底板ID")) {
+                                flag = true;
                             } else {
-                                listening.failure("执行底板ID，占用字节出错");
+                                flag = false;
                                 break;
                             }
+
                         }
                     }
 
                 }
 
-                if(flag){
+                if (flag) {
                     listening.succeed();
-                }else{
-                    listening.failure("写入内容有误");
                 }
 
 
             } catch (Exception e) {
                 e.printStackTrace();
-              //  listening.failure("设备参数错误！");
+                listening.failure("设备参数错误！");
             }
 
         } else {
@@ -1279,11 +1025,12 @@ public class NfcDataUtil {
 
     /**
      * 写入nfc
-     * @param parameters 需要写入的参数字符
-     * @param listening   监听
-     * @param mTag        nfc对象
+     *
+     * @param parameters   需要写入的参数字符
+     * @param listening    监听
+     * @param mTag         nfc对象
      * @param dictionaries 指定的字典格式
-     * @param tagName     当前标签名称
+     * @param tagName      当前标签名称
      * @return
      */
     private static boolean writeNfc(String parameters, OnNfcDataListening listening, ST25DVTag mTag, DataDictionaries dictionaries, String tagName) {
