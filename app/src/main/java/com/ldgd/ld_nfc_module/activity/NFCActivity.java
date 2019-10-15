@@ -310,23 +310,26 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             public void run() {
                 //     writeAlertDialog.findViewById(R.id.tv_dialog);
                 try {
-                    // 1.解析xml文件，得到所有参数
+                    // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
-                    // 校验获取的参数是否符合规定
-                    NfcDataUtil.checkNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
+                    // 校验获取的参数是否符合规定,然后写入
+                    NfcDataUtil.writeNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
-
+                             LogUtil.e("写入成功");
+                            showToast("写入成功");
                         }
 
                         @Override
                         public void failure(String error) {
 
+                            LogUtil.e("xxx " + error);
+                            showToast(error);
                         }
 
 
-                    },NFCActivity.this);
+                    },NFCActivity.this,mTag);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
