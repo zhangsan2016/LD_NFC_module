@@ -488,6 +488,7 @@ public class NfcDataUtil {
             // 解析excel
             try {
                 List<DataDictionaries> dataDictionaries = parseExcel("0001_83140000.xls", context);
+                boolean flag = false;
 
                 for (DataDictionaries dictionaries : dataDictionaries) {
                     String name = dictionaries.getName();
@@ -497,51 +498,22 @@ public class NfcDataUtil {
                         if ("设备类型".equals(name)) {
                         } else if ("更新标志位".equals(name)) {
 
-                            byte[] updateIndex = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getUpdateIndex());
-                            if (updateIndex != null && updateIndex.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), updateIndex);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("更新标志位，写入失败");
-                                    break;
-                                }
-                            } else {
-                                listening.failure("设备类型占用字节出错");
+                            if (writeNfc(nfcDeviceInfo.getUpdateIndex(), listening, mTag, dictionaries,"更新标志位"))
+                                flag = true;
                                 break;
-                            }
-
 
                         } else if ("CRC".equals(name)) {
 
-                            byte[] crc = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getCrc());
-                            if (crc != null && crc.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), crc);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("CRC，写入失败");
-                                    break;
-                                }
-                            } else {
-                                listening.failure("CRC，占用字节出错");
-                                break;
-                            }
+                            if (writeNfc(nfcDeviceInfo.getCrc(), listening, mTag, dictionaries,"CRC"))
+                                flag = true;
+                            break;
 
                         } else if ("主灯1段调光时".equals(name)) {
-                            byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight1Hour());
-                            if (data != null && data.length == dictionaries.getTakeByte()) {
-                                try {
-                                    mTag.writeBytes(dictionaries.getStartAddress(), data);
-                                } catch (STException e) {
-                                    e.printStackTrace();
-                                    listening.failure("主灯1段调光时，写入失败");
-                                    break;
-                                }
-                            } else {
-                                listening.failure("主灯1段调光时，占用字节出错");
-                                break;
-                            }
+
+                            if (writeNfc(nfcDeviceInfo.getMainLight1Hour(), listening, mTag, dictionaries,"主灯1段调光时"))
+                                flag = true;
+                            break;
+
                         } else if ("主灯1段调光分".equals(name)) {
 
                             byte[] data = convertFormat(dictionaries.getFormat(), nfcDeviceInfo.getMainLight1Minute());
@@ -1286,7 +1258,12 @@ public class NfcDataUtil {
                     }
 
                 }
-           //     listening.succeed();
+
+                if(flag){
+                    listening.succeed();
+                }else{
+                    listening.failure("写入内容有误");
+                }
 
 
             } catch (Exception e) {
@@ -1298,6 +1275,32 @@ public class NfcDataUtil {
             listening.failure("设备类型错误！");
         }
 
+    }
+
+    /**
+     * 写入nfc
+     * @param parameters 需要写入的参数字符
+     * @param listening   监听
+     * @param mTag        nfc对象
+     * @param dictionaries 指定的字典格式
+     * @param tagName     当前标签名称
+     * @return
+     */
+    private static boolean writeNfc(String parameters, OnNfcDataListening listening, ST25DVTag mTag, DataDictionaries dictionaries, String tagName) {
+        byte[] data = convertFormat(dictionaries.getFormat(), parameters);
+        if (data != null && data.length == dictionaries.getTakeByte()) {
+            try {
+                mTag.writeBytes(dictionaries.getStartAddress(), data);
+            } catch (STException e) {
+                e.printStackTrace();
+                listening.failure(tagName + "，写入失败");
+                return false;
+            }
+        } else {
+            listening.failure(tagName + "，占用字节出错");
+            return false;
+        }
+        return true;
     }
 
     /**
