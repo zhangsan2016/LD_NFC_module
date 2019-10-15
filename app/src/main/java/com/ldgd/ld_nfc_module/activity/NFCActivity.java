@@ -263,7 +263,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         writeAlertDialog = new AlertDialog.Builder(NFCActivity.this).setTitle("提示")
                 .setView(view)
                 .setCancelable(false)
-                .setPositiveButton("确定", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setPositiveButton("写入", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
