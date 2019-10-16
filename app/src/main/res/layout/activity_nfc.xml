@@ -142,18 +142,25 @@
         android:layout_marginTop="10dp"
         android:layout_weight="1">
 
-        <EditText
-            android:id="@+id/et_text_editor"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/textview_border"
-            android:focusableInTouchMode="false"
-            android:gravity="top"
-            android:cursorVisible="false"
-            android:padding="5dp"
-            android:textSize="15sp"
-            android:scrollbars="vertical"
-            android:textColor="@drawable/edit_selector_color" />
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_text_editor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/textview_border"
+                android:cursorVisible="false"
+                android:focusableInTouchMode="false"
+                android:gravity="top"
+                android:padding="5dp"
+                android:scrollbars="vertical"
+                android:textColor="@drawable/edit_selector_color"
+                android:textSize="15sp" />
+        </FrameLayout>
+
 
         <TextView
             android:id="@+id/tv_edit_switch"

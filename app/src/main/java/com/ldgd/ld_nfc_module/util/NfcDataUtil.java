@@ -245,13 +245,13 @@ public class NfcDataUtil {
                     } else if ("副灯2段调光分".equals(parser.getName())) {
                         nfcDeviceInfo.setAuxiliaryLight2Minute(parser.nextText());
                     } else if ("副灯2段调光亮度".equals(parser.getName())) {
-                        nfcDeviceInfo.setAuxiliaryLight1Brightness(parser.nextText());
+                        nfcDeviceInfo.setAuxiliaryLight2Brightness(parser.nextText());
                     } else if ("副灯3段调光时".equals(parser.getName())) {
                         nfcDeviceInfo.setAuxiliaryLight3Hour(parser.nextText());
                     } else if ("副灯3段调光分".equals(parser.getName())) {
                         nfcDeviceInfo.setAuxiliaryLight3Minute(parser.nextText());
                     } else if ("副灯3段调光亮度".equals(parser.getName())) {
-                        nfcDeviceInfo.setAuxiliaryLight4Brightness(parser.nextText());
+                        nfcDeviceInfo.setAuxiliaryLight3Brightness(parser.nextText());
                     } else if ("副灯4段调光时".equals(parser.getName())) {
                         nfcDeviceInfo.setAuxiliaryLight4Hour(parser.nextText());
                     } else if ("副灯4段调光分".equals(parser.getName())) {
@@ -1085,14 +1085,23 @@ public class NfcDataUtil {
             }*/
 
             // 判断高低位
+            // 判断高低位
             if (dictionaries.getConvertFormat().equals("HL")) {
                 if(dictionaries.getTakeByte() == 2){
                     data = BytesUtil.intBytesHL(intData, 2);
                 }else if(dictionaries.getTakeByte() == 4){
                     data = BytesUtil.intBytesHL(intData, 4);
+                }else {
+                    data = new byte[]{(byte) intData};
                 }
-            } else {
-                data = new byte[]{(byte) intData};
+            }else {
+                if(dictionaries.getTakeByte() == 2){
+                    data = BytesUtil.intBytesHL(intData, 2);
+                }else if(dictionaries.getTakeByte() == 4){
+                    data = BytesUtil.intBytesHL(intData, 4);
+                }else {
+                    data = new byte[]{(byte) intData};
+                }
             }
 
         } else if (dictionaries.getFormat().equals("DEC")) {
@@ -1122,9 +1131,17 @@ public class NfcDataUtil {
                     data = BytesUtil.intBytesHL(intData, 2);
                 }else if(dictionaries.getTakeByte() == 4){
                     data = BytesUtil.intBytesHL(intData, 4);
+                }else {
+                    data = new byte[]{(byte) intData};
                 }
-            } else {
-                data = new byte[]{(byte) intData};
+            }else {
+                if(dictionaries.getTakeByte() == 2){
+                    data = BytesUtil.intBytesHL(intData, 2);
+                }else if(dictionaries.getTakeByte() == 4){
+                    data = BytesUtil.intBytesHL(intData, 4);
+                }else {
+                    data = new byte[]{(byte) intData};
+                }
             }
         } else if (dictionaries.getFormat().equals("STR")) {
             data = parameters.trim().getBytes();

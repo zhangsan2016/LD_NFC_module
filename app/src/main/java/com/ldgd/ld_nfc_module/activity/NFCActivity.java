@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,7 @@ import android.widget.ToggleButton;
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
 import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
+import com.ldgd.ld_nfc_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_module.util.BytesUtil;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
@@ -91,8 +93,12 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         // 隐藏顶部的状态栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         setContentView(R.layout.activity_nfc);
-
+        //将Activity传入以便获取contentView
+        AutoFitKeyBoardUtil.getInstance().assistActivity(this);
 
         initNFC();
 
@@ -533,6 +539,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     } else {
                         Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    showToast("当前类型无法解析");
                 }
 
 
@@ -695,5 +703,13 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             default:
         }
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //移除布局监听
+        AutoFitKeyBoardUtil.getInstance().onDestory();
     }
 }
