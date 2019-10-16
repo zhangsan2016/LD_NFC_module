@@ -285,9 +285,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        LogUtil.e("xxx  写入");
 
+                        // 写入
                         writeNfc();
+
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
@@ -319,6 +320,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             public void run() {
                 //     writeAlertDialog.findViewById(R.id.tv_dialog);
                 try {
+                    // 初始化进度条
+                    initProgressBar();
+
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
@@ -326,14 +330,17 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     NfcDataUtil.writeNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
-                            LogUtil.e("写入成功");
                             showToast("写入成功");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressbar.setProgress(100);
+                                }
+                            });
                         }
 
                         @Override
                         public void failure(String error) {
-
-                            LogUtil.e("xxx " + error);
                             showToast(error);
                         }
 
@@ -341,6 +348,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     }, NFCActivity.this, mTag);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // 初始化进度条
+                    initProgressBar();
                     showToast("" +  e.getMessage().toString());
                 }
 
@@ -412,10 +421,16 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
      * 初始化进度条
      */
     private void initProgressBar() {
-        if (progressbar != null) {
-            progressbar.setProgress(0);
-            progressbar.setSecondaryProgress(0);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressbar != null) {
+                    progressbar.setProgress(0);
+                    progressbar.setSecondaryProgress(0);
+                }
+            }
+        });
+
 
     }
 

@@ -1013,8 +1013,7 @@ public class NfcDataUtil {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                LogUtil.e("xxx 参数错误 = " + e.getMessage().toString());
-                listening.failure("参数错误！");
+                listening.failure("参数错误 = " + e.getMessage().toString());
             }
 
         } else {
