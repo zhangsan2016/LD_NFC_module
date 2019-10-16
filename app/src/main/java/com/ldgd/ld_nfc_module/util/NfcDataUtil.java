@@ -1034,7 +1034,7 @@ public class NfcDataUtil {
      * @return
      */
     private static boolean writeNfc(String parameters, OnNfcDataListening listening, ST25DVTag mTag, DataDictionaries dictionaries, String tagName) {
-        byte[] data = convertFormat(dictionaries.getFormat(), parameters);
+        byte[] data = convertFormat(dictionaries, parameters);
         if (data != null && data.length == dictionaries.getTakeByte()) {
             try {
                 mTag.writeBytes(dictionaries.getStartAddress(), data);
@@ -1053,22 +1053,84 @@ public class NfcDataUtil {
     /**
      * 根据类型转换参数
      *
-     * @param convertFormat 转换类型
-     * @param parameters    转换的参数
+     * @param dictionaries 字典，根据子弹需求完成转换
+     * @param parameters   转换的参数
      * @return
      */
-    private static byte[] convertFormat(String convertFormat, String parameters) {
+    private static byte[] convertFormat(DataDictionaries dictionaries, String parameters) {
         byte[] data = null;
-        if (convertFormat.equals("HEX")) {
-            // 更新标志位 转int
+        if (dictionaries.getFormat().equals("HEX")) {
+            // 判断当前参数是否存在单位
+            if (parameters.contains("(") && !dictionaries.getUnits().equals("")) {
+                parameters = parameters.substring(0, parameters.indexOf("(")).trim();
+            }
+            // 转int
             int intData = Integer.valueOf(parameters, 16);
-            data = new byte[]{(byte) intData};
-        } else if (convertFormat.equals("DEC")) {
+            // 判断是否包含系数，如果有要运算
+            int factor = dictionaries.getFactor();
+            if (factor != 0) {
+                if (dictionaries.getOperator().equals("+")) {
+                    intData = intData - factor;
+                } else if (dictionaries.getOperator().equals("-")) {
+                    intData = intData + factor;
+                } else if (dictionaries.getOperator().equals("*")) {
+                    intData = intData / factor;
+                } else if (dictionaries.getOperator().equals("/")) {
+                    intData = intData * factor;
+                }
+            }
+            // 判断最大值和最小值
+          /*  if(){
+
+            }*/
+
+            // 判断高低位
+            if (dictionaries.getConvertFormat().equals("HL")) {
+                if(dictionaries.getTakeByte() == 2){
+                    data = BytesUtil.intBytesHL(intData, 2);
+                }else if(dictionaries.getTakeByte() == 4){
+                    data = BytesUtil.intBytesHL(intData, 4);
+                }
+            } else {
+                data = new byte[]{(byte) intData};
+            }
+
+        } else if (dictionaries.getFormat().equals("DEC")) {
+            // 判断当前参数是否存在单位
+            if (parameters.contains("(") && !dictionaries.getUnits().equals("")) {
+                parameters = parameters.substring(0, parameters.indexOf("(")).trim();
+            }
+            // 根据类型转换
             int intData = Integer.parseInt(parameters);
-            data = new byte[]{(byte) intData};
-        } else if (convertFormat.equals("STR")) {
-            data = parameters.getBytes();
+            // 判断是否包含系数，如果有要运算
+            int factor = dictionaries.getFactor();
+            if (factor != 0) {
+                if (dictionaries.getOperator().equals("+")) {
+                    intData = intData - factor;
+                } else if (dictionaries.getOperator().equals("-")) {
+                    intData = intData + factor;
+                } else if (dictionaries.getOperator().equals("*")) {
+                    intData = intData / factor;
+                } else if (dictionaries.getOperator().equals("/")) {
+                    intData = intData * factor;
+                }
+            }
+
+            // 判断高低位
+            if (dictionaries.getConvertFormat().equals("HL")) {
+                if(dictionaries.getTakeByte() == 2){
+                    data = BytesUtil.intBytesHL(intData, 2);
+                }else if(dictionaries.getTakeByte() == 4){
+                    data = BytesUtil.intBytesHL(intData, 4);
+                }
+            } else {
+                data = new byte[]{(byte) intData};
+            }
+        } else if (dictionaries.getFormat().equals("STR")) {
+            data = parameters.trim().getBytes();
         }
+
+
         return data;
     }
 

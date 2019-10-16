@@ -106,6 +106,24 @@ public class BytesUtil {
         return result;
     }
 
+    //高位在前，低位在后，区分byte长度
+    public static byte[] intBytesHL(int num, int length) {
+
+        byte[] result = new byte[length];
+        if (length == 2) {
+            result[0] = (byte) ((num >>> 8) & 0xff);
+            result[1] = (byte) ((num >>> 0) & 0xff);
+        } else if (length == 4) {
+            result[0] = (byte) ((num >>> 24) & 0xff);//说明一
+            result[1] = (byte) ((num >>> 16) & 0xff);
+            result[2] = (byte) ((num >>> 8) & 0xff);
+            result[3] = (byte) ((num >>> 0) & 0xff);
+        }
+
+        return result;
+    }
+
+
 
     /**
      *判断字符串是否为乱码
