@@ -97,8 +97,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         setContentView(R.layout.activity_nfc);
-        //将Activity传入以便获取contentView
-        AutoFitKeyBoardUtil.getInstance().assistActivity(this);
+
 
         initNFC();
 
@@ -250,6 +249,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     }
 
     private void initView() {
+
+        //将Activity传入以便获取contentView
+        AutoFitKeyBoardUtil.getInstance().assistActivity(this);
+
         ll = (LinearLayout) findViewById(R.id.ll_nfc);
         ed_search = (EditText) this.findViewById(R.id.ed_search);
         bt_save_config = (TextView) this.findViewById(R.id.bt_save_config);
