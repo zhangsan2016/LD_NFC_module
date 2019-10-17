@@ -235,14 +235,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             public void onClick(View v) {
                 if (temp == true) {
                     temp = false;
-                    v.setBackgroundResource(R.drawable.ico_nfc_on);
+                    v.setBackgroundResource(R.drawable.ico_nfc_off);
                     //    et_text_editor.setEnabled(true);
                     et_text_editor.setFocusable(false);
                     et_text_editor.setCursorVisible(false);
                     et_text_editor.setFocusableInTouchMode(false);
                 } else {
                     temp = true;
-                    v.setBackgroundResource(R.drawable.ico_nfc_off);
+                    v.setBackgroundResource(R.drawable.ico_nfc_on);
                     //   et_text_editor.setEnabled(false);
                     et_text_editor.setFocusable(true);
                     et_text_editor.setCursorVisible(true);
