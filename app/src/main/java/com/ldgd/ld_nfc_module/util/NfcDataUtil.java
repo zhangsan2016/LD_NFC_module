@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import jxl.Sheet;
@@ -82,7 +81,7 @@ public class NfcDataUtil {
             byte[] byteData = new byte[dictionaries.getTakeByte()];
             System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
 
-            LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
+          //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
             if (byteData.length > 0) {

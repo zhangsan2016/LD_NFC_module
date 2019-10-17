@@ -12,7 +12,10 @@ import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -48,7 +51,6 @@ import com.st.st25sdk.type5.st25dv.ST25DVTag;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 import static com.st.st25sdk.MultiAreaInterface.AREA1;
 
@@ -63,6 +65,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private static final String NFC_DATA_CACHE = "NfcDataCache.xml";
     // xml编辑缓存的name
     private static final String NFC_EIDT_DATA_CACHE = "NfcEidtDataCache.xml";
+    // handle
+    private static final int HANDLE_UP_WRITE = 21;
+    private static final int HANDLE_UP_READ = 22;
 
 
     /// static private NFCTag mTag;
@@ -83,6 +88,36 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private Button bt_clear;
     private ProgressBar progressbar;
     private AlertDialog writeAlertDialog;
+
+
+    private Handler myHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case HANDLE_UP_WRITE:
+
+                    String uuid = (String) msg.obj;
+                    if (writeAlertDialog.isShowing()) {
+                        TextView tv_cache_nfcuid = writeAlertDialog.findViewById(R.id.tv_write_nfcuid);
+                        tv_cache_nfcuid.setText(uuid);
+                    }
+                    break;
+
+                case HANDLE_UP_READ:
+
+                    String uuidCache = (String) msg.obj;
+                    if (writeAlertDialog.isShowing()) {
+                        TextView tv_cache_nfcuid = writeAlertDialog.findViewById(R.id.tv_cache_nfcuid);
+                        tv_cache_nfcuid.setText(uuidCache);
+                    }
+
+                    break;
+            }
+
+
+        }
+    };
 
 
     @Override
@@ -155,9 +190,38 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void onClick(View v) {
 
+
+
                 File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
                 if (file.exists()) {
+
+                    // 初始化进度条
+                    initProgressBar();
+
+                    // 显示Dialog
                     writeAlertDialog.show();
+
+                    // 清理dialog的text文本
+                    TextView tv_write_nfcuid = writeAlertDialog.findViewById(R.id.tv_write_nfcuid);
+                    TextView tv_read_nfcuid = writeAlertDialog.findViewById(R.id.tv_cache_nfcuid);
+                    tv_write_nfcuid.setText("");
+                    tv_read_nfcuid.setText("");
+
+                    try {
+                        // 解析xml文件，得到所有参数
+                        FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+                        NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+
+                        // 通过 Handle 更新 AlertDialog
+                        Message tempMsg = myHandler.obtainMessage();
+                        tempMsg.what = HANDLE_UP_READ;
+                        tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
+                        myHandler.sendMessage(tempMsg);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast("读取xml文件失败！");
+                    }
                 } else {
                     showToast("xml文件不存在，请先保存文件");
                 }
@@ -286,8 +350,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             e.printStackTrace();
                         }
 
+
                         // 写入
                         writeNfc();
+
 
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -318,11 +384,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //     writeAlertDialog.findViewById(R.id.tv_dialog);
                 try {
-                    // 初始化进度条
-                    initProgressBar();
-
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
@@ -350,7 +412,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     e.printStackTrace();
                     // 初始化进度条
                     initProgressBar();
-                    showToast("" +  e.getMessage().toString());
+                    showToast("" + e.getMessage().toString());
                 }
 
             }
@@ -522,13 +584,15 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             return true;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (mBuffer != null) {
                 /*mAdapter = new CustomListAdapter(mBuffer);
                 lv = (ListView) findViewById(R.id.readBlocksListView);
                 lv.setAdapter(mAdapter);*/
-                LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
+
+                //    LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
 
                 // 判断nfc硬件类型
                 byte[] typeByte = new byte[2];
@@ -539,25 +603,41 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
                     if (cacheFile != null) {
                         try {
-                            //读取文件流
-                            FileInputStream fis = new FileInputStream(cacheFile);
-                            int size = fis.available();
-                            System.out.println("可读取的字节数 " + size);
-                            byte[] buffer = new byte[size];
-                            fis.read(buffer);
-                            String txt = new String(buffer, 0, buffer.length);
-                            LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
-                            et_text_editor.setText(NfcDataUtil.formatXml(txt));
-                            // 初始化进度条
-                            initProgressBar();
-                            fis.close();
+
+                            // 更新 Dialog
+                            if(writeAlertDialog.isShowing()){
+                                // 解析xml文件，得到所有参数
+                                FileInputStream inputStream = new FileInputStream(cacheFile);
+                                NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                                // 通过 Handle 更新 AlertDialog
+                                Message tempMsg = myHandler.obtainMessage();
+                                tempMsg.what = HANDLE_UP_WRITE;
+                                tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +","");
+                                myHandler.sendMessage(tempMsg);
+                            }
+
+                            if(et_text_editor.getText().toString().equals("")){
+                                //读取文件流
+                                FileInputStream fis = new FileInputStream(cacheFile);
+                                int size = fis.available();
+                                System.out.println("可读取的字节数 " + size);
+                                byte[] buffer = new byte[size];
+                                fis.read(buffer);
+                                String txt = new String(buffer, 0, buffer.length);
+                                //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
+                                et_text_editor.setText(NfcDataUtil.formatXml(txt));
+                                // 初始化进度条
+                                initProgressBar();
+                                fis.close();
+                            }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
                         Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     showToast("当前类型无法解析");
                 }
 
@@ -646,7 +726,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             return;
         }
 
-        Log.e(TAG, "processIntent " + intent);
+        Log.e(TAG, "xxx processIntent " + intent);
 
         if (mNfcIntentHook != null) {
             // NFC Intent hook used only for test purpose!
@@ -692,7 +772,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 //   showToast("NFC 识别成功");
 
                 String str = et_text_editor.getText().toString().trim();
-                if (str.equals("")) {
+                if (str.equals("") || writeAlertDialog.isShowing()) {
                     readNfc();
                 }
                 break;

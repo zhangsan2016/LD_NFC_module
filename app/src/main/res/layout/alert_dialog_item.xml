@@ -24,7 +24,7 @@
         android:text="当前NFC设备UUID:" />
 
     <TextView
-        android:id="@+id/tv_read_nfcuid"
+        android:id="@+id/tv_write_nfcuid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
