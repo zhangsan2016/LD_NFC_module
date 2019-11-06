@@ -318,7 +318,6 @@ public class NfcDataUtil {
             eventType = parser.next();
         }
 
-        LogUtil.e("xxx nfcDeviceInfo = " + nfcDeviceInfo.toString());
         return nfcDeviceInfo;
     }
 

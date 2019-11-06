@@ -50,7 +50,6 @@ import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Field;
 
 import static com.st.st25sdk.MultiAreaInterface.AREA1;
 
@@ -97,6 +96,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             switch (msg.what) {
                 case HANDLE_UP_WRITE:
 
+                    LogUtil.e("xxx HANDLE_UP_WRITE");
                     String uuid = (String) msg.obj;
                     if (writeAlertDialog.isShowing()) {
                         TextView tv_cache_nfcuid = writeAlertDialog.findViewById(R.id.tv_write_nfcuid);
@@ -106,6 +106,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
                 case HANDLE_UP_READ:
 
+                    LogUtil.e("xxx HANDLE_UP_READ");
                     String uuidCache = (String) msg.obj;
                     if (writeAlertDialog.isShowing()) {
                         TextView tv_cache_nfcuid = writeAlertDialog.findViewById(R.id.tv_cache_nfcuid);
@@ -341,14 +342,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        try {
+                     /*   try {
                             Field field = dialog.getClass().getSuperclass()
                                     .getDeclaredField("mShowing");
                             field.setAccessible(true);
                             field.set(dialog, false);
                         } catch (Exception e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
 
                         // 写入
@@ -361,7 +362,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        try {
+                      /*  try {
                             Field field = dialog.getClass().getSuperclass()
                                     .getDeclaredField("mShowing");
                             field.setAccessible(true);
@@ -369,11 +370,27 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             dialog.dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
                         showToast("已经取消");
                     }
                 }).create();
+
+
+        writeAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button btnPositive = writeAlertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                btnPositive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 写入
+                        writeNfc();
+                    }
+                });
+            }
+        });
+
 
 
     }
@@ -604,6 +621,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     if (cacheFile != null) {
                         try {
 
+                            LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
+
                             // 更新 Dialog
                             if(writeAlertDialog.isShowing()){
                                 // 解析xml文件，得到所有参数
@@ -770,6 +789,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*/
 
                 //   showToast("NFC 识别成功");
+
+                LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
 
                 String str = et_text_editor.getText().toString().trim();
                 if (str.equals("") || writeAlertDialog.isShowing()) {
