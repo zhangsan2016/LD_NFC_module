@@ -67,6 +67,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     // handle
     private static final int HANDLE_UP_WRITE = 21;
     private static final int HANDLE_UP_READ = 22;
+    private static final int START_WRITE_NFC = 23;
+    private static final int STOP_WRITE_NFC = 24;
 
 
     /// static private NFCTag mTag;
@@ -113,6 +115,16 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         tv_cache_nfcuid.setText(uuidCache);
                     }
 
+                    break;
+                case START_WRITE_NFC:
+                    // 初始化进度条
+                    initProgressBar();
+                    showProgress();
+
+                    break;
+                case STOP_WRITE_NFC:
+                    // 关闭加载框
+                    stopProgress();
                     break;
             }
 
@@ -192,12 +204,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             public void onClick(View v) {
 
 
-
                 File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
                 if (file.exists()) {
-
-                    // 初始化进度条
-                    initProgressBar();
 
                     // 显示Dialog
                     writeAlertDialog.show();
@@ -222,6 +230,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     } catch (Exception e) {
                         e.printStackTrace();
                         showToast("读取xml文件失败！");
+
                     }
                 } else {
                     showToast("xml文件不存在，请先保存文件");
@@ -353,7 +362,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
 
                         // 写入
-                        writeNfc();
+                        //     writeNfc();
 
 
                     }
@@ -392,7 +401,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         });
 
 
-
     }
 
     private void writeNfc() {
@@ -402,6 +410,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void run() {
                 try {
+                    // 通知 Handle 当前正在写入nfc
+                    myHandler.sendEmptyMessage(START_WRITE_NFC);
+
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
@@ -414,6 +425,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                                 @Override
                                 public void run() {
                                     progressbar.setProgress(100);
+                                    //  通知 Handle nfc 已关闭写入
+                                    myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                                 }
                             });
                         }
@@ -421,6 +434,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         @Override
                         public void failure(String error) {
                             showToast(error);
+                            //  通知 Handle nfc 已关闭写入
+                            myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                         }
 
 
@@ -429,6 +444,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     e.printStackTrace();
                     // 初始化进度条
                     initProgressBar();
+                    //  通知 Handle nfc 已关闭写入
+                    myHandler.sendEmptyMessage(STOP_WRITE_NFC);
+
                     showToast("" + e.getMessage().toString());
                 }
 
@@ -624,18 +642,18 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
 
                             // 更新 Dialog
-                            if(writeAlertDialog.isShowing()){
+                            if (writeAlertDialog.isShowing()) {
                                 // 解析xml文件，得到所有参数
                                 FileInputStream inputStream = new FileInputStream(cacheFile);
                                 NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
                                 // 通过 Handle 更新 AlertDialog
                                 Message tempMsg = myHandler.obtainMessage();
                                 tempMsg.what = HANDLE_UP_WRITE;
-                                tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +","");
+                                tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
                                 myHandler.sendMessage(tempMsg);
                             }
 
-                            if(et_text_editor.getText().toString().equals("")){
+                            if (et_text_editor.getText().toString().equals("")) {
                                 //读取文件流
                                 FileInputStream fis = new FileInputStream(cacheFile);
                                 int size = fis.available();
