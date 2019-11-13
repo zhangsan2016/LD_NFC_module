@@ -81,6 +81,7 @@
                 android:background="@drawable/ico_nfc_deploy" />
 
             <Button
+                android:id="@+id/bt_uploading"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_alignParentRight="true"
@@ -100,6 +101,7 @@
 
             <EditText
                 android:id="@+id/ed_search"
+                android:text="2016C0312000001200001192"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -31,13 +31,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
 import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
+import com.ldgd.ld_nfc_module.json.LoginJson;
 import com.ldgd.ld_nfc_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_module.util.BytesUtil;
 import com.ldgd.ld_nfc_module.util.DrawableUtil;
+import com.ldgd.ld_nfc_module.util.HttpUtil;
 import com.ldgd.ld_nfc_module.util.LogUtil;
+import com.ldgd.ld_nfc_module.util.MapHttpConfiguration;
 import com.ldgd.ld_nfc_module.util.NfcDataUtil;
 import com.ldgd.ld_nfc_module.util.NfcUtils;
 import com.ldgd.ld_nfc_module.util.TagDiscovery;
@@ -48,9 +52,22 @@ import com.st.st25sdk.TagHelper;
 import com.st.st25sdk.type5.Type5Tag;
 import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.ldgd.ld_nfc_module.util.NfcDataUtil.replaceBlank;
 import static com.st.st25sdk.MultiAreaInterface.AREA1;
 
 public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDiscoveryCompletedListener, View.OnClickListener {
@@ -89,6 +106,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     private Button bt_clear;
     private ProgressBar progressbar;
     private AlertDialog writeAlertDialog;
+    private Button bt_uploading;
 
 
     private Handler myHandler = new Handler() {
@@ -300,6 +318,134 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             }
         });
 
+        bt_uploading.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upLoading();
+            }
+        });
+
+
+    }
+
+    /**
+     * 上传设备信息
+     */
+    private void upLoading() {
+
+        final String uuid = ed_search.getText().toString().trim();
+        final String xmlConfig = et_text_editor.getText().toString().trim();
+
+
+        if (uuid.equals("")) {
+            showToast("当前uuid不能为空");
+            return;
+        }
+
+        showProgress();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String url = MapHttpConfiguration.LOGIN_URl;
+
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("username", "ld")
+                        .add("password", "ld9102")
+                        .build();
+
+
+                HttpUtil.sendHttpRequest(url, new Callback() {
+
+                    @Override
+                    public void onFailure(okhttp3.Call call, IOException e) {
+                        showToast("连接服务器失败！");
+                        stopProgress();
+                    }
+
+                    @Override
+                    public void onResponse(okhttp3.Call call, Response response) throws IOException {
+                        try {
+                            String json = response.body().string();
+                            stopProgress();
+
+                            // 解析返回过来的json
+                            Gson gson = new Gson();
+                            LoginJson loginInfo = gson.fromJson(json, LoginJson.class);
+
+
+                            if (loginInfo.getErrno() == 0) {
+
+                                reportDevice(xmlConfig, uuid, loginInfo.getData().getToken().getToken());
+
+                            } else {
+                                showToast("连接服务器失败！");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showToast("获取异常错误 ：" + e.getMessage());
+                        }
+
+                    }
+                }, requestBody);
+
+            }
+        }).start();
+
+
+    }
+
+    /**
+     * 汇报设备信息到服务器
+     *
+     * @param xmlConfig xml 配置信息
+     * @param uuid      上传保存的 uuid
+     * @param token     登录的 token
+     */
+    private void reportDevice(final String xmlConfig, final String uuid, final String token) {
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                // 格式化xml
+                String xml = null;
+                Document document = null;
+                try {
+                    document = DocumentHelper.parseText(xmlConfig);
+                    xml = document.getRootElement().asXML(); //可以去掉头部内容
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+
+                String url = MapHttpConfiguration.REPORT_CONFIG_URL;
+                //     String postBody = "{\"UUID\":\"2016C0312000001200001192\",\"config\": {\"xml_config\": \"21351515615sdf1sd61fs651d65f465sd46f54s6d54f33998\"}}";
+                String postBody = " {\"UUID\": \"" + uuid + "\",\"config\": {\"xml_config\":\"" + replaceBlank(xml) + "\"}}";
+
+
+
+                RequestBody body = FormBody.create(MediaType.parse("application/json"), postBody);
+
+
+                HttpUtil.sendHttpRequest(url, new Callback() {
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("" + "失败" + e.toString());
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        String json = response.body().string();
+                        showToast("上传完成");
+
+                    }
+                }, token, body);
+            }
+        }).start();
 
     }
 
@@ -337,6 +483,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         tb_nfc_switch = (ToggleButton) this.findViewById(R.id.tb_nfc_switch);
         bt_clear = (Button) this.findViewById(R.id.bt_clear);
         progressbar = (ProgressBar) this.findViewById(R.id.progressbar);
+        bt_uploading = (Button) this.findViewById(R.id.bt_uploading);
 
         // 清除当前界面信息
         clearInterface();
@@ -756,6 +903,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public interface NfcIntentHook {
         void newNfcIntent(Intent intent);
+
     }
 
     void processIntent(Intent intent) {

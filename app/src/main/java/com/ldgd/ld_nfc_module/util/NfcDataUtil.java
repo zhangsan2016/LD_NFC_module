@@ -26,6 +26,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -1146,6 +1148,28 @@ public class NfcDataUtil {
 
 
         return data;
+    }
+
+
+    /**
+     *  去掉 xml 文件的所有空格
+     * @param str
+     * @return
+     */
+    public static String replaceBlank(String str) {
+
+        String dest = "";
+
+        if (str != null) {
+
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+
+            Matcher m = p.matcher(str);
+
+            dest = m.replaceAll("");
+        }
+        return dest;
+
     }
 
 

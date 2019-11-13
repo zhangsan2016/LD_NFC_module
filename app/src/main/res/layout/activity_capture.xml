@@ -27,7 +27,7 @@
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/capture_mask_top"
-            android:background="@drawable/qr_code_bg" >
+                android:background="@drawable/qr_code_bg" >
 
             <ImageView
                 android:id="@+id/capture_scan_line"
