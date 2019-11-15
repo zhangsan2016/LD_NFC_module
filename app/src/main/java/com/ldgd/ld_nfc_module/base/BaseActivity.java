@@ -65,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void showProgress() {
-        mProgress = ProgressDialog.show(this, "", "Loading...");
+        mProgress = ProgressDialog.show(this, "", "请稍等...");
     }
 
 

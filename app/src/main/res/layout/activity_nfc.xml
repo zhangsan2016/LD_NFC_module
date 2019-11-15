@@ -101,7 +101,6 @@
 
             <EditText
                 android:id="@+id/ed_search"
-                android:text="2016C0312000001200001192"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

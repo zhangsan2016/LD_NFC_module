@@ -83,7 +83,7 @@ public class NfcDataUtil {
             byte[] byteData = new byte[dictionaries.getTakeByte()];
             System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
 
-          //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
+            //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
             if (byteData.length > 0) {
@@ -107,8 +107,10 @@ public class NfcDataUtil {
 
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < byteData.length; i++) {
-                        String str = new String(new byte[]{byteData[i]}, "utf-8");
+                       String str = new String(new byte[]{byteData[i]}, "utf-8");
                         sb.append(str + " ");
+                      /* String str = String.valueOf(byteData[i]);
+                        sb.append(str + " ");*/
                     }
                     if (BytesUtil.isMessyCode(sb.toString())) {
                         value = "0";
@@ -1086,19 +1088,19 @@ public class NfcDataUtil {
             // 判断高低位
             // 判断高低位
             if (dictionaries.getConvertFormat().equals("HL")) {
-                if(dictionaries.getTakeByte() == 2){
+                if (dictionaries.getTakeByte() == 2) {
                     data = BytesUtil.intBytesHL(intData, 2);
-                }else if(dictionaries.getTakeByte() == 4){
+                } else if (dictionaries.getTakeByte() == 4) {
                     data = BytesUtil.intBytesHL(intData, 4);
-                }else {
+                } else {
                     data = new byte[]{(byte) intData};
                 }
-            }else {
-                if(dictionaries.getTakeByte() == 2){
+            } else {
+                if (dictionaries.getTakeByte() == 2) {
                     data = BytesUtil.intBytesHL(intData, 2);
-                }else if(dictionaries.getTakeByte() == 4){
+                } else if (dictionaries.getTakeByte() == 4) {
                     data = BytesUtil.intBytesHL(intData, 4);
-                }else {
+                } else {
                     data = new byte[]{(byte) intData};
                 }
             }
@@ -1126,24 +1128,25 @@ public class NfcDataUtil {
 
             // 判断高低位
             if (dictionaries.getConvertFormat().equals("HL")) {
-                if(dictionaries.getTakeByte() == 2){
+                if (dictionaries.getTakeByte() == 2) {
                     data = BytesUtil.intBytesHL(intData, 2);
-                }else if(dictionaries.getTakeByte() == 4){
+                } else if (dictionaries.getTakeByte() == 4) {
                     data = BytesUtil.intBytesHL(intData, 4);
-                }else {
+                } else {
                     data = new byte[]{(byte) intData};
                 }
-            }else {
-                if(dictionaries.getTakeByte() == 2){
+            } else {
+                if (dictionaries.getTakeByte() == 2) {
                     data = BytesUtil.intBytesHL(intData, 2);
-                }else if(dictionaries.getTakeByte() == 4){
+                } else if (dictionaries.getTakeByte() == 4) {
                     data = BytesUtil.intBytesHL(intData, 4);
-                }else {
+                } else {
                     data = new byte[]{(byte) intData};
                 }
             }
         } else if (dictionaries.getFormat().equals("STR")) {
-            data = parameters.trim().getBytes();
+            data = parameters.replace(" ", "").getBytes();
+            //    data = parameters.trim().getBytes();
         }
 
 
@@ -1152,7 +1155,8 @@ public class NfcDataUtil {
 
 
     /**
-     *  去掉 xml 文件的所有空格
+     * 去掉 xml 文件的所有空格
+     *
      * @param str
      * @return
      */
