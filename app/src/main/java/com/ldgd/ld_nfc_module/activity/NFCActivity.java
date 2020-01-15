@@ -341,7 +341,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             showToast("当前uuid不能为空");
             return;
         }
-
         showProgress();
 
         new Thread(new Runnable() {
@@ -423,7 +422,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 String url = MapHttpConfiguration.REPORT_CONFIG_URL;
                 //     String postBody = "{\"UUID\":\"2016C0312000001200001192\",\"config\": {\"xml_config\": \"21351515615sdf1sd61fs651d65f465sd46f54s6d54f33998\"}}";
                 String postBody = " {\"UUID\": \"" + uuid + "\",\"config\": {\"xml_config\":\"" + replaceBlank(xml) + "\"}}";
-
 
 
                 RequestBody body = FormBody.create(MediaType.parse("application/json"), postBody);
@@ -780,52 +778,68 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 byte[] typeByte = new byte[2];
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
-                    // 解析成xml文件
-                    File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, "0001_83140000.xls", NFC_DATA_CACHE, NFCActivity.this);
 
-                    if (cacheFile != null) {
-                        try {
+                    // 根据类型读取 nfc
+                    readNfcByType("0001_83140000.xls");
 
-                            LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
+                } else if (BytesUtil.bytesIntHL(typeByte) == 2) {
 
-                            // 更新 Dialog
-                            if (writeAlertDialog.isShowing()) {
-                                // 解析xml文件，得到所有参数
-                                FileInputStream inputStream = new FileInputStream(cacheFile);
-                                NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
-                                // 通过 Handle 更新 AlertDialog
-                                Message tempMsg = myHandler.obtainMessage();
-                                tempMsg.what = HANDLE_UP_WRITE;
-                                tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
-                                myHandler.sendMessage(tempMsg);
-                            }
+                    // 根据类型读取 nfc
+                    readNfcByType("0002_83140000.xls");
 
-                            if (et_text_editor.getText().toString().equals("")) {
-                                //读取文件流
-                                FileInputStream fis = new FileInputStream(cacheFile);
-                                int size = fis.available();
-                                System.out.println("可读取的字节数 " + size);
-                                byte[] buffer = new byte[size];
-                                fis.read(buffer);
-                                String txt = new String(buffer, 0, buffer.length);
-                                //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
-                                et_text_editor.setText(NfcDataUtil.formatXml(txt));
-                                // 初始化进度条
-                                initProgressBar();
-                                fis.close();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
                     showToast("当前类型无法解析");
                 }
 
 
+            }
+        }
+
+        /**
+         *  根据 nfc 的标识类型读取内容信息
+         * @param nfcFileName 类型对应的 nfc 文件名
+         */
+        private void readNfcByType(String nfcFileName) {
+            // 解析成xml文件
+            File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, nfcFileName, NFC_DATA_CACHE, NFCActivity.this);
+
+            if (cacheFile != null) {
+                try {
+
+                    LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
+
+                    // 更新 Dialog
+                    if (writeAlertDialog.isShowing()) {
+                        // 解析xml文件，得到所有参数
+                        FileInputStream inputStream = new FileInputStream(cacheFile);
+                        NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                        // 通过 Handle 更新 AlertDialog
+                        Message tempMsg = myHandler.obtainMessage();
+                        tempMsg.what = HANDLE_UP_WRITE;
+                        tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
+                        myHandler.sendMessage(tempMsg);
+                    }
+
+                    if (et_text_editor.getText().toString().equals("")) {
+                        //读取文件流
+                        FileInputStream fis = new FileInputStream(cacheFile);
+                        int size = fis.available();
+                        System.out.println("可读取的字节数 " + size);
+                        byte[] buffer = new byte[size];
+                        fis.read(buffer);
+                        String txt = new String(buffer, 0, buffer.length);
+                        //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
+                        et_text_editor.setText(NfcDataUtil.formatXml(txt));
+                        // 初始化进度条
+                        initProgressBar();
+                        fis.close();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
             }
         }
 
