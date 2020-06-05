@@ -861,6 +861,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         }
     }
 
+
     @Override
     public void onNewIntent(Intent intent) {
         // onResume gets called after this to handle the intent
