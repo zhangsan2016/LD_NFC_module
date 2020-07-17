@@ -809,9 +809,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             byte[] getCrc2 = Arrays.copyOfRange(mBuffer, 3, 5);
             int crc2 = BytesUtil.bytesIntHL(getCrc2);
             if(crc1 == crc2){
-                showToast("当前 CRC 验证为 true" );
+                showToast("当前 CRC 验证成功" );
             }else{
-                showToast("当前 CRC 验证为 false");
+                showToast("当前 CRC 验证为失败");
             }
 
             // 解析成xml文件
