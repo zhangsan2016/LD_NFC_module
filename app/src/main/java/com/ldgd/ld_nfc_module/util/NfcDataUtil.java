@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,6 +53,7 @@ public class NfcDataUtil {
      */
     public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
+        System.out.println("data = " + Arrays.toString(mBuffer));
 
         try {
             // 1.获取assets包中的 Excel 文件，得到字典格式
@@ -86,6 +88,7 @@ public class NfcDataUtil {
             //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
+            // 如果数据存在，根据类型等信息进行转换
             if (byteData.length > 0) {
 
                 // 创建xml数据对象
@@ -370,7 +373,7 @@ public class NfcDataUtil {
 
             dataDictionaries.add(dictionaries);
 
-            //  System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + Permission );
+              System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + permission );
         }
         book.close();
         is.close();
