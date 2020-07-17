@@ -34,7 +34,6 @@ import android.widget.ToggleButton;
 import com.google.gson.Gson;
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
-import com.ldgd.ld_nfc_module.crc.CRC16;
 import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_module.json.LoginJson;
 import com.ldgd.ld_nfc_module.util.AutoFitKeyBoardUtil;
@@ -60,7 +59,6 @@ import org.dom4j.DocumentHelper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -803,16 +801,6 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
          */
         private void readNfcByType(String nfcFileName) {
 
-            // 验证 crc
-            byte[] getCrc = Arrays.copyOfRange(mBuffer, 5, 148);
-           int crc1 = CRC16.calcCrc16(getCrc);
-            byte[] getCrc2 = Arrays.copyOfRange(mBuffer, 3, 5);
-            int crc2 = BytesUtil.bytesIntHL(getCrc2);
-            if(crc1 == crc2){
-                showToast("当前 CRC 验证成功" );
-            }else{
-                showToast("当前 CRC 验证为失败");
-            }
 
             // 解析成xml文件
             File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, nfcFileName, NFC_DATA_CACHE, NFCActivity.this);
@@ -856,6 +844,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                 Toast.makeText(NFCActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
             }
         }
+
 
         @Override
         protected void onProgressUpdate(Integer... values) {

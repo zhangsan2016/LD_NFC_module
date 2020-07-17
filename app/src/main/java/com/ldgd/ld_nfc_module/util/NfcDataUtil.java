@@ -1,7 +1,9 @@
 package com.ldgd.ld_nfc_module.util;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.ldgd.ld_nfc_module.crc.CRC16;
 import com.ldgd.ld_nfc_module.entity.DataDictionaries;
 import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_module.entity.XmlData;
@@ -41,6 +43,9 @@ import jxl.read.biff.BiffException;
  */
 
 public class NfcDataUtil {
+    // xml 最末尾位置
+    private static int finalPosition = 0;
+
 
     /**
      * 将当前byte数组解析成xml文件
@@ -53,9 +58,11 @@ public class NfcDataUtil {
      */
     public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
+
         System.out.println("data = " + Arrays.toString(mBuffer));
 
         try {
+
             // 1.获取assets包中的 Excel 文件，得到字典格式
             // 解析excel
             List<DataDictionaries> dataDictionaries = parseExcel(excelName, context);
@@ -65,6 +72,9 @@ public class NfcDataUtil {
 
             // 3.转换成xml文件并保存
             File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
+
+            // crc 校验
+            checkCRC(mBuffer,context);
 
             // 4.返回xml文件地址
             return cacheFile;
@@ -77,10 +87,40 @@ public class NfcDataUtil {
 
     }
 
+    private static void checkCRC(byte[] mBuffer, Context context) {
+        byte[] getCrc = Arrays.copyOfRange(mBuffer, 5, finalPosition + 1);
+        int crc1 = CRC16.calcCrc16(getCrc);
+        byte[] getCrc2 = Arrays.copyOfRange(mBuffer, 3, 5);
+        int crc2 = BytesUtil.bytesIntHL(getCrc2);
+        if(crc1 == crc2){
+            showToast("当前 CRC 校验成功" ,context);
+        }else{
+            showToast("当前 CRC 校验错误，数据禁止使用",context);
+        }
+    }
+
+    private static Toast toast;
+    private static void showToast(final String msg, Context context) {
+
+        if (toast == null) {
+            toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+            toast.setText(msg);
+        } else {
+            toast.setText(msg);
+        }
+        toast.show();
+    }
+
+
+
+
     private static ArrayList<XmlData> parseBuffer(byte[] mBuffer, List<DataDictionaries> dataDictionaries) throws UnsupportedEncodingException {
         ArrayList<XmlData> xmlDataList = new ArrayList<>();
         String value = null;
         for (DataDictionaries dictionaries : dataDictionaries) {
+
+            // 当前字段最后的位置
+            finalPosition = dictionaries.getEndAddress();
 
             byte[] byteData = new byte[dictionaries.getTakeByte()];
             System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
