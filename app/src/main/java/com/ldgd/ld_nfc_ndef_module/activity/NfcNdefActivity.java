@@ -33,6 +33,7 @@ import android.widget.ToggleButton;
 import com.google.gson.Gson;
 import com.ldgd.ld_nfc_ndef_module.R;
 import com.ldgd.ld_nfc_ndef_module.base.BaseNfcActivity;
+import com.ldgd.ld_nfc_ndef_module.entity.DataDictionaries;
 import com.ldgd.ld_nfc_ndef_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_ndef_module.json.LoginJson;
 import com.ldgd.ld_nfc_ndef_module.util.AutoFitKeyBoardUtil;
@@ -53,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -553,11 +555,19 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-                    NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                    List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
 
 
-                    // 校验获取的参数是否符合规定,然后写入
-                    NfcDataUtil.writeNfcDeviceInfo2(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
+                    /*    for (int i = 0; i < dataDictionaries.size(); i++) {
+                        System.out.println("xxxx = " + dataDictionaries.get(i).getName() + Arrays.toString(dataDictionaries.get(i).getValue()));
+                    }
+                    //  通知 Handle nfc 已关闭写入
+                    myHandler.sendEmptyMessage(STOP_WRITE_NFC);*/
+
+
+                    // 解析excel
+                  // 校验获取的参数是否符合规定,然后写入
+                    NfcDataUtil.writeNfcDeviceInfo2(dataDictionaries, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
                             showToast("写入成功");
@@ -578,8 +588,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                         }
 
-
                     }, NfcNdefActivity.this, mTag,payload);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 初始化进度条
@@ -660,7 +671,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 // 判断nfc硬件类型
                 byte[] typeByte = new byte[2];
-                System.arraycopy(mBuffer, 0, typeByte, 0, 2);
+                System.arraycopy(mBuffer, 3, typeByte, 0, 2);
+                typeByte[0] = 0;
+                typeByte[1] = 3;
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 根据类型读取 nfc
                     readNfcByType("0001_83140000.xls",mBuffer);

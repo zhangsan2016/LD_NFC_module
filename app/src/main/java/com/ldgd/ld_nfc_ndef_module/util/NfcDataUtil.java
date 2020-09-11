@@ -49,6 +49,7 @@ import jxl.read.biff.BiffException;
 public class NfcDataUtil {
     // xml 最末尾位置
     private static int finalPosition = 0;
+    public static List<DataDictionaries> dataDictionaries = null;
 
 
     /**
@@ -63,13 +64,13 @@ public class NfcDataUtil {
     public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
 
-       //   System.out.println("NfcDataUtil data = " + Arrays.toString(mBuffer));
+        //   System.out.println("NfcDataUtil data = " + Arrays.toString(mBuffer));
 
         try {
 
             // 1.获取assets包中的 Excel 文件，得到字典格式
             // 解析excel
-            List<DataDictionaries> dataDictionaries = parseExcel(excelName, context);
+            dataDictionaries = parseExcel(excelName, context);
 
             // 2.根据字典格式解析数据
             ArrayList<XmlData> xmlDataList = parseBuffer(mBuffer, dataDictionaries);
@@ -96,14 +97,15 @@ public class NfcDataUtil {
         int crc1 = CRC16.calcCrc16(getCrc);
         byte[] getCrc2 = Arrays.copyOfRange(mBuffer, 3, 5);
         int crc2 = BytesUtil.bytesIntHL(getCrc2);
-        if(crc1 == crc2){
-            showToast("当前 CRC 校验成功" ,context);
-        }else{
-            showToast("当前 CRC 校验错误，数据禁止使用",context);
+        if (crc1 == crc2) {
+            showToast("当前 CRC 校验成功", context);
+        } else {
+            showToast("当前 CRC 校验错误，数据禁止使用", context);
         }
     }
 
     private static Toast toast;
+
     private static void showToast(final String msg, Context context) {
 
         if (toast == null) {
@@ -114,8 +116,6 @@ public class NfcDataUtil {
         }
         toast.show();
     }
-
-
 
 
     private static ArrayList<XmlData> parseBuffer(byte[] mBuffer, List<DataDictionaries> dataDictionaries) throws UnsupportedEncodingException {
@@ -154,7 +154,7 @@ public class NfcDataUtil {
 
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < byteData.length; i++) {
-                       String str = new String(new byte[]{byteData[i]}, "utf-8");
+                        String str = new String(new byte[]{byteData[i]}, "utf-8");
                         sb.append(str + " ");
                       /* String str = String.valueOf(byteData[i]);
                         sb.append(str + " ");*/
@@ -215,7 +215,6 @@ public class NfcDataUtil {
         }
         return xmlDataList;
     }
-
 
     /**
      * 解析xml文件，获取数据对象
@@ -354,58 +353,6 @@ public class NfcDataUtil {
                         nfcDeviceInfo.setMaintainImei(parser.nextText());
                     } else if ("执行底板ID".equals(parser.getName())) {
                         nfcDeviceInfo.setBaseplateId(parser.nextText());
-                    }else if ("NC".equals(parser.getName())) {
-                        nfcDeviceInfo.setBaseplateId(parser.nextText());
-                    }else if ("角度校准标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setAngleCalibrationSign(parser.nextText());
-                    }else if ("校准角度".equals(parser.getName())) {
-                        nfcDeviceInfo.setAngleStandards(parser.nextText());
-                    }else if ("角度报警阈值误差".equals(parser.getName())) {
-                        nfcDeviceInfo.setAngleAlarmThresholdArror(parser.nextText());
-                    }else if ("过压报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setOvervoltageVarningSign(parser.nextText());
-                    }else if ("欠压报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setUndervoltageVarningSign(parser.nextText());
-                    }else if ("过流报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setOvercurrentVarningSign(parser.nextText());
-                    }else if ("欠流报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setUndercurrentWarningSign(parser.nextText());
-                    }else if ("漏电报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setLeakageWarningSign(parser.nextText());
-                    }else if ("灯杆倒塌报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setLampPostCollapseWarningSign(parser.nextText());
-                    }else if ("灯杆碰撞报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setLampPoleCollapseWarningSign(parser.nextText());
-                    }else if ("温度异常报警标志".equals(parser.getName())) {
-                        nfcDeviceInfo.setAbnormalTemperatureWarningSign(parser.nextText());
-                    }else if ("重启计数".equals(parser.getName())) {
-                        nfcDeviceInfo.setRestartCount(parser.nextText());
-                    }else if ("X方向加速度初始值".equals(parser.getName())) {
-                        nfcDeviceInfo.setXfxjsdcsz(parser.nextText());
-                    }else if ("X方向加速度初始值小数".equals(parser.getName())) {
-                        nfcDeviceInfo.setXfxjsdcszxs(parser.nextText());
-                    }else if ("Y方向加速度初始值".equals(parser.getName())) {
-                        nfcDeviceInfo.setYfxjscsz(parser.nextText());
-                    }else if ("Y方向加速度初始值小数".equals(parser.getName())) {
-                        nfcDeviceInfo.setYfxjscszxs(parser.nextText());
-                    }else if ("Z方向加速度初始值".equals(parser.getName())) {
-                        nfcDeviceInfo.setZfxjsdcsz(parser.nextText());
-                    }else if ("Z方向加速度初始值小数".equals(parser.getName())) {
-                        nfcDeviceInfo.setZfxjsdcszxs(parser.nextText());
-                    }else if ("lora接收频道".equals(parser.getName())) {
-                        nfcDeviceInfo.setLerajspd(parser.nextText());
-                    }else if ("lora应答频道".equals(parser.getName())) {
-                        nfcDeviceInfo.setLeraydpd(parser.nextText());
-                    }else if ("lora报警频道".equals(parser.getName())) {
-                        nfcDeviceInfo.setLerabjpd(parser.nextText());
-                    }else if ("经度整数".equals(parser.getName())) {
-                        nfcDeviceInfo.setJdzs(parser.nextText());
-                    }else if ("经度小数".equals(parser.getName())) {
-                        nfcDeviceInfo.setJdxs(parser.nextText());
-                    }else if ("纬度整数".equals(parser.getName())) {
-                        nfcDeviceInfo.setWdzs(parser.nextText());
-                    }else if ("纬度小数".equals(parser.getName())) {
-                        nfcDeviceInfo.setWdxs(parser.nextText());
                     }
 
                     break;
@@ -424,6 +371,52 @@ public class NfcDataUtil {
         return nfcDeviceInfo;
     }
 
+
+    /**
+     * 解析xml文件，获取数据对象
+     *
+     * @param is xml文件
+     * @return
+     * @throws Exception
+     */
+    public static List<DataDictionaries> parseXml2(FileInputStream is) throws Exception {
+
+        KXmlParser parser = new KXmlParser();
+        parser.setInput(is, "utf-8");
+
+        int eventType = parser.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            switch (eventType) {
+                case KXmlParser.START_DOCUMENT:
+
+                    break;
+                case KXmlParser.START_TAG:
+
+                    if (dataDictionaries != null) {
+                        for (int d = 0; d < dataDictionaries.size(); d++) {
+                            if (dataDictionaries.get(d).getName().equals(parser.getName())) {
+                                dataDictionaries.get(d).setValue(convertFormat(dataDictionaries.get(d), parser.nextText()));
+                            }
+
+                        }
+                    }
+
+                    break;
+                /*  case KXmlParser.END_TAG:
+                    break;
+                    case KXmlParser.TEXT:
+                    String content = parser.getText();
+                    System.out.println(content + " TEXT:" + content);
+                    break;*/
+                case KXmlParser.END_DOCUMENT:
+                    break;
+            }
+            eventType = parser.next();
+        }
+
+        return dataDictionaries;
+    }
+
     /**
      * 解析Excel文件
      *
@@ -432,7 +425,7 @@ public class NfcDataUtil {
      * @throws IOException
      * @throws BiffException
      */
-    public static List<DataDictionaries> parseExcel(String excelName, Context context) throws IOException, BiffException {
+    private static List<DataDictionaries> parseExcel(String excelName, Context context) throws IOException, BiffException {
         InputStream is = null;
         is = context.getAssets().open(excelName);
         Workbook book = Workbook.getWorkbook(is);
@@ -469,7 +462,7 @@ public class NfcDataUtil {
 
             dataDictionaries.add(dictionaries);
 
-              System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + permission );
+            System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units + "," + factor + "," + operator + "," + permission);
         }
         book.close();
         is.close();
@@ -1127,57 +1120,38 @@ public class NfcDataUtil {
     /**
      * 检测设备信息的正确性
      */
-    public static void writeNfcDeviceInfo2(NfcDeviceInfo nfcDeviceInfo, OnNfcDataListening listening, Context context, Tag mTag, byte[] payload) {
+    public static void writeNfcDeviceInfo2(List<DataDictionaries> nfcDeviceInfo, OnNfcDataListening listening, Context context, Tag mTag, byte[] payload) {
 
-        if (nfcDeviceInfo.getDeviceType().equals("3")) {
-            // 解析excel
-            try {
-                List<DataDictionaries> dataDictionaries = parseExcel("0003_83140000.xls", context);
-                boolean flag = false;
+        // 解析excel
+        try {
 
-                for (DataDictionaries dictionaries : dataDictionaries) {
-                    String name = dictionaries.getName();
-                    // 判断是否存在读写权限
-                    if (dictionaries.getPermission().equals("RW")) {
+            for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
+                System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3, dataDictionarie.getValue().length);
+            /*        // 判断是否存在读写权限
+                    if (dataDictionarie.getPermission().equals("RW")) {
 
-                        for (int i=0; i < dataDictionaries.size();i++){
-                            if (dataDictionaries.get(i).getName().equals(name)) {
+                        System.arraycopy(dataDictionarie.getValue(),  0, payload,dataDictionarie.getStartAddress()+2, dataDictionarie.getValue().length);
 
-                                byte[] data = convertFormat(dictionaries, nfcDeviceInfo.getDeviceType());
-                                dataDictionaries.get(i).setValue(data);
-
-                                System.arraycopy(data,  0, payload,dataDictionaries.get(i).getStartAddress(), data.length);
-
-                            }
-                        }
-
-                    }
-                }
-
-                //获取Tag对象
-
-                Ndef ndef = Ndef.get(mTag);
-                NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{ new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload)});
-                boolean result = writeTag(ndefMessage, mTag);
-                if (result) {
-                    listening.succeed();
-                } else {
-                    listening.failure(result+"");
-                }
-
-                if (flag) {
-                    listening.succeed();
-                }
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                listening.failure("参数错误 = " + e.getMessage().toString());
+                    }*/
             }
 
-        } else {
-            listening.failure("类型错误！");
+            //获取Tag对象
+
+            Ndef ndef = Ndef.get(mTag);
+            NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload)});
+            boolean result = writeTag(ndefMessage, mTag);
+            if (result) {
+                listening.succeed();
+            } else {
+                listening.failure("写入失败");
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            listening.failure("参数错误 = " + e.getMessage().toString());
         }
+
 
     }
 
