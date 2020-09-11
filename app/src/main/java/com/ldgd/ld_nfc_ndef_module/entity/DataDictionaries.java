@@ -18,9 +18,16 @@ public class DataDictionaries {
     private String operator;  // 运算符
     private String permission;  // 权限
     private String convertFormat; // 转换格式
+    private byte[] value;  // 值
 
 
+    public byte[] getValue() {
+        return value;
+    }
 
+    public void setValue(byte[] value) {
+        this.value = value;
+    }
 
     public String getConvertFormat() {
         return convertFormat;

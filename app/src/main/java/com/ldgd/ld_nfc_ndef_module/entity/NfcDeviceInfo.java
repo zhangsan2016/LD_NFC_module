@@ -90,7 +90,268 @@ public class NfcDeviceInfo {
     // 执行底板ID
     private String baseplateId;
 
+    // NC
+    private String nc;
+    // 角度校准标志
+    private String angleCalibrationSign;
+    //   校准角度
+    private String angleStandards;
+    //  角度报警阈值误差
+    private String angleAlarmThresholdArror;
+    //  过压报警标志
+    private String overvoltageVarningSign;
+    //  欠压报警标志
+    private String undervoltageVarningSign;
+    //  过流报警标志
+    private String overcurrentVarningSign;
+    //  欠流报警标志
+    private String undercurrentWarningSign;
+    //  漏电报警标志
+    private String leakageWarningSign;
+    //  灯杆倒塌报警标志
+    private String lampPostCollapseWarningSign;
+    //   灯杆碰撞报警标志
+    private String lampPoleCollapseWarningSign;
+    //   温度异常报警标志
+    private String AbnormalTemperatureWarningSign;
+    //     重启计数
+    private String restartCount;
+    //    X方向加速度初始值
+    private String xfxjsdcsz;
+    //     X方向加速度初始值小数
+    private String xfxjsdcszxs;
+    //    Y方向加速度初始值
+    private String yfxjscsz;
+    //      Y方向加速度初始值小数
+    private String yfxjscszxs;
+    // Z方向加速度初始值
+    private String zfxjsdcsz;
+    // Z方向加速度初始值小数
+    private String zfxjsdcszxs;
+    //   lora接收频道
+    private String lerajspd;
+    //     lora应答频道
+    private String leraydpd;
+    //     lora报警频道
+    private String lerabjpd;
+    //    经度整数
+    private String jdzs;
+    //    经度小数
+    private String jdxs;
+    //    纬度整数
+    private String wdzs;
+    //    纬度小数
+    private String wdxs;
 
+
+    public String getNc() {
+        return nc;
+    }
+
+    public void setNc(String nc) {
+        this.nc = nc;
+    }
+
+    public String getAngleCalibrationSign() {
+        return angleCalibrationSign;
+    }
+
+    public void setAngleCalibrationSign(String angleCalibrationSign) {
+        this.angleCalibrationSign = angleCalibrationSign;
+    }
+
+    public String getAngleStandards() {
+        return angleStandards;
+    }
+
+    public void setAngleStandards(String angleStandards) {
+        this.angleStandards = angleStandards;
+    }
+
+    public String getAngleAlarmThresholdArror() {
+        return angleAlarmThresholdArror;
+    }
+
+    public void setAngleAlarmThresholdArror(String angleAlarmThresholdArror) {
+        this.angleAlarmThresholdArror = angleAlarmThresholdArror;
+    }
+
+    public String getOvervoltageVarningSign() {
+        return overvoltageVarningSign;
+    }
+
+    public void setOvervoltageVarningSign(String overvoltageVarningSign) {
+        this.overvoltageVarningSign = overvoltageVarningSign;
+    }
+
+    public String getUndervoltageVarningSign() {
+        return undervoltageVarningSign;
+    }
+
+    public void setUndervoltageVarningSign(String undervoltageVarningSign) {
+        this.undervoltageVarningSign = undervoltageVarningSign;
+    }
+
+    public String getOvercurrentVarningSign() {
+        return overcurrentVarningSign;
+    }
+
+    public void setOvercurrentVarningSign(String overcurrentVarningSign) {
+        this.overcurrentVarningSign = overcurrentVarningSign;
+    }
+
+    public String getUndercurrentWarningSign() {
+        return undercurrentWarningSign;
+    }
+
+    public void setUndercurrentWarningSign(String undercurrentWarningSign) {
+        this.undercurrentWarningSign = undercurrentWarningSign;
+    }
+
+    public String getLeakageWarningSign() {
+        return leakageWarningSign;
+    }
+
+    public void setLeakageWarningSign(String leakageWarningSign) {
+        this.leakageWarningSign = leakageWarningSign;
+    }
+
+    public String getLampPostCollapseWarningSign() {
+        return lampPostCollapseWarningSign;
+    }
+
+    public void setLampPostCollapseWarningSign(String lampPostCollapseWarningSign) {
+        this.lampPostCollapseWarningSign = lampPostCollapseWarningSign;
+    }
+
+    public String getLampPoleCollapseWarningSign() {
+        return lampPoleCollapseWarningSign;
+    }
+
+    public void setLampPoleCollapseWarningSign(String lampPoleCollapseWarningSign) {
+        this.lampPoleCollapseWarningSign = lampPoleCollapseWarningSign;
+    }
+
+    public String getAbnormalTemperatureWarningSign() {
+        return AbnormalTemperatureWarningSign;
+    }
+
+    public void setAbnormalTemperatureWarningSign(String abnormalTemperatureWarningSign) {
+        AbnormalTemperatureWarningSign = abnormalTemperatureWarningSign;
+    }
+
+    public String getRestartCount() {
+        return restartCount;
+    }
+
+    public void setRestartCount(String restartCount) {
+        this.restartCount = restartCount;
+    }
+
+    public String getXfxjsdcsz() {
+        return xfxjsdcsz;
+    }
+
+    public void setXfxjsdcsz(String xfxjsdcsz) {
+        this.xfxjsdcsz = xfxjsdcsz;
+    }
+
+    public String getXfxjsdcszxs() {
+        return xfxjsdcszxs;
+    }
+
+    public void setXfxjsdcszxs(String xfxjsdcszxs) {
+        this.xfxjsdcszxs = xfxjsdcszxs;
+    }
+
+    public String getYfxjscsz() {
+        return yfxjscsz;
+    }
+
+    public void setYfxjscsz(String yfxjscsz) {
+        this.yfxjscsz = yfxjscsz;
+    }
+
+
+    public String getYfxjscszxs() {
+        return yfxjscszxs;
+    }
+
+    public void setYfxjscszxs(String yfxjscszxs) {
+        this.yfxjscszxs = yfxjscszxs;
+    }
+
+    public String getZfxjsdcsz() {
+        return zfxjsdcsz;
+    }
+
+    public void setZfxjsdcsz(String zfxjsdcsz) {
+        this.zfxjsdcsz = zfxjsdcsz;
+    }
+
+    public String getZfxjsdcszxs() {
+        return zfxjsdcszxs;
+    }
+
+    public void setZfxjsdcszxs(String zfxjsdcszxs) {
+        this.zfxjsdcszxs = zfxjsdcszxs;
+    }
+
+    public String getLerajspd() {
+        return lerajspd;
+    }
+
+    public void setLerajspd(String lerajspd) {
+        this.lerajspd = lerajspd;
+    }
+
+    public String getLeraydpd() {
+        return leraydpd;
+    }
+
+    public void setLeraydpd(String leraydpd) {
+        this.leraydpd = leraydpd;
+    }
+
+    public String getLerabjpd() {
+        return lerabjpd;
+    }
+
+    public void setLerabjpd(String lerabjpd) {
+        this.lerabjpd = lerabjpd;
+    }
+
+    public String getJdzs() {
+        return jdzs;
+    }
+
+    public void setJdzs(String jdzs) {
+        this.jdzs = jdzs;
+    }
+
+    public String getJdxs() {
+        return jdxs;
+    }
+
+    public void setJdxs(String jdxs) {
+        this.jdxs = jdxs;
+    }
+
+    public String getWdzs() {
+        return wdzs;
+    }
+
+    public void setWdzs(String wdzs) {
+        this.wdzs = wdzs;
+    }
+
+    public String getWdxs() {
+        return wdxs;
+    }
+
+    public void setWdxs(String wdxs) {
+        this.wdxs = wdxs;
+    }
 
     public String getDeviceType() {
         return deviceType;

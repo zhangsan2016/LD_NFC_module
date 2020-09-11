@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,7 +44,6 @@ import com.ldgd.ld_nfc_ndef_module.util.MapHttpConfiguration;
 import com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil;
 import com.ldgd.ld_nfc_ndef_module.util.NfcUtils;
 import com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity;
-import com.st.st25sdk.type5.st25dv.ST25DVTag;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -83,7 +83,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
     /// static private NFCTag mTag;
-    static private ST25DVTag mTag;
+    static private Tag mTag;
 
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntent;
@@ -554,8 +554,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
                     NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+
+
                     // 校验获取的参数是否符合规定,然后写入
-                    NfcDataUtil.writeNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
+                    NfcDataUtil.writeNfcDeviceInfo2(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
                             showToast("写入成功");
@@ -577,7 +579,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                         }
 
 
-                    }, NfcNdefActivity.this, mTag);
+                    }, NfcNdefActivity.this, mTag,payload);
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 初始化进度条
@@ -731,6 +733,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
     @Override
     public void onNewIntent(Intent intent) {
 
+        //获取Tag对象
+        mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
          readNfcTag(intent);
 
 
@@ -738,7 +743,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
-
+    private byte[] payload;
     private void readNfcTag(Intent intent) {
 
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
@@ -757,7 +762,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             try {
                 if (msgs != null) {
                     NdefRecord record = msgs[0].getRecords()[0];
-                    byte[] payload = record.getPayload();
+                    payload = record.getPayload();
 
                 //   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx " + Arrays.toString(payload2));
 
