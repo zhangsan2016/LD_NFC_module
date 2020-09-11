@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -655,29 +654,24 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
 
-   byte[]  mBuffer = null;
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(byte[] mBuffer) {
             if (mBuffer != null) {
 
                 // 判断nfc硬件类型
                 byte[] typeByte = new byte[2];
                 System.arraycopy(mBuffer, 0, typeByte, 0, 2);
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
-
                     // 根据类型读取 nfc
-                    readNfcByType("0001_83140000.xls");
-
+                    readNfcByType("0001_83140000.xls",mBuffer);
                 } else if (BytesUtil.bytesIntHL(typeByte) == 2) {
-
                     // 根据类型读取 nfc
-                    readNfcByType("0002_83140000.xls");
-
+                    readNfcByType("0002_83140000.xls",mBuffer);
+                }  else if (BytesUtil.bytesIntHL(typeByte) == 3) {
+                    // 根据类型读取 nfc
+                    readNfcByType("0003_83140000.xls",mBuffer);
                 } else {
                     showToast("当前类型无法解析");
                 }
-
-
             }
         }
 
@@ -685,7 +679,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
          *  根据 nfc 的标识类型读取内容信息
          * @param nfcFileName 类型对应的 nfc 文件名
          */
-        private void readNfcByType(String nfcFileName) {
+        private void readNfcByType(String nfcFileName,byte[] mBuffer) {
 
 
             // 解析成xml文件
@@ -776,25 +770,13 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     byte[] data = new byte[ payload.length - headLong];
                     System.arraycopy(payload, headLong, data, 0, payload.length - headLong);
 
-                    System.out.println("xxxxxxxxxxxxxxxx payload = " + Arrays.toString(payload));
-                    System.out.println("xxxxxxxxxxxxxxxx data = " + Arrays.toString(data));
 
-                    // 判断nfc硬件类型
-                    byte[] typeByte = new byte[2];
-                    System.arraycopy(mBuffer, 0, typeByte, 0, 2);
-                    if (BytesUtil.bytesIntHL(typeByte) == 1) {
-                        // 根据类型读取 nfc
-                        readNfcByType("0001_83140000.xls");
-                    } else if (BytesUtil.bytesIntHL(typeByte) == 2) {
-                        // 根据类型读取 nfc
-                        readNfcByType("0002_83140000.xls");
-                    } else {
-                        showToast("当前类型无法解析");
-                    }
+                    onPostExecute(data);
 
 
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
