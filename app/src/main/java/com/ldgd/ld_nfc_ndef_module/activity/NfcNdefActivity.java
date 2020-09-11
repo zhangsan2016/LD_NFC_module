@@ -53,7 +53,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -762,7 +761,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 //   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx " + Arrays.toString(payload2));
 
-                    et_text_editor.setText(Arrays.toString(payload));
+                //    et_text_editor.setText(Arrays.toString(payload));
 
                     // 获得数据
                     byte[] langBytes = Locale.CHINA.getLanguage().getBytes(Charset.forName("US-ASCII"));

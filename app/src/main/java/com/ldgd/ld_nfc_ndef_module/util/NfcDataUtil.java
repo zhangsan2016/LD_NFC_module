@@ -59,7 +59,7 @@ public class NfcDataUtil {
     public static File parseBytesToXml(byte[] mBuffer, String excelName, String saveFileName, Context context) {
 
 
-        System.out.println("data = " + Arrays.toString(mBuffer));
+       //   System.out.println("NfcDataUtil data = " + Arrays.toString(mBuffer));
 
         try {
 
@@ -74,7 +74,7 @@ public class NfcDataUtil {
             File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
 
             // crc 校验
-            checkCRC(mBuffer,context);
+            // checkCRC(mBuffer,context);
 
             // 4.返回xml文件地址
             return cacheFile;
@@ -103,7 +103,7 @@ public class NfcDataUtil {
     private static void showToast(final String msg, Context context) {
 
         if (toast == null) {
-            toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+            toast = Toast.makeText(context, "", Toast.LENGTH_LONG);
             toast.setText(msg);
         } else {
             toast.setText(msg);
