@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LD_NFC_module.iml" filepath="$PROJECT_DIR$/LD_NFC_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LD_NFC_NDEF_module.iml" filepath="$PROJECT_DIR$/LD_NFC_NDEF_module.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/st25.android.reader.interface/st25.android.reader.interface.iml" filepath="$PROJECT_DIR$/st25.android.reader.interface/st25.android.reader.interface.iml" />
     </modules>

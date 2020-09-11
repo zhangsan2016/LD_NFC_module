@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ldgd.ld_nfc_module">
+    package="com.ldgd.ld_nfc_ndef_module">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!--蓝牙权限-->
@@ -50,8 +50,8 @@
         android:theme="@style/AppTheme">
 
 
-        <activity
-            android:name=".activity.NFCActivity"
+      <!--  <activity
+            android:name="com.ldgd.ld_nfc_ndef_module.activity.NFCActivity"
             android:label="@string/nfc_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -89,8 +89,26 @@
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/filter_nfc" />
 
+        </activity> -->
+
+        <activity
+            android:name=".activity.NfcNdefActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
         </activity>
-        <activity android:name=".zbar.CaptureActivity" />
+
+
+        <activity android:name="com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity" />
 
     </application>
 

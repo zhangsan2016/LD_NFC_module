@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId "com.ldgd.ld_nfc_module"
+        applicationId 'com.ldgd.ld_nfc_ndef_module'
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
@@ -25,6 +25,8 @@ android {
         main {
             jniLibs.srcDirs = ['libs']
         }
+    }
+    productFlavors {
     }
 }
 
@@ -55,6 +57,4 @@ dependencies {
     compile 'com.squareup.okio:okio:1.12.0'
     /* Gson */
     compile 'com.google.code.gson:gson:2.8.4'
-
-
 }
