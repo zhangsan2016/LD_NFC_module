@@ -1126,6 +1126,7 @@ public class NfcDataUtil {
         try {
 
             for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
+
                 System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3, dataDictionarie.getValue().length);
             /*        // 判断是否存在读写权限
                     if (dataDictionarie.getPermission().equals("RW")) {
