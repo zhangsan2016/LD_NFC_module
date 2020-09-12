@@ -123,14 +123,18 @@ public class NfcDataUtil {
         String value = null;
         for (DataDictionaries dictionaries : dataDictionaries) {
 
-            // 当前字段最后的位置
+            // 字段的结束位置
             finalPosition = dictionaries.getEndAddress();
 
             byte[] byteData = new byte[dictionaries.getTakeByte()];
             System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
+            dictionaries.setValue(byteData);
 
             //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
+            if(dictionaries.getName().equals("纬度小数")){
+                System.out.println("");
+            }
 
             // 如果数据存在，根据类型等信息进行转换
             if (byteData.length > 0) {
@@ -211,6 +215,8 @@ public class NfcDataUtil {
             xmlData.setName(dictionaries.getName());
             xmlData.setValue(value);
             xmlDataList.add(xmlData);
+
+            dictionaries.setXmValue(value);
 
         }
         return xmlDataList;
@@ -499,14 +505,21 @@ public class NfcDataUtil {
         serializer.startDocument("utf-8", true);
         // 设置文件开始标签
         serializer.startTag(null, "当前读取信息");
-        for (XmlData xmlData : xmlDataList) {
+ /*       for (XmlData xmlData : xmlDataList) {
 
             // 设置标签
             serializer.startTag(null, xmlData.getName());
             serializer.text(xmlData.getValue());
             serializer.endTag(null, xmlData.getName());
 
+        }*/
+       for (DataDictionaries dd : dataDictionaries) {
+            // 设置标签
+            serializer.startTag(null, dd.getName());
+            serializer.text(dd.getXmValue());
+            serializer.endTag(null,dd.getName());
         }
+
 
         // 设置文件结束标签
         serializer.endTag(null, "当前读取信息");
@@ -1137,8 +1150,6 @@ public class NfcDataUtil {
             }
 
             //获取Tag对象
-
-            Ndef ndef = Ndef.get(mTag);
             NdefMessage ndefMessage = new NdefMessage(new NdefRecord[]{new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload)});
             boolean result = writeTag(ndefMessage, mTag);
             if (result) {

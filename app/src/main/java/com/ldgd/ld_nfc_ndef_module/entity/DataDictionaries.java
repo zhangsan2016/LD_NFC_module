@@ -19,7 +19,16 @@ public class DataDictionaries {
     private String permission;  // 权限
     private String convertFormat; // 转换格式
     private byte[] value;  // 值
+    private String xmValue; // 转换xml格式后的值
 
+
+    public String getXmValue() {
+        return xmValue;
+    }
+
+    public void setXmValue(String xmValue) {
+        this.xmValue = xmValue;
+    }
 
     public byte[] getValue() {
         return value;

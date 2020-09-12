@@ -558,11 +558,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
 
 
-                    /*    for (int i = 0; i < dataDictionaries.size(); i++) {
-                        System.out.println("xxxx = " + dataDictionaries.get(i).getName() + Arrays.toString(dataDictionaries.get(i).getValue()));
-                    }
-                    //  通知 Handle nfc 已关闭写入
-                    myHandler.sendEmptyMessage(STOP_WRITE_NFC);*/
+   /*                    for (int i = 0; i < dataDictionaries.size(); i++) {
+                        System.out.println("xxxx = "+dataDictionaries.get(i).getStartAddress() + " - " + dataDictionaries.get(i).getEndAddress() + "  " + dataDictionaries.get(i).getName() + Arrays.toString(dataDictionaries.get(i).getValue() ) + ""  + dataDictionaries.get(i).getXmValue());
+                    }*/
 
 
                     // 解析excel
