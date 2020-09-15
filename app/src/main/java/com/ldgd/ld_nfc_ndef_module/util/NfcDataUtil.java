@@ -50,6 +50,7 @@ public class NfcDataUtil {
     // xml 最末尾位置
     private static int finalPosition = 0;
     public static List<DataDictionaries> dataDictionaries = null;
+    private static int threshold = 29;
 
 
     /**
@@ -127,14 +128,14 @@ public class NfcDataUtil {
             finalPosition = dictionaries.getEndAddress();
 
             byte[] byteData = new byte[dictionaries.getTakeByte()];
-            System.arraycopy(mBuffer, dictionaries.getStartAddress(), byteData, 0, dictionaries.getTakeByte());
+            System.arraycopy(mBuffer, dictionaries.getStartAddress()+threshold, byteData, 0, dictionaries.getTakeByte());
             dictionaries.setValue(byteData);
 
             //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
-            if(dictionaries.getName().equals("纬度小数")){
-                System.out.println("");
-            }
+         /*   if(dictionaries.getName().equals("IMEIID")){
+                System.out.println("xxxxxx  byteData = " + Arrays.toString(byteData));
+            }*/
 
             // 如果数据存在，根据类型等信息进行转换
             if (byteData.length > 0) {
@@ -149,11 +150,15 @@ public class NfcDataUtil {
                     int transitionValue = 0;
                     if (dictionaries.getTakeByte() == 1) {
                         transitionValue = byteData[0];
-                    } else {
+                    }/* else {
                         transitionValue = BytesUtil.bytesIntHL(byteData);
-                    }
-                    value = Integer.toHexString(transitionValue).toUpperCase();
+                    }*/
+                    //value = Integer.toHexString(transitionValue).toUpperCase();
 
+                //    System.out.println("xxxxxxxxxxxxxxxxxxxx " + dictionaries.getName() + " " +Arrays.toString(byteData));
+
+
+                    value =   BytesUtil.bytesToHex(byteData);
                 } else if (dictionaries.getFormat().equals("STR")) {
 
                     StringBuffer sb = new StringBuffer();
@@ -397,16 +402,22 @@ public class NfcDataUtil {
 
                     break;
                 case KXmlParser.START_TAG:
-
+                    String aa = parser.getName();
                     if (dataDictionaries != null) {
                         for (int d = 0; d < dataDictionaries.size(); d++) {
+
                             if (dataDictionaries.get(d).getName().equals(parser.getName())) {
-                                dataDictionaries.get(d).setValue(convertFormat(dataDictionaries.get(d), parser.nextText()));
+
+                                DataDictionaries  cc =  dataDictionaries.get(d);
+                                String ddd = parser.nextText();
+                                dataDictionaries.get(d).setValue(convertFormat(dataDictionaries.get(d), ddd));
                             }
 
                         }
                     }
 
+                    break;
+                case KXmlParser.END_TAG:
                     break;
                 /*  case KXmlParser.END_TAG:
                     break;
@@ -575,6 +586,7 @@ public class NfcDataUtil {
      */
     public static String formatXml(String str) throws Exception {
         Document document = null;
+        System.out.println("xml = " + str);
         document = DocumentHelper.parseText(str);
         // 格式化输出格式
         OutputFormat format = OutputFormat.createPrettyPrint();
@@ -1140,7 +1152,7 @@ public class NfcDataUtil {
 
             for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
 
-                System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3, dataDictionarie.getValue().length);
+                System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3+threshold, dataDictionarie.getValue().length);
             /*        // 判断是否存在读写权限
                     if (dataDictionarie.getPermission().equals("RW")) {
 
@@ -1228,7 +1240,11 @@ public class NfcDataUtil {
             if (parameters.contains("(") && !dictionaries.getUnits().equals("")) {
                 parameters = parameters.substring(0, parameters.indexOf("(")).trim();
             }
-            // 转int
+
+            data =  BytesUtil.hexToByteArray(parameters);
+
+
+          /*  // 转int
             int intData = Integer.valueOf(parameters, 16);
             // 判断是否包含系数，如果有要运算
             int factor = dictionaries.getFactor();
@@ -1244,9 +1260,9 @@ public class NfcDataUtil {
                 }
             }
             // 判断最大值和最小值
-          /*  if(){
+          *//*  if(){
 
-            }*/
+            }*//*
 
             // 判断高低位
             // 判断高低位
@@ -1266,7 +1282,7 @@ public class NfcDataUtil {
                 } else {
                     data = new byte[]{(byte) intData};
                 }
-            }
+            }*/
 
         } else if (dictionaries.getFormat().equals("DEC")) {
             // 判断当前参数是否存在单位

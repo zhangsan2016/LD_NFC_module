@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -665,6 +666,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
         protected void onPostExecute(byte[] mBuffer) {
+
+            System.out.println("xxxxxxxxx " + Arrays.toString(mBuffer));
             if (mBuffer != null) {
 
                 // 判断nfc硬件类型
@@ -746,8 +749,66 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
         //获取Tag对象
         mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        readNfcTag(intent);
 
-         readNfcTag(intent);
+   /*     Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        String action = intent.getAction();
+        Ndef ndef = Ndef.get(detectedTag);
+        if (ndef == null) {
+            // NDEF is not supported by this Tag.
+            return;
+        }
+        NdefMessage ndefMessage = ndef.getCachedNdefMessage();
+
+
+        NdefRecord[] records = ndefMessage.getRecords();
+        for (NdefRecord ndefRecord : records) {
+            //read each record
+            byte[] da = ndefRecord.getPayload();
+            System.out.println("xxxxxxxx data = " + Arrays.toString(da));
+        }*/
+
+
+      /*  mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        Ndef ndef = Ndef.get(mTag);
+        NdefMessage ndefMessage = ndef.getCachedNdefMessage();
+        Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            System.out.println("rawMessage == null " + (rawMessage == null));*/
+
+
+
+       /* try {
+            mTag   = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            Nfc nfcA = NfcA.get(mTag);
+            nfcA.connect();
+            byte[] SELECT = {(byte) 0x30, (byte) 0x05};//我读取的NFC卡片使用的是NTAG216的芯片，这里的指令参数是根据其datasheet的说明写的。
+            byte[] result = nfcA.transceive(SELECT);//这
+            System.out.println("tag A = " + Arrays.toString(result));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+
+
+    /*    if (mTag!= null) {
+            //Toast.makeText(this, "Reading Tag Info", Toast.LENGTH_SHORT).show();
+            // get NDEF tag details
+            Ndef ndefTag = Ndef.get(mTag);
+
+
+           boolean  tag_writable = ndefTag.isWritable(); // is tag writable?
+
+            // get NDEF message details
+            NdefMessage ndefMesg = ndefTag.getCachedNdefMessage();
+            NdefRecord[] ndefRecords = ndefMesg.getRecords();
+            int len = ndefRecords.length;
+           String[]  recTypes = new String[len];     // will contain the NDEF record types
+            for (int i = 0; i < len; i++) {
+                recTypes[i] = new String(ndefRecords[i].getType());
+            }
+
+            System.out.println("xxxxxxxxxx " + ndefTag.getMaxSize() + "  " + ndefTag.getType() + "  " + Arrays.toString(recTypes));
+        }*/
 
 
 
