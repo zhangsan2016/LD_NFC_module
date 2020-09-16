@@ -1,10 +1,7 @@
 package com.ldgd.ld_nfc_ndef_module.acheck;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.util.Arrays;
-
-import static com.ldgd.ld_nfc_ndef_module.util.BytesUtil.hexToByteArray;
 
 /**
  * Created by ldgd on 2020/9/11.
@@ -46,7 +43,7 @@ public class aa {
 
 
 
-        byte[]  dd ={1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 1};
+   /*     byte[]  dd ={1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 1};
         String hex = new BigInteger(1, dd).toString(16);
 
         System.out.println(hex);
@@ -58,27 +55,56 @@ public class aa {
         System.out.println(Arrays.toString(hexToByteArray(bytesToHex(dd))));
 
 
-        System.out.println(bytesToHex(new byte[]{0,3}));
+        System.out.println(bytesToHex(new byte[]{0,3}));*/
+
+       byte[] value = hexToByteArray("53");
+        System.out.println(Arrays.toString(value));
+
+        System.out.println(bytesToHex(value));
+
+        System.out.println(bytesToHex(new byte[]{83}));
 
     }
 
 
 
-    /**
-     * 字节数组转16进制
-     * @param bytes 需要转换的byte数组
-     * @return  转换后的Hex字符串
-     */
-    public static String bytesToHex(byte[] bytes) {
-        StringBuffer sb = new StringBuffer();
-        for(int i = 0; i < bytes.length; i++) {
-            String hex = Integer.toHexString(bytes[i] & 0xFF);
-            if(hex.length() < 2){
-                sb.append(0);
+    public static String bytesToHex(byte[] bytes){
+        StringBuffer stringBuffer = new StringBuffer();
+        String temp = null;
+        for (int i=0;i<bytes.length;i++){
+            temp = Integer.toHexString(bytes[i] & 0xFF);
+            if (temp.length()==1){
+                //1得到一位的进行补0操作
+                stringBuffer.append("0");
             }
-            sb.append(hex);
+            stringBuffer.append(temp);
         }
-        return sb.toString();
+        return stringBuffer.toString();
+    }
+
+    /**
+     * hex字符串转byte数组
+     * @param inHex 待转换的Hex字符串
+     * @return  转换后的byte数组结果
+     */
+    public static byte[] hexToByteArray(String inHex){
+        int hexlen = inHex.length();
+        byte[] result;
+        if (hexlen % 2 == 1){
+            //奇数
+            hexlen++;
+            result = new byte[(hexlen/2)];
+            inHex="0"+inHex;
+        }else {
+            //偶数
+            result = new byte[(hexlen/2)];
+        }
+        int j=0;
+        for (int i = 0; i < hexlen; i+=2){
+            result[j]=(byte)Integer.parseInt((inHex.substring(i,i+2)),16);
+            j++;
+        }
+        return result;
     }
 
 
