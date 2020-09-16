@@ -34,7 +34,6 @@ import com.google.gson.Gson;
 import com.ldgd.ld_nfc_ndef_module.R;
 import com.ldgd.ld_nfc_ndef_module.base.BaseNfcActivity;
 import com.ldgd.ld_nfc_ndef_module.entity.DataDictionaries;
-import com.ldgd.ld_nfc_ndef_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_ndef_module.json.LoginJson;
 import com.ldgd.ld_nfc_ndef_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
@@ -233,12 +232,19 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     try {
                         // 解析xml文件，得到所有参数
                         FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-                        NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                        List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+                        String baseplateId = null;
+                        for (int i = 0; i < dataDictionaries.size(); i++) {
+                            if(dataDictionaries.get(i).getName().equals("执行底板ID")){
+                                baseplateId  = dataDictionaries.get(i).getXmValue();
+                            }
+                        }
+
 
                         // 通过 Handle 更新 AlertDialog
                         Message tempMsg = myHandler.obtainMessage();
                         tempMsg.what = HANDLE_UP_READ;
-                        tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
+                        tempMsg.obj = baseplateId.replaceAll(" +", "");
                         myHandler.sendMessage(tempMsg);
 
                     } catch (Exception e) {
@@ -709,11 +715,19 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     if (writeAlertDialog.isShowing()) {
                         // 解析xml文件，得到所有参数
                         FileInputStream inputStream = new FileInputStream(cacheFile);
-                        NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                        List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+                        String baseplateId = null;
+                        for (int i = 0; i < dataDictionaries.size(); i++) {
+                            if(dataDictionaries.get(i).getName().equals("执行底板ID")){
+                                baseplateId  = dataDictionaries.get(i).getXmValue();
+                            }
+                        }
+
+
                         // 通过 Handle 更新 AlertDialog
                         Message tempMsg = myHandler.obtainMessage();
                         tempMsg.what = HANDLE_UP_WRITE;
-                        tempMsg.obj = nfcDeviceInfo.getBaseplateId().replaceAll(" +", "");
+                        tempMsg.obj = baseplateId.replaceAll(" +", "");
                         myHandler.sendMessage(tempMsg);
                     }
 
