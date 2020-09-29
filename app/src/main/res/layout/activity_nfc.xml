@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ldgd.ld_nfc_module.activity.NFCActivity">
+    tools:context="com.ldgd.ld_nfc_ndef_module.activity.NFCActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
