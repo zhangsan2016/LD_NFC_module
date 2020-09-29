@@ -19,6 +19,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
+
   /*  private static final String TAG = "NFCActivity";
     public static final int REQUEST_CODE_QR = 10;
     // 请求权限的code
