@@ -129,6 +129,11 @@ public class NfcDataUtil {
             //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
 
+            if( dictionaries.getName().equals("服务器地址")){
+                System.out.println("服务器地址");
+            }
+
+
             // 如果数据存在，根据类型等信息进行转换
             if (byteData.length > 0) {
 
@@ -151,8 +156,8 @@ public class NfcDataUtil {
 
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < byteData.length; i++) {
-                       String str = new String(new byte[]{byteData[i]}, "utf-8");
-                        sb.append(str + " ");
+                  //     String str = new String(new byte[]{byteData[i]}, "utf-8");
+                        sb.append(byteData[i] + " ");
                       /* String str = String.valueOf(byteData[i]);
                         sb.append(str + " ");*/
                     }
@@ -438,7 +443,6 @@ public class NfcDataUtil {
 
         List<DataDictionaries> dataDictionaries = new ArrayList<>();
         for (int i = 1; i < Rows; ++i) {
-            try{
 
                 DataDictionaries dictionaries = new DataDictionaries();
 
@@ -467,9 +471,6 @@ public class NfcDataUtil {
                 dataDictionaries.add(dictionaries);
 
                 System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + permission );
-            }catch(Exception e){
-
-            }
 
         }
         book.close();
