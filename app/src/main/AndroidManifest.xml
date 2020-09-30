@@ -50,7 +50,7 @@
         android:theme="@style/AppTheme">
 
 
-      <!--  <activity
+        <activity
             android:name="com.ldgd.ld_nfc_ndef_module.activity.NFCActivity"
             android:label="@string/nfc_name"
             android:launchMode="singleTop"
@@ -89,9 +89,9 @@
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/filter_nfc" />
 
-        </activity> -->
+        </activity>
 
-        <activity
+      <!--  <activity
             android:name=".activity.NfcNdefActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop" >
@@ -111,7 +111,7 @@
         </activity>
 
 
-        <activity android:name="com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity" />
+        <activity android:name="com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity" />-->
 
     </application>
 

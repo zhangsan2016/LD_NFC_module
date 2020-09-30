@@ -1,6 +1,11 @@
 package com.ldgd.ld_nfc_ndef_module.activity;
 
+import android.app.PendingIntent;
+import android.os.AsyncTask;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.ldgd.ld_nfc_ndef_module.base.BaseActivity;
 import com.ldgd.ld_nfc_ndef_module.util.TagDiscovery;
@@ -19,7 +24,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-  /*  private static final String TAG = "NFCActivity";
+  private static final String TAG = "NFCActivity";
     public static final int REQUEST_CODE_QR = 10;
     // 请求权限的code
     public static final int REQUEST_CODE_CAMERA = 21;
@@ -275,9 +280,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-    *//**
+    *//**//**
      * 上传设备信息
-     *//*
+     *//**//*
     private void upLoading() {
 
         final String uuid = ed_search.getText().toString().trim();
@@ -342,13 +347,13 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-    *//**
+    *//**//**
      * 汇报设备信息到服务器
      *
      * @param xmlConfig xml 配置信息
      * @param uuid      上传保存的 uuid
      * @param token     登录的 token
-     *//*
+     *//**//*
     private void reportDevice(final String xmlConfig, final String uuid, final String token) {
 
 
@@ -394,9 +399,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-    *//**
+    *//**//**
      * 清理界面
-     *//*
+     *//**//*
     private void clearInterface() {
         et_text_editor.setText("");
         // 初始化进度条
@@ -405,9 +410,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         NfcDataUtil.deleFile(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
     }
 
-    *//**
+    *//**//**
      * 跳转到二维码扫描界面
-     *//*
+     *//**//*
     private void goScan() {
         Intent intent = new Intent(NFCActivity.this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE_QR);
@@ -443,14 +448,14 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                     *//*   try {
+                     *//**//*   try {
                             Field field = dialog.getClass().getSuperclass()
                                     .getDeclaredField("mShowing");
                             field.setAccessible(true);
                             field.set(dialog, false);
                         } catch (Exception e) {
                             e.printStackTrace();
-                        }*//*
+                        }*//**//*
 
 
                         // 写入
@@ -463,7 +468,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                      *//*  try {
+                      *//**//*  try {
                             Field field = dialog.getClass().getSuperclass()
                                     .getDeclaredField("mShowing");
                             field.setAccessible(true);
@@ -471,7 +476,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                             dialog.dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
-                        }*//*
+                        }*//**//*
 
                         showToast("已经取消");
                     }
@@ -551,7 +556,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-       *//* // 处理二维码扫描结果
+       *//**//* // 处理二维码扫描结果
         if (requestCode == REQUEST_CODE_ZXING) {
             //处理扫描结果（在界面上显示）
             if (null != intent) {
@@ -566,7 +571,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     showToast("解析二维码失败");
                 }
             }
-        }*//*
+        }*//**//*
 
 
         switch (requestCode) {
@@ -586,9 +591,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         }
     }
 
-    *//**
+    *//**//**
      * 读取的开始位置和结束位置
-     *//*
+     *//**//*
     private int mStartAddress;
     private int mNumberOfBytes;
 
@@ -606,9 +611,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-    *//**
+    *//**//**
      * 初始化进度条
-     *//*
+     *//**//*
     private void initProgressBar() {
         runOnUiThread(new Runnable() {
             @Override
@@ -623,19 +628,19 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
     }
 
-    *//**
+    *//**//**
      * 从 mNumberOfBytes
      *
      * @param mStartAddress
      * @param mNumberOfBytes
-     *//*
+     *//**//*
     private void ReadTheBytes(int mStartAddress, int mNumberOfBytes) {
 
 
-      *//*  Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
+      *//**//*  Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
         snackbar.setAction(getString(R.string.reading_x_bytes_starting_y_address, mStartAddress, mNumberOfBytes), this);
         snackbar.setActionTextColor(getResources().getColor(R.color.white));
-        snackbar.show();*//*
+        snackbar.show();*//**//*
 
         // by defaut - read first area
         if (mTag instanceof Type5Tag) {
@@ -657,9 +662,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
     }
 
 
-    *//**
+    *//**//**
      * 异步读取NFC数组
-     *//*
+     *//**//*
     class ContentViewAsync extends AsyncTask<Void, Integer, Boolean> {
         byte mBuffer[] = null;
         NFCTag mTag;
@@ -690,8 +695,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     if (mBuffer != null) {
                         nbrOfBytesRead = mBuffer.length;
                         // 保存nfc读取的数据
-                          *//*  CacheUtils.putString(ReadFragmentActivity.this,"nfcdata",Arrays.toString(mBuffer));
-                            showToast(R.string.save_read_data);*//*
+                          *//**//*  CacheUtils.putString(ReadFragmentActivity.this,"nfcdata",Arrays.toString(mBuffer));
+                            showToast(R.string.save_read_data);*//**//*
 
                     }
                     if (nbrOfBytesRead != mNumberOfBytes) {
@@ -715,9 +720,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (mBuffer != null) {
-                *//*mAdapter = new CustomListAdapter(mBuffer);
+                *//**//*mAdapter = new CustomListAdapter(mBuffer);
                 lv = (ListView) findViewById(R.id.readBlocksListView);
-                lv.setAdapter(mAdapter);*//*
+                lv.setAdapter(mAdapter);*//**//*
 
                 //    LogUtil.e("xxx onPostExecute mBuffer = " + Arrays.toString(mBuffer));
 
@@ -742,10 +747,10 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             }
         }
 
-        *//**
+        *//**//**
          *  根据 nfc 的标识类型读取内容信息
          * @param nfcFileName 类型对应的 nfc 文件名
-         *//*
+         *//**//*
         private void readNfcByType(String nfcFileName) {
 
 
@@ -840,7 +845,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
         if (mNfcAdapter != null) {
             Log.v(TAG, "enableForegroundDispatch");
-            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null *//*nfcFiltersArray*//*, null *//*nfcTechLists*//*);
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null *//**//*nfcFiltersArray*//**//*, null *//**//*nfcTechLists*//**//*);
 
             if (mNfcAdapter.isEnabled()) {
                 // NFC enabled
@@ -916,8 +921,8 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             case PRODUCT_ST_ST25DV16K_J:
             case PRODUCT_ST_ST25DV04K_I:
             case PRODUCT_ST_ST25DV04K_J:
-             *//*   checkMailboxActivation();
-                startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*//*
+             *//**//*   checkMailboxActivation();
+                startTagActivity(ST25DVActivity.class, R.string.st25dv_menus);*//**//*
 
                 //   showToast("NFC 识别成功");
 
@@ -961,5 +966,5 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         super.onDestroy();
         //移除布局监听
         AutoFitKeyBoardUtil.getInstance().onDestory();
-    }*/
+    }
 }
