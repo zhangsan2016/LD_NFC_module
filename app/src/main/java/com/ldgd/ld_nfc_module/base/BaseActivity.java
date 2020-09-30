@@ -22,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void run() {
 
                 if (toast == null) {
-                    toast = Toast.makeText(BaseActivity.this, null, Toast.LENGTH_LONG);
+                    toast = Toast.makeText(BaseActivity.this, "", Toast.LENGTH_LONG);
                     toast.setText(msg);
                 } else {
                     toast.setText(msg);

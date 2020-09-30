@@ -34,6 +34,7 @@ import android.widget.ToggleButton;
 import com.google.gson.Gson;
 import com.ldgd.ld_nfc_module.R;
 import com.ldgd.ld_nfc_module.base.BaseActivity;
+import com.ldgd.ld_nfc_module.entity.DataDictionaries;
 import com.ldgd.ld_nfc_module.entity.NfcDeviceInfo;
 import com.ldgd.ld_nfc_module.json.LoginJson;
 import com.ldgd.ld_nfc_module.util.AutoFitKeyBoardUtil;
@@ -59,6 +60,7 @@ import org.dom4j.DocumentHelper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -305,7 +307,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                     File file = new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
                     try {
                         NfcDataUtil.saveXml(xmlStr, file);
-                        showToast("保存成功");
+                       // showToast("保存成功");
                         progressbar.setSecondaryProgress(100);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -560,9 +562,9 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
 
                     // 解析xml文件，得到所有参数
                     FileInputStream inputStream = new FileInputStream(new File(NFCActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-                    NfcDeviceInfo nfcDeviceInfo = NfcDataUtil.parseXml(inputStream);
+                    List<DataDictionaries> nfcDeviceInfo = NfcDataUtil.parseXml2(inputStream);
                     // 校验获取的参数是否符合规定,然后写入
-                    NfcDataUtil.writeNfcDeviceInfo(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
+                    NfcDataUtil.writeNfcDeviceInfo2(nfcDeviceInfo, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
                             showToast("写入成功");
@@ -584,7 +586,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
                         }
 
 
-                    }, NFCActivity.this, mTag);
+                    }, NFCActivity.this, mTag,payload);
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 初始化进度条
@@ -709,7 +711,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
         contentView.execute();
     }
 
-
+    private byte[] payload;
     /**
      * 异步读取NFC数组
      */
@@ -735,7 +737,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             if (mBuffer == null) {
                 try {
                     // Type 5
-                    mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
+                    payload =  mBuffer = mTag.readBytes(mStartAddress, mNumberOfBytes);
                     // Warning: readBytes() may return less bytes than requested
                     //调用publishProgress公布进度,最后onProgressUpdate方法将被执行
                     //   publishProgress((int) ((count / (float) total) * 100));

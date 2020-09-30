@@ -45,7 +45,7 @@ import jxl.read.biff.BiffException;
 public class NfcDataUtil {
     // xml 最末尾位置
     private static int finalPosition = 0;
-
+    public static List<DataDictionaries> dataDictionaries = null;
 
     /**
      * 将当前byte数组解析成xml文件
@@ -65,7 +65,7 @@ public class NfcDataUtil {
 
             // 1.获取assets包中的 Excel 文件，得到字典格式
             // 解析excel
-            List<DataDictionaries> dataDictionaries = parseExcel(excelName, context);
+            dataDictionaries = parseExcel(excelName, context);
 
             // 2.根据字典格式解析数据
             ArrayList<XmlData> xmlDataList = parseBuffer(mBuffer, dataDictionaries);
@@ -74,7 +74,7 @@ public class NfcDataUtil {
             File cacheFile = createXML(xmlDataList, new File(context.getCacheDir(), saveFileName));
 
             // crc 校验
-            checkCRC(mBuffer,context);
+         //   checkCRC(mBuffer,context);
 
             // 4.返回xml文件地址
             return cacheFile;
@@ -82,6 +82,7 @@ public class NfcDataUtil {
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("xxx Exception = " + e.getMessage().toString());
+            showToast(e.getMessage().toString(),context);
             return null;
         }
 
@@ -202,6 +203,8 @@ public class NfcDataUtil {
                 }
 
             }
+
+            dictionaries.setXmValue(value);
 
             XmlData xmlData = new XmlData();
             xmlData.setName(dictionaries.getName());
@@ -369,6 +372,55 @@ public class NfcDataUtil {
     }
 
     /**
+     * 解析xml文件，获取数据对象
+     *
+     * @param is xml文件
+     * @return
+     * @throws Exception
+     */
+    public static List<DataDictionaries> parseXml2(FileInputStream is) throws Exception {
+
+        KXmlParser parser = new KXmlParser();
+        parser.setInput(is, "utf-8");
+
+        int eventType = parser.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            switch (eventType) {
+                case KXmlParser.START_DOCUMENT:
+
+                    break;
+                case KXmlParser.START_TAG:
+                    //  String aa = parser.getName();
+                    if (dataDictionaries != null) {
+                        for (int d = 0; d < dataDictionaries.size(); d++) {
+
+                            if (dataDictionaries.get(d).getName().equals(parser.getName())) {
+
+                                dataDictionaries.get(d).setValue(convertFormat(dataDictionaries.get(d), parser.nextText()));
+                            }
+
+                        }
+                    }
+
+                    break;
+                case KXmlParser.END_TAG:
+                    break;
+                /*  case KXmlParser.END_TAG:
+                    break;
+                    case KXmlParser.TEXT:
+                    String content = parser.getText();
+                    System.out.println(content + " TEXT:" + content);
+                    break;*/
+                case KXmlParser.END_DOCUMENT:
+                    break;
+            }
+            eventType = parser.next();
+        }
+
+        return dataDictionaries;
+    }
+
+    /**
      * 解析Excel文件
      *
      * @param excelName 文件名称
@@ -386,34 +438,39 @@ public class NfcDataUtil {
 
         List<DataDictionaries> dataDictionaries = new ArrayList<>();
         for (int i = 1; i < Rows; ++i) {
+            try{
 
-            DataDictionaries dictionaries = new DataDictionaries();
+                DataDictionaries dictionaries = new DataDictionaries();
 
-            String name = (sheet.getCell(0, i)).getContents();
-            int startAddress = Integer.parseInt((sheet.getCell(1, i)).getContents());
-            int endAddress = Integer.parseInt((sheet.getCell(2, i)).getContents());
-            int takeByte = Integer.parseInt((sheet.getCell(3, i)).getContents()); // 占用字节
-            String format = (sheet.getCell(4, i)).getContents(); // 格式
-            String units = (sheet.getCell(5, i)).getContents();  // 单位
-            int factor = Integer.parseInt((sheet.getCell(6, i)).getContents());  // 系数
-            String operator = (sheet.getCell(7, i)).getContents();  // 运算符
-            String permission = (sheet.getCell(8, i)).getContents();  // 权限
-            String convertFormat = (sheet.getCell(9, i)).getContents();  // 转换格式
+                String name = (sheet.getCell(0, i)).getContents();
+                int startAddress = Integer.parseInt((sheet.getCell(1, i)).getContents());
+                int endAddress = Integer.parseInt((sheet.getCell(2, i)).getContents());
+                int takeByte = Integer.parseInt((sheet.getCell(3, i)).getContents()); // 占用字节
+                String format = (sheet.getCell(4, i)).getContents(); // 格式
+                String units = (sheet.getCell(5, i)).getContents();  // 单位
+                int factor = Integer.parseInt((sheet.getCell(6, i)).getContents());  // 系数
+                String operator = (sheet.getCell(7, i)).getContents();  // 运算符
+                String permission = (sheet.getCell(8, i)).getContents();  // 权限
+                String convertFormat = (sheet.getCell(9, i)).getContents();  // 转换格式
 
-            dictionaries.setName(name.trim());
-            dictionaries.setStartAddress(startAddress);
-            dictionaries.setEndAddress(endAddress);
-            dictionaries.setTakeByte(takeByte);
-            dictionaries.setFormat(format.trim());
-            dictionaries.setUnits(units.trim());
-            dictionaries.setFactor(factor);
-            dictionaries.setOperator(operator.trim());
-            dictionaries.setPermission(permission.trim());
-            dictionaries.setConvertFormat(convertFormat.trim());
+                dictionaries.setName(name.trim());
+                dictionaries.setStartAddress(startAddress);
+                dictionaries.setEndAddress(endAddress);
+                dictionaries.setTakeByte(takeByte);
+                dictionaries.setFormat(format.trim());
+                dictionaries.setUnits(units.trim());
+                dictionaries.setFactor(factor);
+                dictionaries.setOperator(operator.trim());
+                dictionaries.setPermission(permission.trim());
+                dictionaries.setConvertFormat(convertFormat.trim());
 
-            dataDictionaries.add(dictionaries);
+                dataDictionaries.add(dictionaries);
 
-              System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + permission );
+                System.out.println("第" + i + "行数据=" + name + "," + startAddress + "," + endAddress + "," + takeByte + "," + format + "," + units+ "," + factor + "," + operator + "," + permission );
+            }catch(Exception e){
+
+            }
+
         }
         book.close();
         is.close();
@@ -478,7 +535,6 @@ public class NfcDataUtil {
      * @throws Exception
      */
     public static void saveXml(String strXml, File file) throws Exception {
-
         if (file.exists()) {
             file.delete();
         }
@@ -1064,6 +1120,43 @@ public class NfcDataUtil {
         } else {
             listening.failure("类型错误！");
         }
+
+    }
+
+    /**
+     * 检测设备信息的正确性
+     */
+    public static void writeNfcDeviceInfo2(List<DataDictionaries> nfcDeviceInfo, OnNfcDataListening listening, Context context, ST25DVTag mTag, byte[] payload) {
+
+        // 解析excel
+        try {
+
+            for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
+
+                System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress(), dataDictionarie.getValue().length);
+            /*        // 判断是否存在读写权限
+                    if (dataDictionarie.getPermission().equals("RW")) {
+
+                        System.arraycopy(dataDictionarie.getValue(),  0, payload,dataDictionarie.getStartAddress()+2, dataDictionarie.getValue().length);
+
+                    }*/
+            }
+
+            //获取Tag对象
+            try {
+                mTag.writeBytes(0, payload);
+                listening.succeed();
+            } catch (STException e) {
+                e.printStackTrace();
+                listening.failure("，写入失败（请保持nfc设备的距离）");
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            listening.failure("参数错误 = " + e.getMessage().toString());
+        }
+
 
     }
 
