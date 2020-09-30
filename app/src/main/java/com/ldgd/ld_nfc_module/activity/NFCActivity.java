@@ -411,6 +411,7 @@ public class NFCActivity extends BaseActivity implements TagDiscovery.onTagDisco
             @Override
             public void run() {
 
+
                 // 格式化xml
                 String xml = null;
                 Document document = null;
