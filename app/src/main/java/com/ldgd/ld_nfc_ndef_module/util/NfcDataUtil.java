@@ -122,12 +122,18 @@ public class NfcDataUtil {
         String value = null;
         for (DataDictionaries dictionaries : dataDictionaries) {
 
+
+
             // 字段的结束位置
             finalPosition = dictionaries.getEndAddress();
 
             byte[] byteData = new byte[dictionaries.getTakeByte()];
             System.arraycopy(mBuffer, dictionaries.getStartAddress()+threshold, byteData, 0, dictionaries.getTakeByte());
             dictionaries.setValue(byteData);
+
+ /*           if("重启计数".equals(dictionaries.getName())){
+                System.out.println("重启计数 = " + Arrays.toString(byteData));
+            }*/
 
             //  LogUtil.e("xxx " + dictionaries.getName() + "   = " + Arrays.toString(byteData));
 
