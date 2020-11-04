@@ -1,5 +1,7 @@
 package com.ldgd.ld_nfc_ndef_module.acheck;
 
+import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
@@ -57,12 +59,13 @@ public class aa {
 
         System.out.println(bytesToHex(new byte[]{0,3}));*/
 
-       byte[] value = hexToByteArray("53");
-        System.out.println(Arrays.toString(value));
 
-        System.out.println(bytesToHex(value));
-
-        System.out.println(bytesToHex(new byte[]{83}));
+        byte[] mBuffer = {0, 3, 66, 77, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -104, 0, 0, 1, 18, 20, 100};
+        byte[] typeByte = new byte[2];
+        System.arraycopy(mBuffer,29, typeByte, 0, 2);
+                /*typeByte[0] = 0;
+                typeByte[1] = 3;*/
+        System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
 
     }
 

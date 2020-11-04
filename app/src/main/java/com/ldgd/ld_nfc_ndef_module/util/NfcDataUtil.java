@@ -246,6 +246,7 @@ public class NfcDataUtil {
                     break;
                 case KXmlParser.START_TAG:
                   //  String aa = parser.getName();
+                   // System.out.println("xxxxxxxxxxx " + aa);
                     if (dataDictionaries != null) {
                         for (int d = 0; d < dataDictionaries.size(); d++) {
 

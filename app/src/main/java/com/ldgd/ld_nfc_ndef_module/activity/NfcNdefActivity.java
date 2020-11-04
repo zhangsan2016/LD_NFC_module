@@ -678,9 +678,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 // 判断nfc硬件类型
                 byte[] typeByte = new byte[2];
-                System.arraycopy(mBuffer, 3, typeByte, 0, 2);
-                typeByte[0] = 0;
-                typeByte[1] = 3;
+             //   System.arraycopy(mBuffer, 3+ 29, typeByte, 0, 2);
+                System.arraycopy(mBuffer, 29, typeByte, 0, 2);
+                /*typeByte[0] = 0;
+                typeByte[1] = 3;*/
+                System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
                 if (BytesUtil.bytesIntHL(typeByte) == 1) {
                     // 根据类型读取 nfc
                     readNfcByType("0001_83140000.xls",mBuffer);
@@ -703,6 +705,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         private void readNfcByType(String nfcFileName,byte[] mBuffer) {
 
 
+            LogUtil.e("nfcFileName = " + nfcFileName);
             // 解析成xml文件
             File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, nfcFileName, NFC_DATA_CACHE, NfcNdefActivity.this);
 
