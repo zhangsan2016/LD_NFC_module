@@ -67,6 +67,7 @@ public class aa {
                 typeByte[1] = 3;*/
         System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
 
+
     }
 
 
