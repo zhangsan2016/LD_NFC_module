@@ -491,7 +491,16 @@ public class NfcDataUtil {
 
             for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
 
-                System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3+threshold, dataDictionarie.getValue().length);
+                // 如果是字符串格式需要添加结束符
+                if(dataDictionarie.getFormat().equals("STR")){
+
+                    byte[] newBytes = new byte[dataDictionarie.getValue().length+2];//新数组
+                    System.arraycopy(dataDictionarie.getValue(), 0, newBytes, 0, dataDictionarie.getValue().length);
+                    System.arraycopy(newBytes, 0, payload, dataDictionarie.getStartAddress() + 3+threshold, newBytes.length);
+                }else{
+                    System.arraycopy(dataDictionarie.getValue(), 0, payload, dataDictionarie.getStartAddress() + 3+threshold, dataDictionarie.getValue().length);
+                }
+
             /*        // 判断是否存在读写权限
                     if (dataDictionarie.getPermission().equals("RW")) {
 
