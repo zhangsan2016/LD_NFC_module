@@ -68,7 +68,6 @@ public class aa {
         System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
 
 
-
     }
 
 
