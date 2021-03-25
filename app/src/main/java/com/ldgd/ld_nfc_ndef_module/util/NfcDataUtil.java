@@ -123,7 +123,6 @@ public class NfcDataUtil {
         for (DataDictionaries dictionaries : dataDictionaries) {
 
 
-
             // 字段的结束位置
             finalPosition = dictionaries.getEndAddress();
 
@@ -140,6 +139,10 @@ public class NfcDataUtil {
          /*   if(dictionaries.getName().equals("IMEIID")){
                 System.out.println("xxxxxx  byteData = " + Arrays.toString(byteData));
             }*/
+
+            if(dictionaries.getName().equals("远程服务器域名或IP")){
+                System.out.println("xxxxxx  byteData = " + Arrays.toString(byteData));
+            }
 
             // 如果数据存在，根据类型等信息进行转换
             if (byteData.length > 0) {
@@ -165,18 +168,21 @@ public class NfcDataUtil {
                     value =   BytesUtil.bytesToHex(byteData);
                 } else if (dictionaries.getFormat().equals("STR")) {
 
-                    StringBuffer sb = new StringBuffer();
+
+                  value =  byteToString(byteData);
+
+                  /*  StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < byteData.length; i++) {
                         String str = new String(new byte[]{byteData[i]}, "utf-8");
                         sb.append(str + " ");
-                      /* String str = String.valueOf(byteData[i]);
-                        sb.append(str + " ");*/
+                      *//* String str = String.valueOf(byteData[i]);
+                        sb.append(str + " ");*//*
                     }
                     if (BytesUtil.isMessyCode(sb.toString())) {
-                        value = "0";
+                        value = "乱码";
                     } else {
                         value = sb.toString();
-                    }
+                    }*/
 
 
                 } else if (dictionaries.getFormat().equals("DEC")) {
@@ -229,6 +235,29 @@ public class NfcDataUtil {
 
         }
         return xmlDataList;
+    }
+
+
+    public static String byteToString(byte[] data) {
+        int index = data.length;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == 0) {
+                index = i;
+                break;
+            }
+        }
+        byte[] temp = new byte[index];
+        Arrays.fill(temp, (byte) 0);
+        System.arraycopy(data, 0, temp, 0, index);
+        String str;
+        try {
+            str = new String(temp, "GBK");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "";
+        }
+        return str;
     }
 
 
@@ -373,6 +402,7 @@ public class NfcDataUtil {
 
         }*/
        for (DataDictionaries dd : dataDictionaries) {
+           System.out.println("DataDictionaries = " + dd.getName() + " : " + dd.getXmValue());
             // 设置标签
             serializer.startTag(null, dd.getName());
             serializer.text(dd.getXmValue());
