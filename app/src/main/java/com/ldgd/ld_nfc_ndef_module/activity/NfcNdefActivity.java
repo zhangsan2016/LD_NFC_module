@@ -540,8 +540,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 btnPositive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // 写入
-                        writeNfc();
+                        // 写入操作执行，先检测数据
+                        checkWrite();
+
                     }
                 });
             }
@@ -550,20 +551,57 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     }
 
-    private void writeNfc() {
+    private void checkWrite() {
+        // 解析xml文件，得到所有参数
+        try {
+            FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+            List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+
+
+            // 如果设备类型为 1 时，需要匹配 IMEI 码
+            for (DataDictionaries dataDictionarie : dataDictionaries) {
+
+                if(dataDictionarie.getName().equals("设备类型")){
+                    if(dataDictionarie.getXmValue().equals("0001")){
+                        // 获 MEI 码
+                     List<String> imeis =  NfcDataUtil.parseImeiExcel("IMEI/v_device_lamp.xls", NfcNdefActivity.this);
+
+                       // List<String> imeis =  NfcDataUtil.parseImeiExcel("0001_83140000.xls", NfcNdefActivity.this);
+                        boolean imeiVerify = false;
+                        for (int i = 0; i < imeis.size(); i++) {
+                            for (DataDictionaries imei : dataDictionaries) {
+                                if(imei.getName().equals("IMEI")){
+                                   if( imei.getXmValue().contains(imeis.get(i))){
+                                       imeiVerify = true;
+                                   }
+                                }
+                            }
+                            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> " + imeis.get(i));
+                        }
+
+                    }
+                }
+            }
+            // 写入
+         //   writeNfc(dataDictionaries);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("校验 IMEI 异常， 写入失败");
+            return;
+        }
+    }
+
+    private void writeNfc(final List<DataDictionaries> dataDictionaries) {
 
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+
                     // 通知 Handle 当前正在写入nfc
                     myHandler.sendEmptyMessage(START_WRITE_NFC);
-
-                    // 解析xml文件，得到所有参数
-                    FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-                    List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
-
 
    /*                    for (int i = 0; i < dataDictionaries.size(); i++) {
                         System.out.println("xxxx = "+dataDictionaries.get(i).getStartAddress() + " - " + dataDictionaries.get(i).getEndAddress() + "  " + dataDictionaries.get(i).getName() + Arrays.toString(dataDictionaries.get(i).getValue() ) + ""  + dataDictionaries.get(i).getXmValue());
@@ -590,6 +628,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                         public void failure(String error) {
                             showToast(error);
                             //  通知 Handle nfc 已关闭写入
+                            progressbar.setProgress(0);
                             myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                         }
 

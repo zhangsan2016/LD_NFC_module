@@ -363,6 +363,30 @@ public class NfcDataUtil {
         return dataDictionaries;
     }
 
+
+    /**
+     *  获取 IMEI 列表
+     */
+    public static List<String> parseImeiExcel(String excelName, Context context) throws IOException, BiffException {
+        InputStream is = null;
+        is = context.getAssets().open(excelName);
+        Workbook book = Workbook.getWorkbook(is);
+        book.getNumberOfSheets();
+        Sheet sheet = book.getSheet(0);
+        int Rows = sheet.getRows();
+
+        List<String> imeis = new ArrayList<>();
+        for (int i = 1; i < Rows; ++i) {
+
+            String imei = (sheet.getCell(0, i)).getContents();
+            imeis.add(imei);
+
+        }
+        book.close();
+        is.close();
+        return imeis;
+    }
+
     /**
      * 创建xml文件
      *
@@ -490,6 +514,7 @@ public class NfcDataUtil {
         try {
 
             for (DataDictionaries dataDictionarie : nfcDeviceInfo) {
+
 
                 // 如果是字符串格式需要添加结束符
                 if(dataDictionarie.getFormat().equals("STR")){
