@@ -67,6 +67,14 @@ public class aa {
                 typeByte[1] = 3;*/
         System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
 
+        String aa = "4654564654654465";
+        if(aa.contains("54465")){
+
+            System.out.println("aa = " + true);
+        }else{
+            System.out.println("aa = " + false);
+        }
+
 
     }
 

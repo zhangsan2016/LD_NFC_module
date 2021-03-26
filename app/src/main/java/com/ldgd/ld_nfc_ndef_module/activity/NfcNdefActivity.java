@@ -552,38 +552,51 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
     private void checkWrite() {
-        // 解析xml文件，得到所有参数
+
         try {
+
+            // 解析xml文件，得到所有参数
             FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
             List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
 
 
             // 如果设备类型为 1 时，需要匹配 IMEI 码
             for (DataDictionaries dataDictionarie : dataDictionaries) {
-
                 if(dataDictionarie.getName().equals("设备类型")){
                     if(dataDictionarie.getXmValue().equals("0001")){
                         // 获 MEI 码
                      List<String> imeis =  NfcDataUtil.parseImeiExcel("IMEI/v_device_lamp.xls", NfcNdefActivity.this);
 
-                       // List<String> imeis =  NfcDataUtil.parseImeiExcel("0001_83140000.xls", NfcNdefActivity.this);
+                        DataDictionaries cImei = null;
                         boolean imeiVerify = false;
-                        for (int i = 0; i < imeis.size(); i++) {
-                            for (DataDictionaries imei : dataDictionaries) {
-                                if(imei.getName().equals("IMEI")){
-                                   if( imei.getXmValue().contains(imeis.get(i))){
-                                       imeiVerify = true;
-                                   }
+                        for (DataDictionaries imei : dataDictionaries) {
+                            if(imei.getName().equals("IMEI")){
+                                cImei = imei;
+                                break;
+                            }
+                        }
+                        if (cImei == null){
+                            return;
+                        }else{
+                            for (int i = 0; i < imeis.size(); i++) {
+                                if( imeis.get(i).contains(cImei.getXmValue())){
+                                    imeiVerify = true;
+                                    System.out.println(">>>>>>>>>>>>>>>>> imeiVerify 成功 "  );
+                                    break;
+
                                 }
                             }
-                            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> " + imeis.get(i));
                         }
-
+                        if(!imeiVerify){
+                            showToast("IMEI 验证失败！");
+                            return;
+                        }
                     }
                 }
             }
+
             // 写入
-         //   writeNfc(dataDictionaries);
+            writeNfc(dataDictionaries);
 
         } catch (Exception e) {
             e.printStackTrace();
