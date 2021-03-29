@@ -109,6 +109,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
+    // 当前高德地图定位
+    private AMapLocation cAMapLocation;
 
 
     private Handler myHandler = new Handler() {
@@ -166,7 +168,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
         }
         setContentView(R.layout.activity_nfc);
 
-
         initNFC();
 
         initView();
@@ -200,6 +201,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 StringBuffer sb = new StringBuffer();
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
                 if(aMapLocation.getErrorCode() == 0){
+                    cAMapLocation = aMapLocation;
                     sb.append("经    度    : " + aMapLocation.getLongitude() + "\n");
                     sb.append("纬    度    : " + aMapLocation.getLatitude() + "\n");
                     Log.e("xx",">>>>>>>>>>>>>>>>>>>>>>>>>  经纬度信息 = " + sb.toString());
@@ -228,7 +230,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         AMapLocationClientOption.setLocationProtocol(AMapLocationClientOption.AMapLocationProtocol.HTTP);//可选， 设置网络请求的协议。可选HTTP或者HTTPS。默认为HTTP
         mOption.setSensorEnable(false);//可选，设置是否使用传感器。默认是false
         mOption.setWifiScan(true); //可选，设置是否开启wifi扫描。默认为true，如果设置为false会同时停止主动刷新，停止以后完全依赖于系统刷新，定位位置可能存在误差
-        mOption.setLocationCacheEnable(true); //可选，设置是否使用缓存定位，默认为true
+        mOption.setLocationCacheEnable(false); //可选，设置是否使用缓存定位，默认为true
         mOption.setGeoLanguage(AMapLocationClientOption.GeoLanguage.DEFAULT);//可选，设置逆地理信息的语言，默认值为默认语言（根据所在地区选择语言）
         return mOption;
     }
@@ -1035,9 +1037,27 @@ public class NfcNdefActivity extends BaseNfcActivity {
         super.onDestroy();
         //移除布局监听
         AutoFitKeyBoardUtil.getInstance().onDestory();
-        // 停止定位
-        locationClient.onDestroy();
-        locationClient = null;
+        // 销毁定位
+        destroyLocation();
 
+    }
+
+    /**
+     * 销毁定位
+     *
+     * @since 2.8.0
+     * @author hongming.wang
+     *
+     */
+    private void destroyLocation(){
+        if (null != locationClient) {
+            /**
+             * 如果AMapLocationClient是在当前Activity实例化的，
+             * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
+             */
+            locationClient.onDestroy();
+            locationClient = null;
+            locationOption = null;
+        }
     }
 }

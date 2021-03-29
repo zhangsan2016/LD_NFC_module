@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.ldgd.ld_nfc_ndef_module.R;
@@ -236,14 +235,14 @@ public class BaseNfcActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
+/*    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
             this.finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
+    }*/
 
     /**
      * 检测是否所有的权限都已经授权
