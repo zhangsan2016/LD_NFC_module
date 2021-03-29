@@ -30,11 +30,38 @@
         android:layout_gravity="center"
         android:text="" />
 
-    <TextView
+   <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="缓存配置将覆盖NFC设备信息" />
+        android:text="缓存配置将覆盖NFC设备信息" />-->
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="更新经纬度" />
+
+        <ToggleButton
+            android:id="@+id/tb_location"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/togglebutton"
+            android:text="sdfsdf"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
 
 
     <TextView

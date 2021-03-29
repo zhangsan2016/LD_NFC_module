@@ -2,6 +2,8 @@ package com.ldgd.ld_nfc_ndef_module.acheck;
 
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
 
+import org.json.JSONException;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
@@ -12,7 +14,7 @@ import java.util.Arrays;
  */
 
 public class aa {
-    public static void main(String[] args) throws UnsupportedEncodingException {
+    public static void main(String[] args) throws UnsupportedEncodingException, JSONException {
 
      /*    byte[] b = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 1, 0, 0, 0};
          byte[]  dd ={48, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0};
@@ -74,6 +76,15 @@ public class aa {
         }else{
             System.out.println("aa = " + false);
         }
+
+        String postBody = "{\"data\":{ \"LNG\":\"54545\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
+     /*   JSONArray a = new JSONArray(postBody);
+        System.out.println(a.toString());*/
+
+        System.out.println(postBody);
+
+
+
 
 
     }

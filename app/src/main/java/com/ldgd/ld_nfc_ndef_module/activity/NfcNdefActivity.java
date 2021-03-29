@@ -576,6 +576,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             }
                         }
                         if (cImei == null){
+
                             return;
                         }else{
                             for (int i = 0; i < imeis.size(); i++) {
