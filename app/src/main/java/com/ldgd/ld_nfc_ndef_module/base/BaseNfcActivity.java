@@ -275,7 +275,10 @@ public class BaseNfcActivity extends AppCompatActivity {
         mProgress = ProgressDialog.show(this, "", "请稍等...");
     }
     protected void stopProgress() {
-        mProgress.cancel();
+        if(mProgress!= null){
+            mProgress.cancel();
+        }
+
     }
 
 }

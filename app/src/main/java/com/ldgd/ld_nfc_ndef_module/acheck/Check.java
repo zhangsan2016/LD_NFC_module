@@ -3,6 +3,7 @@ package com.ldgd.ld_nfc_ndef_module.acheck;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
 
 import org.json.JSONException;
+import org.json.JSONStringer;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import java.util.Arrays;
  * 说明：
  */
 
-public class aa {
+public class Check {
     public static void main(String[] args) throws UnsupportedEncodingException, JSONException {
 
      /*    byte[] b = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 1, 0, 0, 0};
@@ -69,19 +70,24 @@ public class aa {
                 typeByte[1] = 3;*/
         System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
 
-        String aa = "4654564654654465";
-        if(aa.contains("54465")){
 
-            System.out.println("aa = " + true);
-        }else{
-            System.out.println("aa = " + false);
-        }
 
         String postBody = "{\"data\":{ \"LNG\":\"54545\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
      /*   JSONArray a = new JSONArray(postBody);
         System.out.println(a.toString());*/
 
         System.out.println(postBody);
+
+
+        JSONStringer jsonstr = new JSONStringer()
+                .object().key("data")
+                .object().key("LNG").value("106.541654")
+                .key("LAT").value("29.803827")
+                .endObject()
+                .key("where").object().key("UUID").value("000000000000000000000022")
+                .endObject().endObject();
+
+        System.out.println();
 
 
 

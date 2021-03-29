@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import com.ldgd.ld_nfc_ndef_module.R;
 import com.ldgd.ld_nfc_ndef_module.base.BaseNfcActivity;
 import com.ldgd.ld_nfc_ndef_module.entity.DataDictionaries;
+import com.ldgd.ld_nfc_ndef_module.entity.json.LoginInfo;
 import com.ldgd.ld_nfc_ndef_module.json.LoginJson;
 import com.ldgd.ld_nfc_ndef_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
@@ -52,6 +53,7 @@ import com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.json.JSONStringer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,6 +70,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.ldgd.ld_nfc_ndef_module.R.id.tb_location;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.replaceBlank;
 
 public class NfcNdefActivity extends BaseNfcActivity {
@@ -111,6 +114,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private AMapLocationClientOption locationOption = null;
     // 当前高德地图定位
     private AMapLocation cAMapLocation;
+    // 登录获取的 Token
+    private String token = null;
 
 
     private Handler myHandler = new Handler() {
@@ -177,6 +182,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
         //初始化定位
         initLocation();
+
+        // 登录获取 token
+        getToken();
 
 
     }
@@ -406,7 +414,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             showToast("当前uuid不能为空");
             return;
         }
-        showProgress();
+        myHandler.sendEmptyMessage(START_WRITE_NFC);
 
         new Thread(new Runnable() {
             @Override
@@ -425,14 +433,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         showToast("连接服务器失败！");
-                        stopProgress();
+                        myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         try {
                             String json = response.body().string();
-                            stopProgress();
+                            myHandler.sendEmptyMessage(STOP_WRITE_NFC);
 
                             // 解析返回过来的json
                             Gson gson = new Gson();
@@ -591,7 +599,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             e.printStackTrace();
                         }*/
 
-                    //    showToast("已经取消");
+                        //    showToast("已经取消");
                     }
                 }).create();
 
@@ -600,34 +608,42 @@ public class NfcNdefActivity extends BaseNfcActivity {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Button btnPositive = writeAlertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                final ToggleButton tbLocation = writeAlertDialog.findViewById(tb_location);
                 btnPositive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // 写入操作执行，先检测数据
-                        checkWrite();
+                        // 判断是否更新经纬度
+                        if (tbLocation.isChecked()) {
+                            // 更新经纬度信息
+                            upLocation();
+
+                        } else {
+                            // 写入操作执行，先检测数据
+                             checkWrite();
+                        }
+
                     }
                 });
 
                 // 经纬度上传监听
-                final ToggleButton tb_location = writeAlertDialog.findViewById(R.id.tb_location);
-                final EditText et_longitude =  writeAlertDialog.findViewById(R.id.et_longitude);
-                final EditText et_latitude =  writeAlertDialog.findViewById(R.id.et_latitude);
-                final LinearLayout ll_uplocation =  writeAlertDialog.findViewById(R.id.ll_uplocation);
-                tb_location.setOnClickListener(new View.OnClickListener() {
+                final EditText et_longitude = writeAlertDialog.findViewById(R.id.et_longitude);
+                final EditText et_latitude = writeAlertDialog.findViewById(R.id.et_latitude);
+                final LinearLayout ll_uplocation = writeAlertDialog.findViewById(R.id.ll_uplocation);
+                tbLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (tb_location.isChecked() == true) {
+                        if (tbLocation.isChecked() == true) {
                             if (cAMapLocation != null) {
                                 et_longitude.setText(cAMapLocation.getLongitude() + "");
                                 et_latitude.setText(cAMapLocation.getLatitude() + "");
                                 ll_uplocation.setVisibility(View.VISIBLE);
 
-                            }else{
-                                tb_location.setChecked(false);
+                            } else {
+                                tbLocation.setChecked(false);
                                 ll_uplocation.setVisibility(View.GONE);
                                 showToast("定位失败，无法获取经纬度信息");
                             }
-                        }else{
+                        } else {
                             ll_uplocation.setVisibility(View.GONE);
                         }
                     }
@@ -635,6 +651,144 @@ public class NfcNdefActivity extends BaseNfcActivity {
             }
         });
 
+
+    }
+
+    /**
+     * 经纬度更新
+     */
+    private void upLocation() {
+
+        if (token == null) {
+            getToken();
+        } else {
+            try {
+                httpUpLocation();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    String regionN, proN, imei, uuid;
+
+    private void httpUpLocation() throws Exception {
+
+        // 解析xml文件，获取url
+        FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+        List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+
+        for (DataDictionaries dataDictionarie : dataDictionaries) {
+            if (dataDictionarie.getName().equals("项目地区")) {
+                regionN = dataDictionarie.getXmValue();
+            } else if (dataDictionarie.getName().equals("项目编号")) {
+                proN = dataDictionarie.getXmValue();
+            } else if (dataDictionarie.getName().equals("IMEI")) {
+                imei = dataDictionarie.getXmValue();
+            }
+        }
+        uuid = regionN + proN + imei;
+        if (uuid != null) {
+
+            String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
+            // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
+            JSONStringer jsonstr = new JSONStringer()
+                    .object().key("data")
+                    .object().key("LNG").value(cAMapLocation.getLongitude())
+                    .key("LAT").value(cAMapLocation.getLatitude())
+                    .endObject()
+                    .key("where").object().key("UUID").value(uuid)
+                    .endObject().endObject();
+            //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
+            RequestBody requestBody = FormBody.create( MediaType.parse("application/json"),jsonstr.toString());
+
+            HttpUtil.sendHttpRequest(url, new Callback() {
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showToast("连接服务器异常！");
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException {
+                    NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+
+                                showToast("更新经纬度成功" + response.body().string());
+
+                           //     checkWrite();
+
+                                myHandler.sendEmptyMessage(STOP_WRITE_NFC);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }
+            }, token, requestBody);
+
+        } else {
+            showToast("uuid 有误，请先读取uuid");
+        }
+
+    }
+
+    private void getToken() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String url = "https://ludeng.stgxy.com:9443/api/user/login";
+              /*  RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "cy")
+                        .add("password", "@@ld9102")
+                        .add("strVerify", "[admin]")
+                        .build();*/
+
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "admin")
+                        .add("password", "Ld@cc0unt")
+                        .add("strVerify", "[admin]")
+                        .build();
+
+
+
+                HttpUtil.sendHttpRequest(url, new Callback() {
+
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        showToast("连接服务器异常！");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+
+
+                        String json = response.body().string();
+                        Gson gson = new Gson();
+                        LoginInfo loginInfo = gson.fromJson(json, LoginInfo.class);
+                        if (loginInfo.getErrno() == 0) {
+                            token = loginInfo.getData().getToken().getToken();
+                        }
+
+                    }
+                }, requestBody);
+            }
+        }).start();
 
     }
 
