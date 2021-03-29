@@ -77,7 +77,7 @@ public class BaseNfcActivity extends AppCompatActivity {
             public void run() {
 
                 if (toast == null) {
-                    toast = Toast.makeText(BaseNfcActivity.this, null, Toast.LENGTH_LONG);
+                    toast = Toast.makeText(BaseNfcActivity.this, null, Toast.LENGTH_SHORT);
                     toast.setText(msg);
                 } else {
                     toast.setText(msg);

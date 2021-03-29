@@ -184,11 +184,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
     /**
      * 初始化定位
      *
-     * @since 2.8.0
      * @author hongming.wang
-     *
+     * @since 2.8.0
      */
-    private void initLocation(){
+    private void initLocation() {
         //初始化client
         locationClient = new AMapLocationClient(this.getApplicationContext());
         locationOption = getDefaultOption();
@@ -200,11 +199,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
             public void onLocationChanged(AMapLocation aMapLocation) {
                 StringBuffer sb = new StringBuffer();
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
-                if(aMapLocation.getErrorCode() == 0){
+                if (aMapLocation.getErrorCode() == 0) {
                     cAMapLocation = aMapLocation;
                     sb.append("经    度    : " + aMapLocation.getLongitude() + "\n");
                     sb.append("纬    度    : " + aMapLocation.getLatitude() + "\n");
-                    Log.e("xx",">>>>>>>>>>>>>>>>>>>>>>>>>  经纬度信息 = " + sb.toString());
+                    Log.e("xx", ">>>>>>>>>>>>>>>>>>>>>>>>>  经纬度信息 = " + sb.toString());
                 }
             }
         });
@@ -214,11 +213,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     /**
      * 默认的定位参数
-     * @since 2.8.0
-     * @author hongming.wang
      *
+     * @author hongming.wang
+     * @since 2.8.0
      */
-    private AMapLocationClientOption getDefaultOption(){
+    private AMapLocationClientOption getDefaultOption() {
         AMapLocationClientOption mOption = new AMapLocationClientOption();
         mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
         mOption.setGpsFirst(false);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
@@ -299,8 +298,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                         List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
                         String baseplateId = null;
                         for (int i = 0; i < dataDictionaries.size(); i++) {
-                            if(dataDictionaries.get(i).getName().equals("执行底板ID")){
-                                baseplateId  = dataDictionaries.get(i).getXmValue();
+                            if (dataDictionaries.get(i).getName().equals("执行底板ID")) {
+                                baseplateId = dataDictionaries.get(i).getXmValue();
                             }
                         }
 
@@ -592,7 +591,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             e.printStackTrace();
                         }*/
 
-                        showToast("已经取消");
+                    //    showToast("已经取消");
                     }
                 }).create();
 
@@ -606,7 +605,31 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     public void onClick(View view) {
                         // 写入操作执行，先检测数据
                         checkWrite();
+                    }
+                });
 
+                // 经纬度上传监听
+                final ToggleButton tb_location = writeAlertDialog.findViewById(R.id.tb_location);
+                final EditText et_longitude =  writeAlertDialog.findViewById(R.id.et_longitude);
+                final EditText et_latitude =  writeAlertDialog.findViewById(R.id.et_latitude);
+                final LinearLayout ll_uplocation =  writeAlertDialog.findViewById(R.id.ll_uplocation);
+                tb_location.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (tb_location.isChecked() == true) {
+                            if (cAMapLocation != null) {
+                                et_longitude.setText(cAMapLocation.getLongitude() + "");
+                                et_latitude.setText(cAMapLocation.getLatitude() + "");
+                                ll_uplocation.setVisibility(View.VISIBLE);
+
+                            }else{
+                                tb_location.setChecked(false);
+                                ll_uplocation.setVisibility(View.GONE);
+                                showToast("定位失败，无法获取经纬度信息");
+                            }
+                        }else{
+                            ll_uplocation.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
@@ -626,33 +649,33 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
             // 如果设备类型为 1 时，需要匹配 IMEI 码
             for (DataDictionaries dataDictionarie : dataDictionaries) {
-                if(dataDictionarie.getName().equals("设备类型")){
-                    if(dataDictionarie.getXmValue().equals("0001")){
+                if (dataDictionarie.getName().equals("设备类型")) {
+                    if (dataDictionarie.getXmValue().equals("0001")) {
                         // 获 MEI 码
-                     List<String> imeis =  NfcDataUtil.parseImeiExcel("IMEI/v_device_lamp.xls", NfcNdefActivity.this);
+                        List<String> imeis = NfcDataUtil.parseImeiExcel("IMEI/v_device_lamp.xls", NfcNdefActivity.this);
 
                         DataDictionaries cImei = null;
                         boolean imeiVerify = false;
                         for (DataDictionaries imei : dataDictionaries) {
-                            if(imei.getName().equals("IMEI")){
+                            if (imei.getName().equals("IMEI")) {
                                 cImei = imei;
                                 break;
                             }
                         }
-                        if (cImei == null){
+                        if (cImei == null) {
 
                             return;
-                        }else{
+                        } else {
                             for (int i = 0; i < imeis.size(); i++) {
-                                if( imeis.get(i).contains(cImei.getXmValue())){
+                                if (imeis.get(i).contains(cImei.getXmValue())) {
                                     imeiVerify = true;
-                                    System.out.println(">>>>>>>>>>>>>>>>> imeiVerify 成功 "  );
+                                    System.out.println(">>>>>>>>>>>>>>>>> imeiVerify 成功 ");
                                     break;
 
                                 }
                             }
                         }
-                        if(!imeiVerify){
+                        if (!imeiVerify) {
                             showToast("IMEI 验证失败！");
                             return;
                         }
@@ -687,7 +710,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
                     // 解析excel
-                  // 校验获取的参数是否符合规定,然后写入
+                    // 校验获取的参数是否符合规定,然后写入
                     NfcDataUtil.writeNfcDeviceInfo2(dataDictionaries, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
@@ -710,7 +733,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                         }
 
-                    }, NfcNdefActivity.this, mTag,payload);
+                    }, NfcNdefActivity.this, mTag, payload);
 
 
                 } catch (Exception e) {
@@ -768,7 +791,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
-
     /**
      * 初始化进度条
      */
@@ -786,96 +808,92 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
+    protected void onPostExecute(byte[] mBuffer) {
 
+        System.out.println("xxxxxxxxx " + Arrays.toString(mBuffer));
+        if (mBuffer != null) {
 
-        protected void onPostExecute(byte[] mBuffer) {
-
-            System.out.println("xxxxxxxxx " + Arrays.toString(mBuffer));
-            if (mBuffer != null) {
-
-                // 判断nfc硬件类型
-                byte[] typeByte = new byte[2];
-             //   System.arraycopy(mBuffer, 3+ 29, typeByte, 0, 2);
-                System.arraycopy(mBuffer, 29, typeByte, 0, 2);
+            // 判断nfc硬件类型
+            byte[] typeByte = new byte[2];
+            //   System.arraycopy(mBuffer, 3+ 29, typeByte, 0, 2);
+            System.arraycopy(mBuffer, 29, typeByte, 0, 2);
                 /*typeByte[0] = 0;
                 typeByte[1] = 3;*/
-                System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) +"  "+  BytesUtil.bytesIntHL(typeByte) );
-                if (BytesUtil.bytesIntHL(typeByte) == 1) {
-                    // 根据类型读取 nfc
-                    readNfcByType("0001_83140000.xls",mBuffer);
-                } else if (BytesUtil.bytesIntHL(typeByte) == 2) {
-                    // 根据类型读取 nfc
-                    readNfcByType("0002_83140000.xls",mBuffer);
-                }  else if (BytesUtil.bytesIntHL(typeByte) == 3) {
-                    // 根据类型读取 nfc
-                    readNfcByType("0003_83140000.xls",mBuffer);
-                } else {
-                    showToast("当前类型无法解析");
-                }
-            }
-        }
-
-        /**
-         *  根据 nfc 的标识类型读取内容信息
-         * @param nfcFileName 类型对应的 nfc 文件名
-         */
-        private void readNfcByType(String nfcFileName,byte[] mBuffer) {
-
-
-            LogUtil.e("nfcFileName = " + nfcFileName);
-            // 解析成xml文件
-            File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, nfcFileName, NFC_DATA_CACHE, NfcNdefActivity.this);
-
-            if (cacheFile != null) {
-                try {
-
-                    LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
-
-                    // 更新 Dialog
-                    if (writeAlertDialog.isShowing()) {
-                        // 解析xml文件，得到所有参数
-                        FileInputStream inputStream = new FileInputStream(cacheFile);
-                        List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
-                        String baseplateId = null;
-                        for (int i = 0; i < dataDictionaries.size(); i++) {
-                            if(dataDictionaries.get(i).getName().equals("执行底板ID")){
-                                baseplateId  = dataDictionaries.get(i).getXmValue();
-                            }
-                        }
-
-
-                        // 通过 Handle 更新 AlertDialog
-                        Message tempMsg = myHandler.obtainMessage();
-                        tempMsg.what = HANDLE_UP_WRITE;
-                        tempMsg.obj = baseplateId.replaceAll(" +", "");
-                        myHandler.sendMessage(tempMsg);
-                    }
-
-                    if (et_text_editor.getText().toString().equals("")) {
-                        //读取文件流
-                        FileInputStream fis = new FileInputStream(cacheFile);
-                        int size = fis.available();
-                        System.out.println("可读取的字节数 " + size);
-                        byte[] buffer = new byte[size];
-                        fis.read(buffer);
-                        String txt = new String(buffer, 0, buffer.length);
-                        //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
-                        et_text_editor.setText(NfcDataUtil.formatXml(txt));
-                        // 初始化进度条
-                        initProgressBar();
-                        fis.close();
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            System.out.println("xxxxxxxxx " + Arrays.toString(typeByte) + "  " + BytesUtil.bytesIntHL(typeByte));
+            if (BytesUtil.bytesIntHL(typeByte) == 1) {
+                // 根据类型读取 nfc
+                readNfcByType("0001_83140000.xls", mBuffer);
+            } else if (BytesUtil.bytesIntHL(typeByte) == 2) {
+                // 根据类型读取 nfc
+                readNfcByType("0002_83140000.xls", mBuffer);
+            } else if (BytesUtil.bytesIntHL(typeByte) == 3) {
+                // 根据类型读取 nfc
+                readNfcByType("0003_83140000.xls", mBuffer);
             } else {
-                Toast.makeText(NfcNdefActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
+                showToast("当前类型无法解析");
             }
         }
+    }
+
+    /**
+     * 根据 nfc 的标识类型读取内容信息
+     *
+     * @param nfcFileName 类型对应的 nfc 文件名
+     */
+    private void readNfcByType(String nfcFileName, byte[] mBuffer) {
 
 
+        LogUtil.e("nfcFileName = " + nfcFileName);
+        // 解析成xml文件
+        File cacheFile = NfcDataUtil.parseBytesToXml(mBuffer, nfcFileName, NFC_DATA_CACHE, NfcNdefActivity.this);
 
+        if (cacheFile != null) {
+            try {
+
+                LogUtil.e("writeAlertDialog.isShowing() = " + writeAlertDialog.isShowing());
+
+                // 更新 Dialog
+                if (writeAlertDialog.isShowing()) {
+                    // 解析xml文件，得到所有参数
+                    FileInputStream inputStream = new FileInputStream(cacheFile);
+                    List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+                    String baseplateId = null;
+                    for (int i = 0; i < dataDictionaries.size(); i++) {
+                        if (dataDictionaries.get(i).getName().equals("执行底板ID")) {
+                            baseplateId = dataDictionaries.get(i).getXmValue();
+                        }
+                    }
+
+
+                    // 通过 Handle 更新 AlertDialog
+                    Message tempMsg = myHandler.obtainMessage();
+                    tempMsg.what = HANDLE_UP_WRITE;
+                    tempMsg.obj = baseplateId.replaceAll(" +", "");
+                    myHandler.sendMessage(tempMsg);
+                }
+
+                if (et_text_editor.getText().toString().equals("")) {
+                    //读取文件流
+                    FileInputStream fis = new FileInputStream(cacheFile);
+                    int size = fis.available();
+                    System.out.println("可读取的字节数 " + size);
+                    byte[] buffer = new byte[size];
+                    fis.read(buffer);
+                    String txt = new String(buffer, 0, buffer.length);
+                    //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
+                    et_text_editor.setText(NfcDataUtil.formatXml(txt));
+                    // 初始化进度条
+                    initProgressBar();
+                    fis.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(NfcNdefActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     @Override
@@ -945,16 +963,16 @@ public class NfcNdefActivity extends BaseNfcActivity {
         }*/
 
 
-
     }
 
 
     private byte[] payload;
+
     private void readNfcTag(Intent intent) {
 
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             //   Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            Parcelable[] rawMsgs=intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             Log.d("textRecord", "长度 = " + rawMsgs.length);
             NdefMessage msgs[] = null;
             int contentSize = 0;
@@ -970,14 +988,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     NdefRecord record = msgs[0].getRecords()[0];
                     payload = record.getPayload();
 
-                //   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx " + Arrays.toString(payload2));
+                    //   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx " + Arrays.toString(payload2));
 
-                //    et_text_editor.setText(Arrays.toString(payload));
+                    //    et_text_editor.setText(Arrays.toString(payload));
 
                     // 获得数据
                     byte[] langBytes = Locale.CHINA.getLanguage().getBytes(Charset.forName("US-ASCII"));
                     int headLong = 1 + langBytes.length;
-                    byte[] data = new byte[ payload.length - headLong];
+                    byte[] data = new byte[payload.length - headLong];
                     System.arraycopy(payload, headLong, data, 0, payload.length - headLong);
 
 
@@ -1030,8 +1048,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -1045,11 +1061,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
     /**
      * 销毁定位
      *
-     * @since 2.8.0
      * @author hongming.wang
-     *
+     * @since 2.8.0
      */
-    private void destroyLocation(){
+    private void destroyLocation() {
         if (null != locationClient) {
             /**
              * 如果AMapLocationClient是在当前Activity实例化的，
