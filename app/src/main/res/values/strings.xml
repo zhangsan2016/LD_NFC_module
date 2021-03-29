@@ -18,4 +18,10 @@
         \n请点击”设置”->在应用程序中找到”popon”->权限管理->%2$s->”允许”即可 </string>
     <string name="camera">摄像头(相机)</string>
 
+    <string name="notifyTitle">提示</string>
+    <string name="notifyMsg">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。</string>
+    <string name="setting">设置</string>
+    <string name="cancel">取消</string>
+
+
 </resources>
