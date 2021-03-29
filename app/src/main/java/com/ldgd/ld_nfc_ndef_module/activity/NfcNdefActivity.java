@@ -199,7 +199,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
             public void onLocationChanged(AMapLocation aMapLocation) {
                 StringBuffer sb = new StringBuffer();
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
-                Log.e("xx",">>>>>>>>>>>>>>>>>>>>>>>>>  aMapLocation.getErrorCode() = " + aMapLocation.getErrorCode());
                 if(aMapLocation.getErrorCode() == 0){
                     sb.append("经    度    : " + aMapLocation.getLongitude() + "\n");
                     sb.append("纬    度    : " + aMapLocation.getLatitude() + "\n");
@@ -254,7 +253,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
             @Override
             public void onRight(View v, Drawable right) {
-
 
                 //动态权限申请
                 if (ContextCompat.checkSelfPermission(NfcNdefActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
