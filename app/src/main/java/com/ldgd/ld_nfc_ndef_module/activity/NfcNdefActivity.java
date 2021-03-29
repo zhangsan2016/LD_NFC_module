@@ -117,6 +117,95 @@ public class NfcNdefActivity extends BaseNfcActivity {
     // 登录获取的 Token
     private String token = null;
 
+    private String cxml = "\n" +
+            "<当前读取信息>\n" +
+            "  <设备类型>0001</设备类型>\n" +
+            "  <更新标志>58</更新标志>\n" +
+            "  <CRC>0000</CRC>\n" +
+            "  <安装测试模式>0</安装测试模式>\n" +
+            "  <主灯1段调光时>18</主灯1段调光时>\n" +
+            "  <主灯1段调光分>30</主灯1段调光分>\n" +
+            "  <主灯1段调光亮度>80</主灯1段调光亮度>\n" +
+            "  <主灯2段调光时>21</主灯2段调光时>\n" +
+            "  <主灯2段调光分>0</主灯2段调光分>\n" +
+            "  <主灯2段调光亮度>80</主灯2段调光亮度>\n" +
+            "  <主灯3段调光时>23</主灯3段调光时>\n" +
+            "  <主灯3段调光分>0</主灯3段调光分>\n" +
+            "  <主灯3段调光亮度>80</主灯3段调光亮度>\n" +
+            "  <主灯4段调光时>1</主灯4段调光时>\n" +
+            "  <主灯4段调光分>0</主灯4段调光分>\n" +
+            "  <主灯4段调光亮度>80</主灯4段调光亮度>\n" +
+            "  <主灯5段调光时>4</主灯5段调光时>\n" +
+            "  <主灯5段调光分>0</主灯5段调光分>\n" +
+            "  <主灯5段调光亮度>80</主灯5段调光亮度>\n" +
+            "  <主灯6段调光时>7</主灯6段调光时>\n" +
+            "  <主灯6段调光分>30</主灯6段调光分>\n" +
+            "  <主灯6段调光亮度>0</主灯6段调光亮度>\n" +
+            "  <副灯1段调光时>18</副灯1段调光时>\n" +
+            "  <副灯1段调光分>30</副灯1段调光分>\n" +
+            "  <副灯1段调光亮度>80</副灯1段调光亮度>\n" +
+            "  <副灯2段调光时>21</副灯2段调光时>\n" +
+            "  <副灯2段调光分>0</副灯2段调光分>\n" +
+            "  <副灯2段调光亮度>80</副灯2段调光亮度>\n" +
+            "  <副灯3段调光时>23</副灯3段调光时>\n" +
+            "  <副灯3段调光分>0</副灯3段调光分>\n" +
+            "  <副灯3段调光亮度>80</副灯3段调光亮度>\n" +
+            "  <副灯4段调光时>1</副灯4段调光时>\n" +
+            "  <副灯4段调光分>0</副灯4段调光分>\n" +
+            "  <副灯4段调光亮度>80</副灯4段调光亮度>\n" +
+            "  <副灯5段调光时>4</副灯5段调光时>\n" +
+            "  <副灯5段调光分>0</副灯5段调光分>\n" +
+            "  <副灯5段调光亮度>80</副灯5段调光亮度>\n" +
+            "  <副灯6段调光时>7</副灯6段调光时>\n" +
+            "  <副灯6段调光分>30</副灯6段调光分>\n" +
+            "  <副灯6段调光亮度>0</副灯6段调光亮度>\n" +
+            "  <过流保护开关>1</过流保护开关>\n" +
+            "  <漏电保护开关>0</漏电保护开关>\n" +
+            "  <照度开灯开关>0</照度开灯开关>\n" +
+            "  <过压保护阈值>250(V)</过压保护阈值>\n" +
+            "  <欠压保护阈值>120(V)</欠压保护阈值>\n" +
+            "  <过流保护阈值>5(A)</过流保护阈值>\n" +
+            "  <欠流保护阈值>0(A)</欠流保护阈值>\n" +
+            "  <报警开关>-1</报警开关>\n" +
+            "  <经纬度辅助开灯开关>1</经纬度辅助开灯开关>\n" +
+            "  <漏电保护阈值>40(mA)</漏电保护阈值>\n" +
+            "  <照度开灯阈值>30(Lux)</照度开灯阈值>\n" +
+            "  <照度关灯阈值>5(Lux)</照度关灯阈值>\n" +
+            "  <灯杆倒塌报警开关>0</灯杆倒塌报警开关>\n" +
+            "  <项目地区>400700</项目地区>\n" +
+            "  <项目编号>00</项目编号>\n" +
+            "  <IMEI>865976051596240</IMEI>\n" +
+            "  <维修IMEI>0</维修IMEI>\n" +
+            "  <执行底板ID>0</执行底板ID>\n" +
+            "  <NC>0</NC>\n" +
+            "  <角度校准标志>0</角度校准标志>\n" +
+            "  <校准角度>0(度)</校准角度>\n" +
+            "  <角度报警阈值误差>0</角度报警阈值误差>\n" +
+            "  <过压报警标志>1</过压报警标志>\n" +
+            "  <欠压报警标志>0</欠压报警标志>\n" +
+            "  <过流报警标志>0</过流报警标志>\n" +
+            "  <欠流报警标志>0</欠流报警标志>\n" +
+            "  <漏电报警标志>0</漏电报警标志>\n" +
+            "  <灯杆倒塌报警标志>0</灯杆倒塌报警标志>\n" +
+            "  <灯杆碰撞报警标志>1</灯杆碰撞报警标志>\n" +
+            "  <温度异常报警标志>0</温度异常报警标志>\n" +
+            "  <重启计数>8(次)</重启计数>\n" +
+            "  <X方向加速度初始值>0</X方向加速度初始值>\n" +
+            "  <X方向加速度初始值小数>2048</X方向加速度初始值小数>\n" +
+            "  <Y方向加速度初始值>0</Y方向加速度初始值>\n" +
+            "  <Y方向加速度初始值小数>1536</Y方向加速度初始值小数>\n" +
+            "  <Z方向加速度初始值>0</Z方向加速度初始值>\n" +
+            "  <Z方向加速度初始值小数>9472</Z方向加速度初始值小数>\n" +
+            "  <经度整数>0</经度整数>\n" +
+            "  <经度小数>0</经度小数>\n" +
+            "  <纬度整数>0</纬度整数>\n" +
+            "  <纬度小数>0</纬度小数>\n" +
+            "  <远程服务器域名或IP>ludeng.stgxy.com</远程服务器域名或IP>\n" +
+            "  <远程端口>50001</远程端口>\n" +
+            "  <用户名>device</用户名>\n" +
+            "  <密码>!@Ddfox136030</密码>\n" +
+            "</当前读取信息>\n";
+
 
     private Handler myHandler = new Handler() {
         @Override
@@ -185,6 +274,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
         // 登录获取 token
         getToken();
+
+
+
 
 
     }
@@ -376,15 +468,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 String xmlStr = et_text_editor.getText().toString();
                 if (!xmlStr.equals("")) {
                     File file = new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
-                    try {
-                        NfcDataUtil.saveXml(xmlStr, file);
-                        showToast("保存成功");
-                        progressbar.setSecondaryProgress(100);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        showToast("保存出错");
-                        progressbar.setSecondaryProgress(0);
-                    }
+                    saveXmlCacheDir(xmlStr, file);
                 } else {
                     showToast("当前内容为空,请您触碰NFC设备，读取设备信息");
                 }
@@ -399,6 +483,18 @@ public class NfcNdefActivity extends BaseNfcActivity {
         });
 
 
+    }
+
+    private void saveXmlCacheDir(String xmlStr, File file) {
+        try {
+            NfcDataUtil.saveXml(xmlStr, file);
+            showToast("保存成功");
+            progressbar.setSecondaryProgress(100);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("保存出错");
+            progressbar.setSecondaryProgress(0);
+        }
     }
 
     /**
@@ -725,7 +821,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                 showToast("更新经纬度成功" + response.body().string());
 
-                           //     checkWrite();
+                                checkWrite();
 
                                 myHandler.sendEmptyMessage(STOP_WRITE_NFC);
                             } catch (IOException e) {
@@ -797,8 +893,35 @@ public class NfcNdefActivity extends BaseNfcActivity {
         try {
 
             // 解析xml文件，得到所有参数
-            FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
-            List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+
+         /*   FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+            List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);*/
+
+           /* InputStream is = NfcNdefActivity.this.getAssets().open("xml/NfcDataCache.xml");
+            FileInputStream inputStream = (FileInputStream) (is);
+            List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);*/
+
+
+            FileInputStream inputStream;
+            List<DataDictionaries> dataDictionaries;
+            final ToggleButton tbDefault = writeAlertDialog.findViewById(R.id.tb_default);
+            if(tbDefault.isChecked()){
+                File file = new File(NfcNdefActivity.this.getCacheDir(), "moren.xml");
+                if(!file.exists()){
+                    saveXmlCacheDir(cxml,file);
+                }
+                inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), "moren.xml"));
+                dataDictionaries  = NfcDataUtil.parseXml2(inputStream);
+            }else {
+                 inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+               dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+            }
+
+
+
+
+
+
 
 
             // 如果设备类型为 1 时，需要匹配 IMEI 码

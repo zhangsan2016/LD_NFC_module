@@ -63,6 +63,33 @@
             android:textOn="" />
     </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="写入默认配置" />
+
+        <ToggleButton
+            android:id="@+id/tb_default"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/togglebutton"
+            android:text="sdfsdf"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/ll_uplocation"
         android:layout_width="match_parent"
