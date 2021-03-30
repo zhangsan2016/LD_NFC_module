@@ -122,43 +122,43 @@ public class NfcNdefActivity extends BaseNfcActivity {
             "  <设备类型>0001</设备类型>\n" +
             "  <更新标志>58</更新标志>\n" +
             "  <CRC>0000</CRC>\n" +
-            "  <安装测试模式>0</安装测试模式>\n" +
+            "  <安装测试模式>1</安装测试模式>\n" +
             "  <主灯1段调光时>18</主灯1段调光时>\n" +
             "  <主灯1段调光分>30</主灯1段调光分>\n" +
-            "  <主灯1段调光亮度>80</主灯1段调光亮度>\n" +
+            "  <主灯1段调光亮度>100</主灯1段调光亮度>\n" +
             "  <主灯2段调光时>21</主灯2段调光时>\n" +
             "  <主灯2段调光分>0</主灯2段调光分>\n" +
-            "  <主灯2段调光亮度>80</主灯2段调光亮度>\n" +
+            "  <主灯2段调光亮度>100</主灯2段调光亮度>\n" +
             "  <主灯3段调光时>23</主灯3段调光时>\n" +
             "  <主灯3段调光分>0</主灯3段调光分>\n" +
-            "  <主灯3段调光亮度>80</主灯3段调光亮度>\n" +
+            "  <主灯3段调光亮度>100</主灯3段调光亮度>\n" +
             "  <主灯4段调光时>1</主灯4段调光时>\n" +
             "  <主灯4段调光分>0</主灯4段调光分>\n" +
-            "  <主灯4段调光亮度>80</主灯4段调光亮度>\n" +
+            "  <主灯4段调光亮度>100</主灯4段调光亮度>\n" +
             "  <主灯5段调光时>4</主灯5段调光时>\n" +
             "  <主灯5段调光分>0</主灯5段调光分>\n" +
-            "  <主灯5段调光亮度>80</主灯5段调光亮度>\n" +
+            "  <主灯5段调光亮度>100</主灯5段调光亮度>\n" +
             "  <主灯6段调光时>7</主灯6段调光时>\n" +
             "  <主灯6段调光分>30</主灯6段调光分>\n" +
-            "  <主灯6段调光亮度>0</主灯6段调光亮度>\n" +
+            "  <主灯6段调光亮度>100</主灯6段调光亮度>\n" +
             "  <副灯1段调光时>18</副灯1段调光时>\n" +
             "  <副灯1段调光分>30</副灯1段调光分>\n" +
-            "  <副灯1段调光亮度>80</副灯1段调光亮度>\n" +
+            "  <副灯1段调光亮度>100</副灯1段调光亮度>\n" +
             "  <副灯2段调光时>21</副灯2段调光时>\n" +
             "  <副灯2段调光分>0</副灯2段调光分>\n" +
-            "  <副灯2段调光亮度>80</副灯2段调光亮度>\n" +
+            "  <副灯2段调光亮度>100</副灯2段调光亮度>\n" +
             "  <副灯3段调光时>23</副灯3段调光时>\n" +
             "  <副灯3段调光分>0</副灯3段调光分>\n" +
-            "  <副灯3段调光亮度>80</副灯3段调光亮度>\n" +
+            "  <副灯3段调光亮度>100</副灯3段调光亮度>\n" +
             "  <副灯4段调光时>1</副灯4段调光时>\n" +
             "  <副灯4段调光分>0</副灯4段调光分>\n" +
-            "  <副灯4段调光亮度>80</副灯4段调光亮度>\n" +
+            "  <副灯4段调光亮度>100</副灯4段调光亮度>\n" +
             "  <副灯5段调光时>4</副灯5段调光时>\n" +
             "  <副灯5段调光分>0</副灯5段调光分>\n" +
-            "  <副灯5段调光亮度>80</副灯5段调光亮度>\n" +
+            "  <副灯5段调光亮度>100</副灯5段调光亮度>\n" +
             "  <副灯6段调光时>7</副灯6段调光时>\n" +
             "  <副灯6段调光分>30</副灯6段调光分>\n" +
-            "  <副灯6段调光亮度>0</副灯6段调光亮度>\n" +
+            "  <副灯6段调光亮度>100</副灯6段调光亮度>\n" +
             "  <过流保护开关>1</过流保护开关>\n" +
             "  <漏电保护开关>0</漏电保护开关>\n" +
             "  <照度开灯开关>0</照度开灯开关>\n" +
@@ -167,7 +167,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             "  <过流保护阈值>5(A)</过流保护阈值>\n" +
             "  <欠流保护阈值>0(A)</欠流保护阈值>\n" +
             "  <报警开关>-1</报警开关>\n" +
-            "  <经纬度辅助开灯开关>1</经纬度辅助开灯开关>\n" +
+            "  <经纬度辅助开灯开关>0</经纬度辅助开灯开关>\n" +
             "  <漏电保护阈值>40(mA)</漏电保护阈值>\n" +
             "  <照度开灯阈值>30(Lux)</照度开灯阈值>\n" +
             "  <照度关灯阈值>5(Lux)</照度关灯阈值>\n" +
@@ -757,6 +757,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
         if (token == null) {
             getToken();
+            showToast("当前 token 为空，请重新写入！");
         } else {
             try {
                 httpUpLocation();
@@ -788,12 +789,17 @@ public class NfcNdefActivity extends BaseNfcActivity {
         uuid = regionN + proN + imei;
         if (uuid != null) {
 
+            // 获取 Dialog 中的经纬度
+            String longitude = ((EditText)writeAlertDialog.findViewById(R.id.et_longitude)).getText().toString();
+            String latitude = ((EditText)writeAlertDialog.findViewById(R.id.et_latitude)).getText().toString();
+
+
             String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
             // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
             JSONStringer jsonstr = new JSONStringer()
                     .object().key("data")
-                    .object().key("LNG").value(cAMapLocation.getLongitude())
-                    .key("LAT").value(cAMapLocation.getLatitude())
+                    .object().key("LNG").value(longitude)
+                    .key("LAT").value(latitude)
                     .endObject()
                     .key("where").object().key("UUID").value(uuid)
                     .endObject().endObject();
@@ -853,10 +859,17 @@ public class NfcNdefActivity extends BaseNfcActivity {
                         .add("strVerify", "[admin]")
                         .build();*/
 
-                RequestBody requestBody = new FormBody.Builder()
+              /*  RequestBody requestBody = new FormBody.Builder()
                         .add("strTemplate", "{\"ischeck\":$data.rows}")
                         .add("username", "admin")
                         .add("password", "Ld@cc0unt")
+                        .add("strVerify", "[admin]")
+                        .build();*/
+
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "cy")
+                        .add("password", "@@ld9102")
                         .add("strVerify", "[admin]")
                         .build();
 
