@@ -304,6 +304,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     sb.append("经    度    : " + aMapLocation.getLongitude() + "\n");
                     sb.append("纬    度    : " + aMapLocation.getLatitude() + "\n");
                     Log.e("xx", ">>>>>>>>>>>>>>>>>>>>>>>>>  经纬度信息 = " + sb.toString());
+
+
                 }
             }
         });
