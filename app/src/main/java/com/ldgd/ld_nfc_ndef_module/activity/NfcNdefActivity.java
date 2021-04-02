@@ -940,7 +940,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
             // 如果设备类型为 1 时，需要匹配 IMEI 码
-            for (DataDictionaries dataDictionarie : dataDictionaries) {
+         /*   for (DataDictionaries dataDictionarie : dataDictionaries) {
                 if (dataDictionarie.getName().equals("设备类型")) {
                     if (dataDictionarie.getXmValue().equals("0001")) {
                         // 获 MEI 码
@@ -973,7 +973,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                         }
                     }
                 }
-            }
+            }*/
 
             // 写入
             writeNfc(dataDictionaries);
