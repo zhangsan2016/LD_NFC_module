@@ -36,12 +36,17 @@
         android:layout_gravity="center"
         android:text="缓存配置将覆盖NFC设备信息" />-->
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="horizontal">
 
         <TextView
@@ -69,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="horizontal">
 
         <TextView
@@ -105,7 +110,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="116.372709"
+            android:layout_weight="1"
+            android:gravity="center"
             android:hint="经度"/>
 
         <TextView
@@ -119,11 +125,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="39.937929"
+            android:layout_weight="1"
+            android:gravity="center"
             android:hint="纬度" />
 
 
     </LinearLayout>
+
+</LinearLayout>
+
 
 
     <TextView

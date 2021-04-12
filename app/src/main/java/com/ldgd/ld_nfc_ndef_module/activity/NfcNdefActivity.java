@@ -109,6 +109,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private ProgressBar progressbar;
     private AlertDialog writeAlertDialog;
     private Button bt_uploading;
+    private  TextView   tv_location;
 
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -249,6 +250,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     };
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -277,6 +279,16 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] paramArrayOfInt) {
+        super.onRequestPermissionsResult(requestCode, permissions, paramArrayOfInt);
+
+        // 停止定位
+        locationClient.stopLocation();
+        // 启动定位
+        locationClient.startLocation();
 
 
     }
@@ -301,6 +313,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
                 if (aMapLocation.getErrorCode() == 0) {
                     cAMapLocation = aMapLocation;
+
+                    tv_location.setText( aMapLocation.getLongitude() + " / " + aMapLocation.getLatitude());
                     sb.append("经    度    : " + aMapLocation.getLongitude() + "\n");
                     sb.append("纬    度    : " + aMapLocation.getLatitude() + "\n");
                     Log.e("xx", ">>>>>>>>>>>>>>>>>>>>>>>>>  经纬度信息 = " + sb.toString());
@@ -653,6 +667,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         bt_clear = (Button) this.findViewById(R.id.bt_clear);
         progressbar = (ProgressBar) this.findViewById(R.id.progressbar);
         bt_uploading = (Button) this.findViewById(R.id.bt_uploading);
+        tv_location  = (TextView) this.findViewById(R.id.tv_location);
 
         // 清除当前界面信息
         clearInterface();
@@ -726,6 +741,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 // 经纬度上传监听
                 final EditText et_longitude = writeAlertDialog.findViewById(R.id.et_longitude);
                 final EditText et_latitude = writeAlertDialog.findViewById(R.id.et_latitude);
+                if (cAMapLocation != null) {
+                    et_longitude.setText(cAMapLocation.getLongitude() + "");
+                    et_latitude.setText(cAMapLocation.getLatitude() + "");
+
+                }
                 final LinearLayout ll_uplocation = writeAlertDialog.findViewById(R.id.ll_uplocation);
                 tbLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
