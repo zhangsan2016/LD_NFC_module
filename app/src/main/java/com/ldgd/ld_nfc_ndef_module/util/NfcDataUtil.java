@@ -130,6 +130,10 @@ public class NfcDataUtil {
             System.arraycopy(mBuffer, dictionaries.getStartAddress()+threshold, byteData, 0, dictionaries.getTakeByte());
             dictionaries.setValue(byteData);
 
+            if("重启计数".equals(dictionaries.getName())){
+                System.out.println("重启计数 = " + Arrays.toString(byteData));
+            }
+
  /*           if("重启计数".equals(dictionaries.getName())){
                 System.out.println("重启计数 = " + Arrays.toString(byteData));
             }*/
