@@ -53,6 +53,7 @@ import com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.json.JSONException;
 import org.json.JSONStringer;
 
 import java.io.File;
@@ -71,6 +72,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.ldgd.ld_nfc_ndef_module.R.id.tb_location;
+import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.dataDictionaries;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.replaceBlank;
 
 public class NfcNdefActivity extends BaseNfcActivity {
@@ -215,7 +217,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
             switch (msg.what) {
                 case HANDLE_UP_WRITE:
 
-                    LogUtil.e("xxx HANDLE_UP_WRITE");
                     String uuid = (String) msg.obj;
                     if (writeAlertDialog.isShowing()) {
                         TextView tv_cache_nfcuid = writeAlertDialog.findViewById(R.id.tv_write_nfcuid);
@@ -418,7 +419,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                 baseplateId = dataDictionaries.get(i).getXmValue();
                             }
                         }
-
 
                         // 通过 Handle 更新 AlertDialog
                         Message tempMsg = myHandler.obtainMessage();
@@ -653,6 +653,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     private void initView() {
 
+        // 临时，初始化电参数据上传服务器
+        initLight();
+
         //将Activity传入以便获取contentView
         AutoFitKeyBoardUtil.getInstance().assistActivity(this);
 
@@ -772,6 +775,87 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     }
 
+    Button bt_nfc_light_submit;
+    EditText tv_device_info_UUID;
+    String currentUuid;
+    private void initLight() {
+
+        // 获取保存的数据
+        /*SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        boolean b = sharedPrefs.getBoolean(Config.KEY_AUTO_FOCUS, true);*/
+
+
+        tv_device_info_UUID = (EditText) this.findViewById(R.id.tv_device_info_UUID);
+        bt_nfc_light_submit = (Button) this.findViewById(R.id.bt_nfc_light_submit);
+        bt_nfc_light_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                if (currentUuid != null) {
+                    // 获取 Dialog 中的经纬度
+              /*      String longitude = ((EditText)writeAlertDialog.findViewById(R.id.et_longitude)).getText().toString();
+                    String latitude = ((EditText)writeAlertDialog.findViewById(R.id.et_latitude)).getText().toString();*/
+
+
+                    //    String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
+                    String url = "https://iot2.sz-luoding.com:2888/api/device_lamp/list";
+                    // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
+                    JSONStringer jsonstr = null;
+                    try {
+                        jsonstr = new JSONStringer()
+                                .object().key("size").value(2000)
+                                .key("where").object().key("UUID").value(currentUuid)
+                                .endObject().endObject();
+                        LogUtil.e("jsonstr = " + jsonstr.toString());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
+                    RequestBody requestBody = FormBody.create( MediaType.parse("application/json"),jsonstr.toString());
+
+                    HttpUtil.sendHttpRequest(url, new Callback() {
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showToast("连接服务器异常！");
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(Call call, final Response response) throws IOException {
+                            NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+
+                                        showToast("更新经纬度成功" + response.body().string());
+
+                                        myHandler.sendEmptyMessage(STOP_WRITE_NFC);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+                        }
+                    }, token, requestBody);
+
+                } else {
+                    showToast("uuid 有误，请先读取uuid");
+                }
+            }
+        });
+
+    }
+
     /**
      * 经纬度更新
      */
@@ -792,7 +876,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
     String regionN, proN, imei, uuid;
-
     private void httpUpLocation() throws Exception {
 
         // 解析xml文件，获取url
@@ -873,6 +956,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             @Override
             public void run() {
 
+             //   String url = "https://ludeng.stgxy.com:9443/api/user/login";
                 String url = "https://ludeng.stgxy.com:9443/api/user/login";
               /*  RequestBody requestBody = new FormBody.Builder()
                         .add("strTemplate", "{\"ischeck\":$data.rows}")
@@ -1173,9 +1257,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     for (int i = 0; i < dataDictionaries.size(); i++) {
                         if (dataDictionaries.get(i).getName().equals("执行底板ID")) {
                             baseplateId = dataDictionaries.get(i).getXmValue();
+                            break;
                         }
                     }
-
 
                     // 通过 Handle 更新 AlertDialog
                     Message tempMsg = myHandler.obtainMessage();
@@ -1198,6 +1282,20 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     initProgressBar();
                     fis.close();
                 }
+
+                // 获取uuid
+                for (int i = 0; i < dataDictionaries.size(); i++) {
+                    if (dataDictionaries.get(i).getName().equals("项目地区")) {
+                        regionN = dataDictionaries.get(i).getXmValue();
+                    } else if (dataDictionaries.get(i).getName().equals("项目编号")) {
+                        proN = dataDictionaries.get(i).getXmValue();
+                    } else if (dataDictionaries.get(i).getName().equals("IMEI")) {
+                        imei = dataDictionaries.get(i).getXmValue();
+                    }
+                }
+                currentUuid  = regionN + proN + imei;
+                tv_device_info_UUID.setText(currentUuid);
+
 
             } catch (Exception e) {
                 e.printStackTrace();
