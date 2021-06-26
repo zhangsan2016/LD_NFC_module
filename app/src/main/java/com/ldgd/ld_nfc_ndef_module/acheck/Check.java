@@ -90,7 +90,7 @@ public class Check {
         System.out.println();
 
 
-
+      //  {"Power_Manufacturer": "英飞特","Lamp_Manufacturer": "77"}
 
 
     }

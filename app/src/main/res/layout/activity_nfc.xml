@@ -40,7 +40,7 @@
                         android:text="UUID  " />
 
                     <EditText
-                        android:id="@+id/tv_device_info_UUID"
+                        android:id="@+id/et_device_info_UUID"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                         android:text="名称  " />
 
                     <EditText
-                        android:id="@+id/tv_device_info_name"
+                        android:id="@+id/et_device_info_name"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -85,6 +85,7 @@
                         android:text="经度  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lat"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -105,6 +106,7 @@
                         android:text="纬度  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lng"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -126,6 +128,7 @@
                         android:text="灯杆直径  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lamp_diameter"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -146,6 +149,7 @@
                         android:text="电源出厂商  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_power_manufacturer"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -166,6 +170,7 @@
                         android:text="灯具额定电流  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lamp_ratedCurrent"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -186,6 +191,7 @@
                         android:text="灯具额定电压  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lamp_ratedvoltage"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -206,6 +212,7 @@
                         android:text="灯具类型  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lampType"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -226,6 +233,7 @@
                         android:text="灯具厂商  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lamp_manufacturer"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -246,6 +254,7 @@
                         android:text="灯具数  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_lamp_num"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -266,31 +275,14 @@
                         android:text="灯具出厂日期  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_poleProductionDate"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/fr_device_info_text"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="灯具出厂日期  " />
-
-                    <EditText
-                        style="@style/fr_device_info_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -306,6 +298,7 @@
                         android:text="灯杆高度  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_pole_height"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -326,6 +319,7 @@
                         android:text="总额定功率  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_rated_power"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -346,6 +340,7 @@
                         android:text="通讯方式  " />
 
                     <EditText
+                        android:id="@+id/et_device_info_subcommunicate_mode"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
