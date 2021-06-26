@@ -784,6 +784,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             et_device_info_rated_power, et_device_info_subcommunicate_mode;
     String currentUuid;
     Gson gson = new Gson();
+
     private void initLight() {
 
         et_device_info_UUID = (EditText) this.findViewById(R.id.et_device_info_UUID);
@@ -802,8 +803,29 @@ public class NfcNdefActivity extends BaseNfcActivity {
         et_device_info_rated_power = (EditText) this.findViewById(R.id.et_device_info_rated_power);
         et_device_info_subcommunicate_mode = (EditText) this.findViewById(R.id.et_device_info_subcommunicate_mode);
 
+        // 获取保存数据
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
+        String lampData = prefs.getString(Config.KEY_DEVICE_LAMP_DATA, "");
+        if (lampData != ""){
+            LampEditData lampEditData =  gson.fromJson(lampData,LampEditData.class);
+            et_device_info_UUID.setText(lampEditData.getUUID());
+            et_device_info_name.setText(lampEditData.getNAME());
+            et_device_info_lat.setText(lampEditData.getLAT());
+            et_device_info_lng.setText(lampEditData.getLNG());
+            et_device_info_lamp_diameter.setText(lampEditData.getLampDiameter());
+            et_device_info_power_manufacturer.setText(lampEditData.getPower_Manufacturer());
+            et_device_info_lamp_ratedCurrent.setText(lampEditData.getLamp_RatedCurrent());
+            et_device_info_lamp_ratedvoltage.setText(lampEditData.getLamp_Ratedvoltage());
+            et_device_info_lampType.setText(lampEditData.getLampType());
+            et_device_info_lamp_manufacturer.setText(lampEditData.getLamp_Manufacturer());
+            et_device_info_lamp_num.setText(lampEditData.getLamp_Num());
+            et_device_info_poleProductionDate.setText(lampEditData.getPoleProductionDate());
+            et_device_info_pole_height.setText(lampEditData.getPole_height());
+            et_device_info_rated_power.setText(lampEditData.getRated_power());
+            et_device_info_subcommunicate_mode.setText(lampEditData.getSubcommunicate_mode());
+        }
 
-        bt_nfc_light_submit = (Button) this.findViewById(R.id.bt_nfc_light_submit);
+            bt_nfc_light_submit = (Button) this.findViewById(R.id.bt_nfc_light_submit);
         bt_nfc_light_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

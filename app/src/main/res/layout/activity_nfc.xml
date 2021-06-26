@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#00008B"
-        android:visibility="visible"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
 
         <ScrollView
@@ -67,7 +67,7 @@
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="" />
+                        android:text="洛丁展厅99号灯" />
 
                 </LinearLayout>
 
@@ -88,7 +88,8 @@
                         android:id="@+id/et_device_info_lat"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="114.004099" />
 
                 </LinearLayout>
 
@@ -98,7 +99,8 @@
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
-                    <TextView style="@style/fr_device_info_text"
+                    <TextView
+                        style="@style/fr_device_info_text"
 
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
@@ -109,7 +111,8 @@
                         android:id="@+id/et_device_info_lng"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="22.635641" />
 
                 </LinearLayout>
 
@@ -131,7 +134,8 @@
                         android:id="@+id/et_device_info_lamp_diameter"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="21cm" />
 
                 </LinearLayout>
 
@@ -152,7 +156,8 @@
                         android:id="@+id/et_device_info_power_manufacturer"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="英飞特" />
 
                 </LinearLayout>
 
@@ -173,7 +178,8 @@
                         android:id="@+id/et_device_info_lamp_ratedCurrent"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="1025mA" />
 
                 </LinearLayout>
 
@@ -194,7 +200,8 @@
                         android:id="@+id/et_device_info_lamp_ratedvoltage"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="125V" />
 
                 </LinearLayout>
 
@@ -215,7 +222,8 @@
                         android:id="@+id/et_device_info_lampType"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="LED" />
 
                 </LinearLayout>
 
@@ -236,7 +244,8 @@
                         android:id="@+id/et_device_info_lamp_manufacturer"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="洛丁光电" />
 
                 </LinearLayout>
 
@@ -257,7 +266,8 @@
                         android:id="@+id/et_device_info_lamp_num"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="1" />
 
                 </LinearLayout>
 
@@ -278,10 +288,10 @@
                         android:id="@+id/et_device_info_poleProductionDate"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="2015/2/12" />
 
                 </LinearLayout>
-
 
 
                 <LinearLayout
@@ -301,7 +311,8 @@
                         android:id="@+id/et_device_info_pole_height"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="2.8m" />
 
                 </LinearLayout>
 
@@ -322,6 +333,7 @@
                         android:id="@+id/et_device_info_rated_power"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
+                        android:text="120"
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
@@ -343,19 +355,20 @@
                         android:id="@+id/et_device_info_subcommunicate_mode"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="以太网有线"/>
 
                 </LinearLayout>
 
 
                 <Button
                     android:id="@+id/bt_nfc_light_submit"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="提交"/>
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="提交" />
 
                 <View
                     android:layout_width="match_parent"
@@ -598,7 +611,6 @@
                 android:max="100"
                 android:progress="0"
                 android:progressDrawable="@drawable/progress_bar" />
-
 
 
             <TextView
