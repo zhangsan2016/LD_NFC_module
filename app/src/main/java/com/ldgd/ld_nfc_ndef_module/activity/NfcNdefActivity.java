@@ -779,16 +779,18 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
     Button bt_nfc_light_submit;
-    EditText et_device_info_UUID, et_device_info_name, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter, et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent,
-            et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer, et_device_info_lamp_num, et_device_info_poleProductionDate, et_device_info_pole_height,
-            et_device_info_rated_power, et_device_info_subcommunicate_mode;
+    EditText et_device_info_UUID, et_device_info_name1, et_device_info_name2, et_device_info_name3, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter,
+            et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent, et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer,
+            et_device_info_lamp_num, et_device_info_poleProductionDate, et_device_info_pole_height, et_device_info_rated_power, et_device_info_subcommunicate_mode;
     String currentUuid;
     Gson gson = new Gson();
 
     private void initLight() {
 
         et_device_info_UUID = (EditText) this.findViewById(R.id.et_device_info_UUID);
-        et_device_info_name = (EditText) this.findViewById(R.id.et_device_info_name);
+        et_device_info_name1 = (EditText) this.findViewById(R.id.et_device_info_name1);
+        et_device_info_name2 = (EditText) this.findViewById(R.id.et_device_info_name2);
+        et_device_info_name3 = (EditText) this.findViewById(R.id.et_device_info_name3);
         et_device_info_lat = (EditText) this.findViewById(R.id.et_device_info_lat);
         et_device_info_lng = (EditText) this.findViewById(R.id.et_device_info_lng);
         et_device_info_lamp_diameter = (EditText) this.findViewById(R.id.et_device_info_lamp_diameter);
@@ -806,10 +808,12 @@ public class NfcNdefActivity extends BaseNfcActivity {
         // 获取保存数据
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
         String lampData = prefs.getString(Config.KEY_DEVICE_LAMP_DATA, "");
-        if (lampData != ""){
-            LampEditData lampEditData =  gson.fromJson(lampData,LampEditData.class);
+        if (lampData != "") {
+            LampEditData lampEditData = gson.fromJson(lampData, LampEditData.class);
             et_device_info_UUID.setText(lampEditData.getUUID());
-            et_device_info_name.setText(lampEditData.getNAME());
+            et_device_info_name1.setText(lampEditData.getNAME1());
+            et_device_info_name2.setText(lampEditData.getNAME2());
+            et_device_info_name3.setText(lampEditData.getNAME3());
             et_device_info_lat.setText(lampEditData.getLAT());
             et_device_info_lng.setText(lampEditData.getLNG());
             et_device_info_lamp_diameter.setText(lampEditData.getLampDiameter());
@@ -825,7 +829,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             et_device_info_subcommunicate_mode.setText(lampEditData.getSubcommunicate_mode());
         }
 
-            bt_nfc_light_submit = (Button) this.findViewById(R.id.bt_nfc_light_submit);
+        bt_nfc_light_submit = (Button) this.findViewById(R.id.bt_nfc_light_submit);
         bt_nfc_light_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -837,7 +841,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 LampEditData lampEditData = new LampEditData();
                 lampEditData.setUUID(et_device_info_UUID.getText().toString());
-                lampEditData.setNAME(et_device_info_name.getText().toString());
+                lampEditData.setNAME1(et_device_info_name1.getText().toString());
+                lampEditData.setNAME2(et_device_info_name2.getText().toString());
+                lampEditData.setNAME3(et_device_info_name3.getText().toString());
                 lampEditData.setLAT(et_device_info_lat.getText().toString());
                 lampEditData.setLNG(et_device_info_lng.getText().toString());
                 lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
@@ -900,6 +906,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                         String data = response.body().string();
                                         DeviceLampData deviceLampSingleData = gson.fromJson(data, DeviceLampData.class);
+                                        if(deviceLampSingleData.getErrno() != 0 ){
+                                            showToast("服务器访问异常~");
+                                             return;
+                                        }
                                         showToast("更新经纬度成功" + deviceLampSingleData.getData().getData().get(0).get_id());
                                         LogUtil.e("更新数据成功" + data);
 
@@ -908,22 +918,43 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                         String url = "https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=" + deviceLampSingleData.getData().getData().get(0).get_id();
                                         JSONStringer jsonstr = null;
                                         try {
+
+
+                                            LampEditData lampEditData = new LampEditData();
+                                            lampEditData.setUUID(et_device_info_UUID.getText().toString());
+                                            lampEditData.setNAME1(et_device_info_name1.getText().toString());
+                                            lampEditData.setNAME2(et_device_info_name2.getText().toString());
+                                            lampEditData.setNAME3(et_device_info_name3.getText().toString());
+                                            lampEditData.setLAT(et_device_info_lat.getText().toString());
+                                            lampEditData.setLNG(et_device_info_lng.getText().toString());
+                                            lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
+                                            lampEditData.setPower_Manufacturer(et_device_info_power_manufacturer.getText().toString());
+                                            lampEditData.setLamp_RatedCurrent(et_device_info_lamp_ratedCurrent.getText().toString());
+                                            lampEditData.setLamp_Ratedvoltage(et_device_info_lamp_ratedvoltage.getText().toString());
+                                            lampEditData.setLampType(et_device_info_lampType.getText().toString());
+                                            lampEditData.setLamp_Manufacturer(et_device_info_lamp_manufacturer.getText().toString());
+                                            lampEditData.setLamp_Num(et_device_info_lamp_num.getText().toString());
+                                            lampEditData.setPoleProductionDate(et_device_info_poleProductionDate.getText().toString());
+                                            lampEditData.setPole_height(et_device_info_pole_height.getText().toString());
+                                            lampEditData.setRated_power(et_device_info_rated_power.getText().toString());
+                                            lampEditData.setSubcommunicate_mode(et_device_info_subcommunicate_mode.getText().toString());
+
                                             jsonstr = new JSONStringer()
                                                     .object()
-                                                    .key("LAT").value("8868")
-                                                    .key("LNG").value(996)
-                                                    .key("NAME").value(996)
-                                                    .key("LampDiameter").value(996)
-                                                    .key("Power_Manufacturer").value(996)
-                                                    .key("Lamp_RatedCurrent").value(996)
-                                                    .key("Lamp_Ratedvoltage").value(996)
-                                                    .key("lampType").value(996)
-                                                    .key("Lamp_Manufacturer").value(996)
-                                                    .key("Lamp_Num").value(996)
-                                                    .key("PoleProductionDate").value(996)
-                                                    .key("Pole_height").value(996)
-                                                    .key("Rated_power").value(996)
-                                                    .key("Subcommunicate_mode").value(996)
+                                                    .key("LAT").value(lampEditData.getLAT())
+                                                    .key("LNG").value(lampEditData.getLNG())
+                                                    .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
+                                                    .key("LampDiameter").value(lampEditData.getLampDiameter())
+                                                    .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
+                                                    .key("Lamp_RatedCurrent").value(lampEditData.getLamp_RatedCurrent())
+                                                    .key("Lamp_Ratedvoltage").value(lampEditData.getLamp_Ratedvoltage())
+                                                    .key("lampType").value(lampEditData.getLampType())
+                                                    .key("Lamp_Manufacturer").value(lampEditData.getLamp_Manufacturer())
+                                                    .key("Lamp_Num").value(lampEditData.getLamp_Num())
+                                                    .key("PoleProductionDate").value(lampEditData.getPoleProductionDate())
+                                                    .key("Pole_height").value(lampEditData.getPole_height())
+                                                    .key("Rated_power").value(lampEditData.getRated_power())
+                                                    .key("Subcommunicate_mode").value(lampEditData.getSubcommunicate_mode())
                                                     .endObject();
                                             LogUtil.e("jsonstr = " + jsonstr.toString());
 
@@ -1399,6 +1430,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 }
                 currentUuid = regionN + proN + imei;
                 et_device_info_UUID.setText(currentUuid);
+
+                int num = Integer.parseInt(et_device_info_name2.getText().toString());
+                et_device_info_name2.setText(++num + ""); // 灯杆号自加
+
 
 
             } catch (Exception e) {

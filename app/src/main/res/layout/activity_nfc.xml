@@ -63,11 +63,27 @@
                         android:text="名称  " />
 
                     <EditText
-                        android:id="@+id/et_device_info_name"
+                        android:id="@+id/et_device_info_name1"
                         style="@style/fr_device_info_text"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="洛丁展厅99号灯" />
+                        android:text="洛丁展厅" />
+
+                    <EditText
+                        android:id="@+id/et_device_info_name2"
+                        style="@style/fr_device_info_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="99" />
+
+                    <EditText
+                        android:id="@+id/et_device_info_name3"
+                        style="@style/fr_device_info_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="号灯" />
+
+
 
                 </LinearLayout>
 

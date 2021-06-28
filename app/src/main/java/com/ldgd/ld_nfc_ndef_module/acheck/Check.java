@@ -3,10 +3,11 @@ package com.ldgd.ld_nfc_ndef_module.acheck;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
 
 import org.json.JSONException;
-import org.json.JSONStringer;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ldgd on 2020/9/11.
@@ -79,15 +80,15 @@ public class Check {
         System.out.println(postBody);
 
 
-        JSONStringer jsonstr = new JSONStringer()
-                .object().key("data")
-                .object().key("LNG").value("106.541654")
-                .key("LAT").value("29.803827")
-                .endObject()
-                .key("where").object().key("UUID").value("000000000000000000000022")
-                .endObject().endObject();
-
+        String a="洛丁展厅19号灯";
+        String regEx="[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(a);
+        System.out.println( m.replaceAll("").trim());
         System.out.println();
+
+        int nub = Integer.parseInt(m.replaceAll("").trim());
+        nub++;
 
 
       //  {"Power_Manufacturer": "英飞特","Lamp_Manufacturer": "77"}

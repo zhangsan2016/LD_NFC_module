@@ -17,7 +17,9 @@ public class LampEditData {
     private String UUID;
     private String LAT;  // 经度
     private String LNG;  // 纬度
-    private String NAME; // 灯杆名称
+    private String NAME1; // 灯杆名称
+    private String NAME2; // 灯杆名称
+    private String NAME3; // 灯杆名称
     private String LampDiameter; // 灯杆直径
     private String Power_Manufacturer; // 电源出厂商
     private String Lamp_RatedCurrent; // 灯具额定电流
@@ -48,12 +50,28 @@ public class LampEditData {
         this.LNG = LNG;
     }
 
-    public String getNAME() {
-        return NAME;
+    public String getNAME1() {
+        return NAME1;
     }
 
-    public void setNAME(String NAME) {
-        this.NAME = NAME;
+    public void setNAME1(String NAME1) {
+        this.NAME1 = NAME1;
+    }
+
+    public String getNAME2() {
+        return NAME2;
+    }
+
+    public void setNAME2(String NAME2) {
+        this.NAME2 = NAME2;
+    }
+
+    public String getNAME3() {
+        return NAME3;
+    }
+
+    public void setNAME3(String NAME3) {
+        this.NAME3 = NAME3;
     }
 
     public String getPole_height() {
