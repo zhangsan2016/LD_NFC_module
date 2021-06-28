@@ -977,7 +977,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                                 myHandler.sendEmptyMessage(STOP_WRITE_NFC);
 
                                             }
-                                        }, "29337160-d596-11eb-b642-9f07dd16e8f6", requestBody);*/
+                                        }, token, requestBody);*/
 
 
                                     } catch (IOException e) {
@@ -987,7 +987,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                             });
 
                         }
-                    }, "29337160-d596-11eb-b642-9f07dd16e8f6", requestBody);
+                    }, token, requestBody);
 
                 } else {
                     showToast("uuid 有误，请先读取uuid");
@@ -1094,12 +1094,64 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     private void getToken() {
 
-        new Thread(new Runnable() {
+       /* new Thread(new Runnable() {
             @Override
             public void run() {
 
                 //   String url = "https://ludeng.stgxy.com:9443/api/user/login";
                 String url = "https://ludeng.stgxy.com:9443/api/user/login";
+              *//*  RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "cy")
+                        .add("password", "@@ld9102")
+                        .add("strVerify", "[admin]")
+                        .build();*//*
+
+              *//*  RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "admin")
+                        .add("password", "Ld@cc0unt")
+                        .add("strVerify", "[admin]")
+                        .build();*//*
+
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("strTemplate", "{\"ischeck\":$data.rows}")
+                        .add("username", "cy")
+                        .add("password", "@@ld9102")
+                        .add("strVerify", "[admin]")
+                        .build();
+
+
+                HttpUtil.sendHttpRequest(url, new Callback() {
+
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        showToast("连接服务器异常！");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+
+
+                        String json = response.body().string();
+                        Gson gson = new Gson();
+                        LoginInfo loginInfo = gson.fromJson(json, LoginInfo.class);
+                        if (loginInfo.getErrno() == 0) {
+                            token = loginInfo.getData().getToken().getToken();
+                        }
+
+                    }
+                }, requestBody);
+            }
+        }).start();*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                //   String url = "https://ludeng.stgxy.com:9443/api/user/login";
+                String url = "https://iot2.sz-luoding.com:2888/api/user/login";
               /*  RequestBody requestBody = new FormBody.Builder()
                         .add("strTemplate", "{\"ischeck\":$data.rows}")
                         .add("username", "cy")
@@ -1116,8 +1168,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 RequestBody requestBody = new FormBody.Builder()
                         .add("strTemplate", "{\"ischeck\":$data.rows}")
-                        .add("username", "cy")
-                        .add("password", "@@ld9102")
+                        .add("username", "ld")
+                        .add("password", "ld9102")
                         .add("strVerify", "[admin]")
                         .build();
 
