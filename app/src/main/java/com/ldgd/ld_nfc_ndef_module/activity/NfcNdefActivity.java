@@ -860,6 +860,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 editor.putString(Config.KEY_DEVICE_LAMP_DATA, gson.toJson(lampEditData));
                 editor.commit();
 
+                showProgress();
+
                 currentUuid = "2015BA11A0000B0000000019";
                 if (currentUuid != null) {
                     // 获取 Dialog 中的经纬度
@@ -957,6 +959,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                                     .key("Subcommunicate_mode").value(lampEditData.getSubcommunicate_mode())
                                                     .endObject();
                                             LogUtil.e("jsonstr = " + jsonstr.toString());
+
+                                            stopProgress();
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
