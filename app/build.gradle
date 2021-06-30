@@ -4,7 +4,8 @@ android {
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId 'com.ldgd.ld_nfc_ndef_module'
+      //  applicationId 'com.ldgd.ld_nfc_ndef_module'
+        applicationId 'com.ldgd.ld_nfc_ndef_module2'
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 3
