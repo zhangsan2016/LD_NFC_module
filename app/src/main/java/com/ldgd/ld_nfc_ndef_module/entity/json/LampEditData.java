@@ -12,6 +12,17 @@ public class LampEditData {
      * LNG : 114.004099
      * NAME : 英飞特
      * Pole_height : 18
+     * "LampDiameter|e",
+       "Power_Manufacturer|e",
+       "Lamp_RatedCurrent|e",
+       "Lamp_Ratedvoltage|e",
+       "lampType|e",
+       "Lamp_Manufacturer|e",
+       "Lamp_Num|e",
+       "PoleProductionDate|e",
+       "Pole_height|e",
+       "Rated_power|e",
+       "Subcommunicate_mode|e"
      */
 
     private String UUID;

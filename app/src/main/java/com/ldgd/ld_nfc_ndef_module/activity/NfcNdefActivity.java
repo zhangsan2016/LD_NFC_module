@@ -811,6 +811,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
         if (lampData != "") {
             LampEditData lampEditData = gson.fromJson(lampData, LampEditData.class);
             et_device_info_UUID.setText(lampEditData.getUUID());
+
+            et_device_info_UUID.setText("83140000862285036010878");
+
             et_device_info_name1.setText(lampEditData.getNAME1());
             et_device_info_name2.setText(lampEditData.getNAME2());
             et_device_info_name3.setText(lampEditData.getNAME3());
@@ -860,17 +863,19 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 editor.putString(Config.KEY_DEVICE_LAMP_DATA, gson.toJson(lampEditData));
                 editor.commit();
 
-                showProgress();
 
-                currentUuid = "2015BA11A0000B0000000019";
-                if (currentUuid != null) {
+
+                //currentUuid = "83140000862285036010878";
+                currentUuid = lampEditData.getUUID();
+                if (currentUuid != null && !currentUuid.equals("")) {
+                    showProgress();
                     // 获取 Dialog 中的经纬度
               /*      String longitude = ((EditText)writeAlertDialog.findViewById(R.id.et_longitude)).getText().toString();
                     String latitude = ((EditText)writeAlertDialog.findViewById(R.id.et_latitude)).getText().toString();*/
 
 
                     //    String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
-                    String url = "https://iot2.sz-luoding.com:2888/api/device_lamp/list";
+                    String url = "https://iot.sz-luoding.com:2890/api/device_lamp/list";
                     // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
 
                     JSONStringer jsonstr = null;
@@ -912,18 +917,17 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                             showToast("服务器访问异常~");
                                              return;
                                         }
-                                        showToast("更新经纬度成功" + deviceLampSingleData.getData().getData().get(0).get_id());
-                                        LogUtil.e("更新数据成功" + data);
-
 
                                         //  https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=28
-                                        String url = "https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=" + deviceLampSingleData.getData().getData().get(0).get_id();
+                                        LogUtil.e("data = " + data);
+                                        String url = "https://iot.sz-luoding.com:2890/api/device_lamp/edit?upsert=1&id=" + deviceLampSingleData.getData().getData().get(0).get_id();
                                         JSONStringer jsonstr = null;
                                         try {
 
-
                                             LampEditData lampEditData = new LampEditData();
                                             lampEditData.setUUID(et_device_info_UUID.getText().toString());
+                                           // lampEditData.setUUID("83140000862285036010878");
+
                                             lampEditData.setNAME1(et_device_info_name1.getText().toString());
                                             lampEditData.setNAME2(et_device_info_name2.getText().toString());
                                             lampEditData.setNAME3(et_device_info_name3.getText().toString());
@@ -943,8 +947,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                             jsonstr = new JSONStringer()
                                                     .object()
-                                                    .key("LAT").value(lampEditData.getLAT())
-                                                    .key("LNG").value(lampEditData.getLNG())
+                                                  //  .key("LAT").value(lampEditData.getLAT())
+                                                   // .key("LNG").value(lampEditData.getLNG())
                                                     .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
                                                     .key("LampDiameter").value(lampEditData.getLampDiameter())
                                                     .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
@@ -968,7 +972,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                         LogUtil.e("jsonstr = " + jsonstr.toString());
                                         //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
-                                      /*  RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
+                                        RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
                                         HttpUtil.sendHttpRequest(url, new Callback() {
                                             @Override
                                             public void onFailure(Call call, IOException e) {
@@ -977,11 +981,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
-
+                                                showToast("更新经纬度成功~");
                                                 myHandler.sendEmptyMessage(STOP_WRITE_NFC);
 
                                             }
-                                        }, token, requestBody);*/
+                                        }, token, requestBody);
 
 
                                     } catch (IOException e) {
@@ -994,6 +998,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     }, token, requestBody);
 
                 } else {
+                    stopProgress();
                     showToast("uuid 有误，请先读取uuid");
                 }
             }
@@ -1155,7 +1160,12 @@ public class NfcNdefActivity extends BaseNfcActivity {
             public void run() {
 
                 //   String url = "https://ludeng.stgxy.com:9443/api/user/login";
-                String url = "https://iot2.sz-luoding.com:2888/api/user/login";
+               // String url = "https://iot2.sz-luoding.com:2888/api/user/login";
+               // String url = "https://iot.sz-luoding.com:888/api/user/login";
+                String url = "https://iot.sz-luoding.com:2890/api/user/login";
+
+
+
               /*  RequestBody requestBody = new FormBody.Builder()
                         .add("strTemplate", "{\"ischeck\":$data.rows}")
                         .add("username", "cy")
