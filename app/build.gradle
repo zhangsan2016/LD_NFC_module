@@ -1,10 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'ldgd'
+            keyPassword '12345678'
+            storeFile file('C:/Users/ldgd/Desktop/KEY/ldgd.jks')
+            storePassword '12345678'
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
     defaultConfig {
-      //  applicationId 'com.ldgd.ld_nfc_ndef_module'
+        //  applicationId 'com.ldgd.ld_nfc_ndef_module'
         applicationId 'com.ldgd.ld_nfc_ndef_module2'
         minSdkVersion 15
         targetSdkVersion 26
@@ -20,6 +28,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     sourceSets {
@@ -59,4 +71,5 @@ dependencies {
     /* Gson */
     compile 'com.google.code.gson:gson:2.8.4'
     compile files('libs/AMap_Location_V5.3.0_20210317.jar')
+    compile files('libs/Android_Map3D_SDK_V7.9.1_20210414.jar')
 }

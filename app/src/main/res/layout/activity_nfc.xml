@@ -84,7 +84,6 @@
                         android:text="号灯" />
 
 
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -100,12 +99,22 @@
                         android:gravity="right"
                         android:text="经度  " />
 
+
                     <EditText
                         android:id="@+id/et_device_info_lat"
                         style="@style/fr_device_info_text"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="" />
+
+
+                    <ImageView
+                        android:layout_marginRight="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/icon_location" />
 
                 </LinearLayout>
 
@@ -349,8 +358,8 @@
                         android:id="@+id/et_device_info_rated_power"
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
-                        android:text="120"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="120" />
 
                 </LinearLayout>
 
@@ -372,7 +381,7 @@
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="以太网有线"/>
+                        android:text="以太网有线" />
 
                 </LinearLayout>
 
