@@ -812,7 +812,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             LampEditData lampEditData = gson.fromJson(lampData, LampEditData.class);
             et_device_info_UUID.setText(lampEditData.getUUID());
 
-            et_device_info_UUID.setText("83140000862285036010878");
+         //   et_device_info_UUID.setText("83140000862285036010878");
 
             et_device_info_name1.setText(lampEditData.getNAME1());
             et_device_info_name2.setText(lampEditData.getNAME2());
