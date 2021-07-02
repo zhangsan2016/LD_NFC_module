@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -64,6 +65,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
     // 移动或者定位所获得的地址
     private String addressName;
     private ImageView iv_reposition;
+    private TextView tvLocation;
 
 
     @Override
@@ -113,8 +115,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
 
-
-
+       tvLocation = (TextView) this.findViewById(R.id.tv_location);
 
 
     }
@@ -292,8 +293,10 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
                                /*    if (followMove) {
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
                         }*/
+                            LatLng latLng =  new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
+                            tvLocation.setText(latLng.toString());
                             // 设置地图中心点
-                            mAMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude()), 16, 0, 0)));
+                            mAMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 0, 0)));
                         }
 
                     } else {
@@ -375,7 +378,9 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         if (markerOption != null) {
             // moveMarker.setPosition(cameraPosition.target);
             //    moveMarker.setSnippet(latLng.toString());
-            moveMarker.setPosition(new LatLng(latLng.latitude, latLng.longitude));
+            LatLng latLng1 = new LatLng(latLng.latitude, latLng.longitude);
+            moveMarker.setPosition(latLng1);
+            tvLocation.setText(latLng.toString());
             followMove = false;
 
         }
