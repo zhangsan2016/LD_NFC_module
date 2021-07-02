@@ -155,7 +155,7 @@
 
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.AMapLocationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop" >
 

@@ -38,7 +38,7 @@ import com.ldgd.ld_nfc_ndef_module.util.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AMap.OnCameraChangeListener, AMap.OnMapClickListener, AMap.OnMapTouchListener {
+public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCameraChangeListener, AMap.OnMapClickListener, AMap.OnMapTouchListener {
     public static final String USER_INFO = "USER_INFO";
     private List<String> list = new ArrayList<String>();
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnCameraChan
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast toast = Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(AMapLocationActivity.this, str, Toast.LENGTH_SHORT);
                 toast.setText(str);
                 toast.show();
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnCameraChan
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgress = ProgressDialog.show(MainActivity.this, "", "请稍等...");
+                mProgress = ProgressDialog.show(AMapLocationActivity.this, "", "请稍等...");
             }
         });
 
@@ -219,13 +219,13 @@ public class MainActivity extends AppCompatActivity implements AMap.OnCameraChan
 
 
     private void requestPermission() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(AMapLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {//未开启定位权限
             //开启定位权限,200是标识码
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+            ActivityCompat.requestPermissions(AMapLocationActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         } else {
             //开始定位
-            //   Toast.makeText(MainActivity.this,"已开启定位权限",Toast.LENGTH_LONG).show();
+            //   Toast.makeText(AMapLocationActivity.this,"已开启定位权限",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnCameraChan
                             moveMarker.setVisible(false);
                             moveMarker.hideInfoWindow();
 
-                            followMove = false;
+                         //   followMove = false;
 
                                /*    if (followMove) {
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
@@ -376,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnCameraChan
             // moveMarker.setPosition(cameraPosition.target);
             //    moveMarker.setSnippet(latLng.toString());
             moveMarker.setPosition(new LatLng(latLng.latitude, latLng.longitude));
+            followMove = false;
 
         }
 
