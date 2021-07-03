@@ -254,6 +254,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         mLocationClient.setLocationListener(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation amapLocation) {
+
                 if (amapLocation != null) {
                     if (amapLocation.getErrorCode() == 0) {
 
@@ -312,6 +313,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
                         }*/
                             currentLatLng =  new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
                             tvLocation.setText(currentLatLng.toString());
+                            LogUtil.e("setLocationListener = " + amapLocation.getAddress());
                             // 设置地图中心点
                             mAMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentLatLng, 16, 0, 0)));
                         }
@@ -341,7 +343,8 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         /**
          * 设置定位场景，目前支持三种场景（签到、出行、运动，默认无场景）
          */
-        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
+       // option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
+        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Sport);
         if (null != mLocationClient) {
             mLocationClient.setLocationOption(option);
             //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
@@ -398,7 +401,6 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
             LatLng latLng1 = new LatLng(latLng.latitude, latLng.longitude);
             moveMarker.setPosition(latLng1);
             tvLocation.setText(latLng.toString());
-            followMove = false;
 
         }
 
@@ -429,6 +431,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         if (moveMarker != null) {
             moveMarker.setVisible(true);
             marker.hideInfoWindow();
+            followMove = false;
         }
     }
 }
