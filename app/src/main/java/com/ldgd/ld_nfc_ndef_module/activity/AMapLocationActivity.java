@@ -344,7 +344,7 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
          * 设置定位场景，目前支持三种场景（签到、出行、运动，默认无场景）
          */
        // option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
-        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Sport);
+        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
         if (null != mLocationClient) {
             mLocationClient.setLocationOption(option);
             //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效

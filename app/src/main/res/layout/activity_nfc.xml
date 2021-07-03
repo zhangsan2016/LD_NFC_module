@@ -315,7 +315,7 @@
                         style="@style/fr_device_info_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2015/2/12" />
+                        android:text="2021/7/3" />
 
                 </LinearLayout>
 
