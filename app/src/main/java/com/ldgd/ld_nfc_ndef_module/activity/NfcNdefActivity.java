@@ -26,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.ldgd.ld_nfc_ndef_module.R;
 import com.ldgd.ld_nfc_ndef_module.base.BaseNfcActivity;
@@ -84,6 +86,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
     private static final String TAG = "NFCActivity";
     public static final int REQUEST_CODE_QR = 10;
+    // 定位返回
+    public static final int REQUEST_CODE_ORIENTATION = 11;
     // 请求权限的code
     public static final int REQUEST_CODE_CAMERA = 21;
 
@@ -117,6 +121,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private AlertDialog writeAlertDialog;
     private Button bt_uploading;
     private TextView tv_location;
+    private ImageView iv_location;
 
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -775,8 +780,17 @@ public class NfcNdefActivity extends BaseNfcActivity {
             }
         });
 
+        iv_location = (ImageView) this.findViewById(R.id.iv_location);
+        iv_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NfcNdefActivity.this, AMapLocationActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ORIENTATION);
 
+            }
+        });
     }
+
 
     Button bt_nfc_light_submit;
     EditText et_device_info_UUID, et_device_info_name1, et_device_info_name2, et_device_info_name3, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter,
@@ -812,7 +826,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             LampEditData lampEditData = gson.fromJson(lampData, LampEditData.class);
             et_device_info_UUID.setText(lampEditData.getUUID());
 
-         //   et_device_info_UUID.setText("83140000862285036010878");
+            //   et_device_info_UUID.setText("83140000862285036010878");
 
             et_device_info_name1.setText(lampEditData.getNAME1());
             et_device_info_name2.setText(lampEditData.getNAME2());
@@ -864,7 +878,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 editor.commit();
 
 
-
                 //currentUuid = "83140000862285036010878";
                 currentUuid = lampEditData.getUUID();
                 if (currentUuid != null && !currentUuid.equals("")) {
@@ -913,9 +926,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                         String data = response.body().string();
                                         DeviceLampData deviceLampSingleData = gson.fromJson(data, DeviceLampData.class);
-                                        if(deviceLampSingleData.getErrno() != 0 ){
+                                        if (deviceLampSingleData.getErrno() != 0) {
                                             showToast("服务器访问异常~");
-                                             return;
+                                            return;
                                         }
 
                                         //  https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=28
@@ -926,7 +939,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                             LampEditData lampEditData = new LampEditData();
                                             lampEditData.setUUID(et_device_info_UUID.getText().toString());
-                                           // lampEditData.setUUID("83140000862285036010878");
+                                            // lampEditData.setUUID("83140000862285036010878");
 
                                             lampEditData.setNAME1(et_device_info_name1.getText().toString());
                                             lampEditData.setNAME2(et_device_info_name2.getText().toString());
@@ -947,8 +960,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                             jsonstr = new JSONStringer()
                                                     .object()
-                                                  //  .key("LAT").value(lampEditData.getLAT())
-                                                   // .key("LNG").value(lampEditData.getLNG())
+                                                    //  .key("LAT").value(lampEditData.getLAT())
+                                                    // .key("LNG").value(lampEditData.getLNG())
                                                     .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
                                                     .key("LampDiameter").value(lampEditData.getLampDiameter())
                                                     .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
@@ -1160,8 +1173,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
             public void run() {
 
                 //   String url = "https://ludeng.stgxy.com:9443/api/user/login";
-               // String url = "https://iot2.sz-luoding.com:2888/api/user/login";
-               // String url = "https://iot.sz-luoding.com:888/api/user/login";
+                // String url = "https://iot2.sz-luoding.com:2888/api/user/login";
+                // String url = "https://iot.sz-luoding.com:888/api/user/login";
                 String url = "https://iot.sz-luoding.com:2890/api/user/login";
 
 
@@ -1382,6 +1395,18 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     }
                 }
                 break;
+            case REQUEST_CODE_ORIENTATION:// 定位返回
+                // 定位返回
+                if (resultCode == RESULT_OK) {
+                    if (intent != null) {
+                        LatLng latLng = intent.getParcelableExtra("location");
+                        if (latLng != null) {
+                            et_device_info_lat.setText(latLng.latitude + "");
+                            et_device_info_lng.setText(latLng.longitude + "");
+                        }
+                    }
+                }
+                break;
             default:
                 break;
         }
@@ -1499,7 +1524,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                 int num = Integer.parseInt(et_device_info_name2.getText().toString());
                 et_device_info_name2.setText(++num + ""); // 灯杆号自加
-
 
 
             } catch (Exception e) {

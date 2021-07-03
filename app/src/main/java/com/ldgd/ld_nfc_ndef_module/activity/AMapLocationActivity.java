@@ -3,6 +3,7 @@ package com.ldgd.ld_nfc_ndef_module.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,6 +68,8 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
     private String addressName;
     private ImageView iv_reposition;
     private TextView tvLocation;
+    private Button bt_location_return;
+    private LatLng currentLatLng = null;
 
 
     @Override
@@ -105,10 +109,6 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
 
     }
 
-
-
-
-
     private void initView(Bundle savedInstanceState) {
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
@@ -116,6 +116,23 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
         mMapView.onCreate(savedInstanceState);
 
        tvLocation = (TextView) this.findViewById(R.id.tv_location);
+       /* RelativeLayout rl_location= (RelativeLayout) findViewById(R.id.rl_location);//布局
+        rl_location.setBackgroundColor(Color.TRANSPARENT);*/
+
+        bt_location_return = (Button) this.findViewById(R.id.bt_location_return);
+        bt_location_return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent();
+                intent.putExtra("location",currentLatLng);
+                //通过Intent对象返回结果，使setResult
+                setResult(RESULT_OK,intent);
+                //结束当前的Activity生命周期
+                finish();
+
+            }
+        });
 
 
     }
@@ -293,10 +310,10 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
                                /*    if (followMove) {
                             mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
                         }*/
-                            LatLng latLng =  new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
-                            tvLocation.setText(latLng.toString());
+                            currentLatLng =  new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
+                            tvLocation.setText(currentLatLng.toString());
                             // 设置地图中心点
-                            mAMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 16, 0, 0)));
+                            mAMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(currentLatLng, 16, 0, 0)));
                         }
 
                     } else {
@@ -390,10 +407,10 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
     @Override
     public void onCameraChangeFinish(CameraPosition cameraPosition) {
         //根据latLng编译成地理描述
-        LatLng latLng = cameraPosition.target;
+        currentLatLng = cameraPosition.target;
         moveMarker.hideInfoWindow();
         LogUtil.e("onCameraChangeFinish = " + cameraPosition.toString());
-        Toast.makeText(this,"当前位置：" + latLng.toString(),Toast.LENGTH_LONG);
+        Toast.makeText(this,"当前位置：" + currentLatLng.toString(),Toast.LENGTH_LONG);
        /* LatLonPoint latLonPoint = new LatLonPoint(latLng.latitude, latLng.longitude);
         getAddress(latLonPoint);*/
 

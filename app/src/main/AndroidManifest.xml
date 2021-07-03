@@ -151,6 +151,7 @@
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED"/>
             </intent-filter>
+
         </activity>
 
         <activity
@@ -158,7 +159,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop" >
 
-            <!--  <intent-filter>
+            <!-- <intent-filter>
                   <action android:name="android.intent.action.MAIN" />
                   <category android:name="android.intent.category.LAUNCHER" />
               </intent-filter>
