@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:icon="@mipmap/ic_launcher"
+        android:orderInCategory="100"
+        android:title="新建"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@mipmap/ic_launcher"
+        android:orderInCategory="100"
+        android:title="导入"
+        app:showAsAction="never" />
+
+    <item
+        android:icon="@mipmap/ic_launcher"
+        android:orderInCategory="100"
+        android:title="导出"
+        app:showAsAction="never" />
+
+</menu>

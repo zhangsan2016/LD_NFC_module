@@ -20,6 +20,7 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -802,6 +803,10 @@ public class NfcNdefActivity extends BaseNfcActivity {
     Gson gson = new Gson();
 
     private void initLight() {
+
+        // toolbar 加载该menu文件
+        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu);
 
         et_device_info_UUID = (EditText) this.findViewById(R.id.et_device_info_UUID);
         et_device_info_name1 = (EditText) this.findViewById(R.id.et_device_info_name1);
