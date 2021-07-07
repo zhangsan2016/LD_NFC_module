@@ -60,7 +60,7 @@
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="名称  " />
+                        android:text="灯杆号  " />
 
                     <EditText
                         android:id="@+id/et_device_info_name1"
@@ -69,6 +69,8 @@
                         android:layout_height="wrap_content"
                         android:text="洛丁展厅" />
 
+
+
                     <EditText
                         android:id="@+id/et_device_info_name2"
                         style="@style/fr_device_info_text"
@@ -76,12 +78,35 @@
                         android:layout_height="wrap_content"
                         android:text="99" />
 
+
+
+
                     <EditText
                         android:id="@+id/et_device_info_name3"
                         style="@style/fr_device_info_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="号灯" />
+
+                    <ImageView
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/bt_subbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_sub"
+                        android:textColor="#0157D3" />
+
+                    <ImageView
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/bt_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:src="@mipmap/icon_add"
+                        android:textColor="#0157D3" />
 
 
                 </LinearLayout>
@@ -111,10 +136,10 @@
 
                     <ImageView
                         android:id="@+id/iv_location"
-                        android:layout_marginRight="20dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginRight="20dp"
                         android:src="@mipmap/icon_location" />
 
                 </LinearLayout>

@@ -16,16 +16,16 @@
     <RelativeLayout
         android:id="@+id/rl_location"
         android:layout_width="match_parent"
+        android:layout_height="20dp"
         android:background="@android:color/transparent"
-        android:clickable="true"
-        android:layout_height="20dp">
+        android:clickable="true">
 
-      <TextView
-          android:background="@android:color/transparent"
+        <TextView
             android:id="@+id/tv_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
             android:text=""
             android:textColor="@android:color/black"
             android:textSize="12sp" />
@@ -43,18 +43,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/bt_location_return"
-            android:background="@drawable/buttonstyle"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:textSize="22sp"
-            android:textColor="#C0C0C0"
-            android:text="使用当前位置"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bt_location_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonstyle"
+                android:text="取消定位"
+                android:textColor="#C0C0C0"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/bt_location_return"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonstyle"
+                android:text="使用定位"
+                android:textColor="#C0C0C0"
+                android:textSize="22sp" />
+
+        </LinearLayout>
 
 
     </RelativeLayout>

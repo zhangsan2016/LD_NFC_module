@@ -134,6 +134,14 @@ public class AMapLocationActivity extends AppCompatActivity implements AMap.OnCa
             }
         });
 
+        Button bt_location_cancel = (Button) this.findViewById(R.id.bt_location_cancel);
+        bt_location_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
 
     }
 

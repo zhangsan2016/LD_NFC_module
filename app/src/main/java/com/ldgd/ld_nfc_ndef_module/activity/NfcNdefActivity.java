@@ -81,6 +81,7 @@ import okhttp3.Response;
 import static com.ldgd.ld_nfc_ndef_module.R.id.tb_location;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.dataDictionaries;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.replaceBlank;
+import static java.lang.Integer.parseInt;
 
 public class NfcNdefActivity extends BaseNfcActivity {
 
@@ -282,7 +283,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         initListening();
 
         //初始化定位
-     //   initLocation();
+        //   initLocation();
 
         // 登录获取 token
         getToken();
@@ -796,6 +797,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     EditText et_device_info_UUID, et_device_info_name1, et_device_info_name2, et_device_info_name3, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter,
             et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent, et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer,
             et_device_info_lamp_num, et_device_info_poleProductionDate, et_device_info_pole_height, et_device_info_rated_power, et_device_info_subcommunicate_mode;
+    ImageView bt_subbt, bt_add;
     String currentUuid;
     Gson gson = new Gson();
 
@@ -818,6 +820,27 @@ public class NfcNdefActivity extends BaseNfcActivity {
         et_device_info_pole_height = (EditText) this.findViewById(R.id.et_device_info_pole_height);
         et_device_info_rated_power = (EditText) this.findViewById(R.id.et_device_info_rated_power);
         et_device_info_subcommunicate_mode = (EditText) this.findViewById(R.id.et_device_info_subcommunicate_mode);
+
+        bt_subbt = (ImageView) this.findViewById(R.id.bt_subbt);
+        bt_add = (ImageView) this.findViewById(R.id.bt_add);
+        bt_subbt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int num = Integer.parseInt(et_device_info_name2.getText().toString());
+                et_device_info_name2.setText(--num + "");
+            }
+        });
+        bt_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int num = Integer.parseInt(et_device_info_name2.getText().toString());
+                et_device_info_name2.setText(++num + "");
+            }
+        });
+
+
+
 
         // 获取保存数据
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
@@ -1522,7 +1545,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 currentUuid = regionN + proN + imei;
                 et_device_info_UUID.setText(currentUuid);
 
-                int num = Integer.parseInt(et_device_info_name2.getText().toString());
+                int num = parseInt(et_device_info_name2.getText().toString());
                 et_device_info_name2.setText(++num + ""); // 灯杆号自加
 
 
