@@ -960,8 +960,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                                             jsonstr = new JSONStringer()
                                                     .object()
-                                                    //  .key("LAT").value(lampEditData.getLAT())
-                                                    // .key("LNG").value(lampEditData.getLNG())
+                                                    .key("LAT").value(lampEditData.getLAT())
+                                                    .key("LNG").value(lampEditData.getLNG())
                                                     .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
                                                     .key("LampDiameter").value(lampEditData.getLampDiameter())
                                                     .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
