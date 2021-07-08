@@ -1026,11 +1026,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     NfcDataUtil.writeNfcDeviceInfo2(dataDictionaries, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
-                            et_text_editor.setText("");
                             showToast("写入成功");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    clearInterface();
                                     progressbar.setProgress(100);
                                     //  通知 Handle nfc 已关闭写入
                                     myHandler.sendEmptyMessage(STOP_WRITE_NFC);
@@ -1040,7 +1040,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                         @Override
                         public void failure(String error) {
-                            showToast(error);
+                            Toast.makeText(NfcNdefActivity.this, "写入失败："+error, Toast.LENGTH_LONG);
                             //  通知 Handle nfc 已关闭写入
                             progressbar.setProgress(0);
                             myHandler.sendEmptyMessage(STOP_WRITE_NFC);
