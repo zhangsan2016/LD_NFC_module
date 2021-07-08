@@ -52,7 +52,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#000080"
+            android:background="#3F51B5"
             app:title=""
             app:titleTextColor="@color/white">
 

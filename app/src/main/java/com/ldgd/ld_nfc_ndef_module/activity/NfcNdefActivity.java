@@ -3,17 +3,19 @@ package com.ldgd.ld_nfc_ndef_module.activity;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
@@ -22,9 +24,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -79,6 +80,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Intent.ACTION_GET_CONTENT;
 import static com.ldgd.ld_nfc_ndef_module.R.id.tb_location;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.dataDictionaries;
 import static com.ldgd.ld_nfc_ndef_module.util.NfcDataUtil.replaceBlank;
@@ -102,6 +104,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private static final int HANDLE_UP_READ = 22;
     private static final int START_WRITE_NFC = 23;
     private static final int STOP_WRITE_NFC = 24;
+    private static final int FILE_SELECT_CODE = 25;
 
 
     /// static private NFCTag mTag;
@@ -267,13 +270,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 去掉窗口标题
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // requestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏顶部的状态栏
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+      /*  getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+        }*/
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_nfc);
 
         initNFC();
@@ -794,6 +798,41 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
+
+    public void openSystemFile() {
+        // https://www.cnblogs.com/zhujiabin/p/9204951.html
+        // https://blog.csdn.net/weixin_42105630/article/details/86305354
+        // https://github.com/search?l=Java&q=%E6%96%87%E4%BB%B6%E9%80%89%E6%8B%A9%E5%99%A8&type=Repositories
+        // https://github.com/ZLYang110/FileSelector
+
+       // Intent intent = new Intent(ACTION_GET_CONTENT);
+        Intent intent = new Intent(ACTION_GET_CONTENT);
+        // 所有类型
+        intent.setType("*/*");
+        //intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // 这里可以设置要显示的文件的类型，用MIME data tpe的规范来设置，常见的类型可以看这个网页：
+        //https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+        //设置为*/*表示可打开所有文件。只显示pdf的话可以设置为application/pdf
+        intent.setType("*/*");
+        intent.setDataAndType(Uri.fromFile(Environment.getExternalStorageDirectory()), "file/*");
+
+        //要设置多种类型可打开，则需要用putExtra。
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/pdf", "text/plain", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "请选择文件"), FILE_SELECT_CODE);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            Toast.makeText(NfcNdefActivity.this, "请安装文件管理器", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
     Button bt_nfc_light_submit;
     EditText et_device_info_UUID, et_device_info_name1, et_device_info_name2, et_device_info_name3, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter,
             et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent, et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer,
@@ -807,6 +846,28 @@ public class NfcNdefActivity extends BaseNfcActivity {
         // toolbar 加载该menu文件
         Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu);
+        // setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                showToast("xx setNavigationOnClickListener = " + item.getTitle().toString());
+                switch (item.getItemId()) {
+                    case R.id.item_newfile:
+
+                        break;
+                    case R.id.item_import:
+                        openSystemFile();
+                        break;
+                    case R.id.item_export:
+
+                        break;
+                }
+
+
+                return true;
+            }
+        });
 
         et_device_info_UUID = (EditText) this.findViewById(R.id.et_device_info_UUID);
         et_device_info_name1 = (EditText) this.findViewById(R.id.et_device_info_name1);
@@ -843,8 +904,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 et_device_info_name2.setText(++num + "");
             }
         });
-
-
 
 
         // 获取保存数据
@@ -1436,6 +1495,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 }
                 break;
             default:
+                showToast(intent.getData().toString());
+                LogUtil.e("xxx = " + intent.getData().toString());
                 break;
         }
     }
@@ -1569,6 +1630,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
         //获取Tag对象
         mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         readNfcTag(intent);
+
+
 
    /*     Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         String action = intent.getAction();
