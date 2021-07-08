@@ -808,15 +808,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
        // Intent intent = new Intent(ACTION_GET_CONTENT);
         Intent intent = new Intent(ACTION_GET_CONTENT);
         // 所有类型
-        intent.setType("*/*");
         //intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // 这里可以设置要显示的文件的类型，用MIME data tpe的规范来设置，常见的类型可以看这个网页：
         //https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
         //设置为*/*表示可打开所有文件。只显示pdf的话可以设置为application/pdf
-        intent.setType("*/*");
-        intent.setDataAndType(Uri.fromFile(Environment.getExternalStorageDirectory()), "file/*");
+        // intent.setType("*/*");
+        intent.setDataAndType(Uri.fromFile(Environment.getExternalStorageDirectory()), "application/vnd.ms-excel");
 
         //要设置多种类型可打开，则需要用putExtra。
         intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/pdf", "text/plain", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
