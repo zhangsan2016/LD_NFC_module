@@ -1193,7 +1193,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     fis.read(buffer);
                     String txt = new String(buffer, 0, buffer.length);
                     //  LogUtil.e("xxx XmlUtil.formatXml(txt) =" + NfcDataUtil.formatXml(txt));
+                    String xmlStr = NfcDataUtil.formatXml(txt);
                     et_text_editor.setText(NfcDataUtil.formatXml(txt));
+
+                    upWrite(xmlStr);
+
                     // 初始化进度条
                     initProgressBar();
                     fis.close();
@@ -1205,6 +1209,44 @@ public class NfcNdefActivity extends BaseNfcActivity {
         } else {
             Toast.makeText(NfcNdefActivity.this, "读取失败！", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     *  更新后写入
+     * @param xmlStr
+     */
+    private void upWrite(String xmlStr) {
+
+
+        File file = new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
+        saveXmlCacheDir(xmlStr, file);
+        if (file.exists()) {
+
+            try {
+                // 解析xml文件，得到所有参数
+                FileInputStream inputStream = new FileInputStream(new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE));
+                List<DataDictionaries> dataDictionaries = NfcDataUtil.parseXml2(inputStream);
+                String baseplateId = null;
+                for (int i = 0; i < dataDictionaries.size(); i++) {
+                    if (dataDictionaries.get(i).getName().equals("远程服务器域名或IP")) {
+                     //   String xmlWebIp = dataDictionaries.get(i).getXmValue().toString();
+                        dataDictionaries.get(i).setValue("iot.sz-luoding.com".getBytes());
+                    }
+                    if(dataDictionaries.get(i).getName().equals("远程端口")){
+                           dataDictionaries.get(i).setValue("1883".getBytes());
+                    }
+                }
+                writeNfc(dataDictionaries);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("读取xml文件失败！");
+
+            }
+        } else {
+            showToast("xml文件不存在，请先保存文件");
+        }
+
     }
 
 

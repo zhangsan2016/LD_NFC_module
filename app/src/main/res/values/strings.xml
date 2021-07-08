@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LD_NFC_NDEF_module</string>
+    <string name="app_name">LD_NFC_NDEF_module_deip</string>
     <string name="nfc_name">LD_NFC</string>
 
     <string name="servicedesc">服务描述</string>
