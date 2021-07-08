@@ -1026,6 +1026,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     NfcDataUtil.writeNfcDeviceInfo2(dataDictionaries, new NfcDataUtil.OnNfcDataListening() {
                         @Override
                         public void succeed() {
+                            et_text_editor.setText("");
                             showToast("写入成功");
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -1216,7 +1217,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
      * @param xmlStr
      */
     private void upWrite(String xmlStr) {
-
 
         File file = new File(NfcNdefActivity.this.getCacheDir(), NFC_EIDT_DATA_CACHE);
         saveXmlCacheDir(xmlStr, file);
