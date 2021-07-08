@@ -1215,6 +1215,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         readNfcTag(intent);
 
+
    /*     Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         String action = intent.getAction();
         Ndef ndef = Ndef.get(detectedTag);
