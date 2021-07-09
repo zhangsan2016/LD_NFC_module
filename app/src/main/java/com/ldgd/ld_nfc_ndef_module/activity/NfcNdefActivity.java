@@ -850,7 +850,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                showToast("xx setNavigationOnClickListener = " + item.getTitle().toString());
                 switch (item.getItemId()) {
                     case R.id.item_newfile:
 
