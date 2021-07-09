@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- NFC权限-->
@@ -37,34 +37,34 @@
 
     <!-- 高德定位权限 -->
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- 请求网络 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 不是SDK需要的权限，是示例中的后台唤醒定位需要的权限 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- 需要运行时注册的权限 -->
     <!-- 用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- 用于提高GPS定位速度 -->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 读取缓存数据 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 用于读取手机当前的状态 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 更改设置 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!--如果设置了target >= 28 如果需要启动后台定位则必须声明这个权限-->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!--如果您的应用需要后台定位权限，且有可能运行在Android Q设备上,并且设置了target>28，必须增加这个权限声明-->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -74,8 +74,8 @@
         android:required="true" />
 
     <application
-        android:allowBackup="true"
         android:name=".appliction.MyAppliction"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -83,62 +83,61 @@
         android:theme="@style/AppTheme">
 
         <!-- 设置key -->
-      <!--  <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="ca337dbca1e39a0369da571391c0a35a"/>-->
+        <!--  <meta-data
+              android:name="com.amap.api.v2.apikey"
+              android:value="ca337dbca1e39a0369da571391c0a35a"/>-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="ce89e4de9561cda2bc28bf27cfb75539"/>
+            android:value="ce89e4de9561cda2bc28bf27cfb75539" />
         <!-- 定位需要的服务 适配Android Q需要加上android:foregroundServiceType="location"-->
-        <service
-            android:name="com.amap.api.location.APSService" />
+        <service android:name="com.amap.api.location.APSService" />
 
 
-      <!--  <activity
-            android:name="com.ldgd.ld_nfc_ndef_module.activity.NFCActivity"
-            android:label="@string/nfc_name"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+        <!--  <activity
+              android:name="com.ldgd.ld_nfc_ndef_module.activity.NFCActivity"
+              android:label="@string/nfc_name"
+              android:launchMode="singleTop"
+              android:screenOrientation="portrait"
+              android:windowSoftInputMode="adjustResize|stateHidden">
+              <intent-filter>
+                  <action android:name="android.intent.action.MAIN" />
+                  <category android:name="android.intent.category.LAUNCHER" />
 
-            </intent-filter>
+              </intent-filter>
 
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <data android:mimeType="application/vnd.wfa.wsc" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+              <intent-filter>
+                  <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                  <category android:name="android.intent.category.DEFAULT" />
+              </intent-filter>
+              <intent-filter>
+                  <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                  <category android:name="android.intent.category.DEFAULT" />
+                  <data android:scheme="http" />
+              </intent-filter>
+              <intent-filter>
+                  <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                  <category android:name="android.intent.category.DEFAULT" />
+              </intent-filter>
+              <intent-filter>
+                  <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                  <data android:mimeType="application/vnd.wfa.wsc" />
+                  <category android:name="android.intent.category.DEFAULT" />
+              </intent-filter>
+              <intent-filter>
+                  <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                  <category android:name="android.intent.category.DEFAULT" />
+              </intent-filter>
 
-            <meta-data
-                android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/filter_nfc" />
+              <meta-data
+                  android:name="android.nfc.action.TECH_DISCOVERED"
+                  android:resource="@xml/filter_nfc" />
 
-        </activity> -->
+          </activity> -->
 
         <activity
             android:name=".activity.NfcNdefActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -150,7 +149,7 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
             </intent-filter>
 
         </activity>
@@ -158,7 +157,7 @@
         <activity
             android:name=".activity.AMapLocationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop">
 
             <!-- <intent-filter>
                   <action android:name="android.intent.action.MAIN" />
@@ -174,7 +173,11 @@
               </intent-filter>-->
 
         </activity>
-
+        <activity
+            android:name=".fileselector.FileSelectorActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
 
         <activity android:name="com.ldgd.ld_nfc_ndef_module.zbar.CaptureActivity" />

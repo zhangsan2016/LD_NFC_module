@@ -47,6 +47,7 @@ import com.ldgd.ld_nfc_ndef_module.entity.DataDictionaries;
 import com.ldgd.ld_nfc_ndef_module.entity.json.DeviceLampData;
 import com.ldgd.ld_nfc_ndef_module.entity.json.LampEditData;
 import com.ldgd.ld_nfc_ndef_module.entity.json.LoginInfo;
+import com.ldgd.ld_nfc_ndef_module.fileselector.FileSelectorActivity;
 import com.ldgd.ld_nfc_ndef_module.json.LoginJson;
 import com.ldgd.ld_nfc_ndef_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
@@ -853,10 +854,19 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 showToast("xx setNavigationOnClickListener = " + item.getTitle().toString());
                 switch (item.getItemId()) {
                     case R.id.item_newfile:
+                        Intent intent = new Intent(NfcNdefActivity.this, FileSelectorActivity.class);
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MULTI, true);  //是否多选模式
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MAX_COUNT, 5);//限定文件选择数，默认为3
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILEROOT, ""); //初始路径
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, ""); //筛选文件类型，数组字符串形式，例如["video","image","doc"]或[FileSelectorActivity.FILE_TYPE_IMAGE,FileSelectorActivity.FILE_TYPE_VIDEO]
+//intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, FileSelectorActivity.FILE_TYPE_IMAGE);//只展示图片
+                        startActivityForResult(intent, 100);
+
 
                         break;
                     case R.id.item_import:
                         openSystemFile();
+
                         break;
                     case R.id.item_export:
 
