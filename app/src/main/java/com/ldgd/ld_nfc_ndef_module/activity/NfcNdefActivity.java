@@ -70,6 +70,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -856,11 +857,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     case R.id.item_newfile:
                         Intent intent = new Intent(NfcNdefActivity.this, FileSelectorActivity.class);
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MULTI, true);  //是否多选模式
-                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MAX_COUNT, 5);//限定文件选择数，默认为3
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MAX_COUNT, 1);//限定文件选择数，默认为3
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILEROOT, ""); //初始路径
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, ""); //筛选文件类型，数组字符串形式，例如["video","image","doc"]或[FileSelectorActivity.FILE_TYPE_IMAGE,FileSelectorActivity.FILE_TYPE_VIDEO]
-//intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, FileSelectorActivity.FILE_TYPE_IMAGE);//只展示图片
-                        startActivityForResult(intent, 100);
+                        // intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, FileSelectorActivity.FILE_TYPE_IMAGE);//只展示图片
+                        startActivityForResult(intent, FILE_SELECT_CODE);
 
 
                         break;
@@ -1503,9 +1504,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
                     }
                 }
                 break;
+            case FILE_SELECT_CODE:// 文件选择器返回
+                ArrayList<String> pathList = intent.getStringArrayListExtra(FileSelectorActivity.ACTIVITY_KEY_RESULT_PATHLIST);
+                for (String path : pathList) {
+                    showToast(path);
+                    LogUtil.e("xxx = " + path);
+                }
+                break;
             default:
-                showToast(intent.getData().toString());
-                LogUtil.e("xxx = " + intent.getData().toString());
                 break;
         }
     }

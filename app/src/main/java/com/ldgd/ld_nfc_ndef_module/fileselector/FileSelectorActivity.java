@@ -36,9 +36,7 @@ import java.util.List;
 
 /**
  * File Selector
- *
- * @author king
- * @since 2017/11/3
+ * https://github.com/GdinKing/FileSelector
  */
 public class FileSelectorActivity extends AppCompatActivity implements View.OnClickListener {
 
