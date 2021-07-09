@@ -1,6 +1,7 @@
 package com.ldgd.ld_nfc_ndef_module.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -800,14 +801,13 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
-
     public void openSystemFile() {
         // https://www.cnblogs.com/zhujiabin/p/9204951.html
         // https://blog.csdn.net/weixin_42105630/article/details/86305354
         // https://github.com/search?l=Java&q=%E6%96%87%E4%BB%B6%E9%80%89%E6%8B%A9%E5%99%A8&type=Repositories
         // https://github.com/ZLYang110/FileSelector
 
-       // Intent intent = new Intent(ACTION_GET_CONTENT);
+        // Intent intent = new Intent(ACTION_GET_CONTENT);
         Intent intent = new Intent(ACTION_GET_CONTENT);
         // 所有类型
         //intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -832,8 +832,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
 
-
-
     Button bt_nfc_light_submit;
     EditText et_device_info_UUID, et_device_info_name1, et_device_info_name2, et_device_info_name3, et_device_info_lat, et_device_info_lng, et_device_info_lamp_diameter,
             et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent, et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer,
@@ -855,18 +853,18 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 showToast("xx setNavigationOnClickListener = " + item.getTitle().toString());
                 switch (item.getItemId()) {
                     case R.id.item_newfile:
+
+                        break;
+                    case R.id.item_import:
+
+                         // openSystemFile();
                         Intent intent = new Intent(NfcNdefActivity.this, FileSelectorActivity.class);
-                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MULTI, true);  //是否多选模式
+                        intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MULTI, false);  //是否多选模式
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MAX_COUNT, 1);//限定文件选择数，默认为3
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILEROOT, ""); //初始路径
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, ""); //筛选文件类型，数组字符串形式，例如["video","image","doc"]或[FileSelectorActivity.FILE_TYPE_IMAGE,FileSelectorActivity.FILE_TYPE_VIDEO]
                         // intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_FILE_TYPE, FileSelectorActivity.FILE_TYPE_IMAGE);//只展示图片
                         startActivityForResult(intent, FILE_SELECT_CODE);
-
-
-                        break;
-                    case R.id.item_import:
-                        openSystemFile();
 
                         break;
                     case R.id.item_export:
@@ -1478,42 +1476,45 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 }
             }
         }*/
-
-
-        switch (requestCode) {
-            case REQUEST_CODE_QR:// 二维码
-                // 扫描二维码回传
-                if (resultCode == RESULT_OK) {
-                    if (intent != null) {
-                        //获取扫描结果
-                        Bundle bundle = intent.getExtras();
-                        String result = bundle.getString(CaptureActivity.EXTRA_STRING);
-                        ed_search.setText(result);
-                    }
-                }
-                break;
-            case REQUEST_CODE_ORIENTATION:// 定位返回
-                // 定位返回
-                if (resultCode == RESULT_OK) {
-                    if (intent != null) {
-                        LatLng latLng = intent.getParcelableExtra("location");
-                        if (latLng != null) {
-                            et_device_info_lat.setText(latLng.latitude + "");
-                            et_device_info_lng.setText(latLng.longitude + "");
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_QR:// 二维码
+                    // 扫描二维码回传
+                    if (resultCode == RESULT_OK) {
+                        if (intent != null) {
+                            //获取扫描结果
+                            Bundle bundle = intent.getExtras();
+                            String result = bundle.getString(CaptureActivity.EXTRA_STRING);
+                            ed_search.setText(result);
                         }
                     }
-                }
-                break;
-            case FILE_SELECT_CODE:// 文件选择器返回
-                ArrayList<String> pathList = intent.getStringArrayListExtra(FileSelectorActivity.ACTIVITY_KEY_RESULT_PATHLIST);
-                for (String path : pathList) {
-                    showToast(path);
-                    LogUtil.e("xxx = " + path);
-                }
-                break;
-            default:
-                break;
+                    break;
+                case REQUEST_CODE_ORIENTATION:// 定位返回
+                    // 定位返回
+                    if (resultCode == RESULT_OK) {
+                        if (intent != null) {
+                            LatLng latLng = intent.getParcelableExtra("location");
+                            if (latLng != null) {
+                                et_device_info_lat.setText(latLng.latitude + "");
+                                et_device_info_lng.setText(latLng.longitude + "");
+                            }
+                        }
+                    }
+                    break;
+                case FILE_SELECT_CODE:// 文件选择器返回
+                    ArrayList<String> pathList = intent.getStringArrayListExtra(FileSelectorActivity.ACTIVITY_KEY_RESULT_PATHLIST);
+
+                    for (String path : pathList) {
+                        showToast(path);
+                        LogUtil.e("xxx = " + path);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
+
+
     }
 
 
