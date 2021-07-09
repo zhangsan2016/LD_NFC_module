@@ -52,5 +52,6 @@ public final class Config {
 	public static final String KEY_AUTO_OPEN_WEB = "preferences_auto_open_web";
 
 	public  static  final  String KEY_DEVICE_LAMP_DATA = "key_device_lamp_data";
+	public  static  final  String KEY_EXCEL_PATH = "key_Excel_path";
 
 }

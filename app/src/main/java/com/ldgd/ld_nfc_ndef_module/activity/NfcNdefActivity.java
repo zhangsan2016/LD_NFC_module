@@ -137,6 +137,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private AMapLocation cAMapLocation;
     // 登录获取的 Token
     private String token = null;
+    // Excel 表格导出地址
+    private File outputFile;
 
     private String cxml = "\n" +
             "<当前读取信息>\n" +
@@ -837,6 +839,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
             et_device_info_power_manufacturer, et_device_info_lamp_ratedCurrent, et_device_info_lamp_ratedvoltage, et_device_info_lampType, et_device_info_lamp_manufacturer,
             et_device_info_lamp_num, et_device_info_poleProductionDate, et_device_info_pole_height, et_device_info_rated_power, et_device_info_subcommunicate_mode;
     ImageView bt_subbt, bt_add;
+    TextView tv_path;
     String currentUuid;
     Gson gson = new Gson();
 
@@ -853,10 +856,49 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 switch (item.getItemId()) {
                     case R.id.item_newfile:
 
+                        final EditText et = new EditText(NfcNdefActivity.this);
+                        new AlertDialog.Builder(NfcNdefActivity.this).setTitle("请输入Excel文件名称")
+                                .setView(et)
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        String fileName =  et.getText().toString().trim();
+                                        if (fileName.equals("")){
+                                            showToast("文件名不能为空~");
+                                            return;
+                                        }
+
+                                        try {
+                                            File fs = new File(Environment.getExternalStorageDirectory() + "/洛丁光电/" + et.getText().toString().trim()+".xlsx");
+                                            if (!fs.exists()) {
+                                                //先创建文件夹/目录
+                                                fs.getParentFile().mkdirs();
+                                                //再创建新文件
+                                                fs.createNewFile();
+
+                                                // 保存地址
+                                                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
+                                                SharedPreferences.Editor editor = sharedPrefs.edit();
+                                                editor.putString(Config.KEY_EXCEL_PATH, fs.getPath());
+                                                outputFile =fs;
+                                                tv_path.setText("存储位置：" + fs.getPath());
+                                                showToast("创建 Excel 文件成功~");
+
+                                            }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+
+
+
+                                    }
+                                }).setNegativeButton("取消", null).show();
+
                         break;
                     case R.id.item_import:
 
-                         // openSystemFile();
+                        // openSystemFile();
                         Intent intent = new Intent(NfcNdefActivity.this, FileSelectorActivity.class);
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MULTI, false);  //是否多选模式
                         intent.putExtra(FileSelectorActivity.ACTIVITY_KEY_MAX_COUNT, 1);//限定文件选择数，默认为3
@@ -893,6 +935,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         et_device_info_pole_height = (EditText) this.findViewById(R.id.et_device_info_pole_height);
         et_device_info_rated_power = (EditText) this.findViewById(R.id.et_device_info_rated_power);
         et_device_info_subcommunicate_mode = (EditText) this.findViewById(R.id.et_device_info_subcommunicate_mode);
+        tv_path = (TextView) this.findViewById(R.id.tv_path);
 
         bt_subbt = (ImageView) this.findViewById(R.id.bt_subbt);
         bt_add = (ImageView) this.findViewById(R.id.bt_add);

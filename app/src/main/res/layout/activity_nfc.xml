@@ -78,13 +78,15 @@
         android:orientation="vertical"
         android:visibility="visible">
 
+        <!-- 当前位置：C:\Users\ldgd\Desktop\blecheck -->
         <TextView
+            android:id="@+id/tv_path"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:gravity="center"
             android:layout_marginTop="10dp"
-            android:text="当前位置：C:\Users\ldgd\Desktop\blecheck"/>
+            android:text=""/>
 
         <ScrollView
             android:layout_width="match_parent"
