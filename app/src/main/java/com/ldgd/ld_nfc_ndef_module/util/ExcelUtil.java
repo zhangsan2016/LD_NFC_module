@@ -2,10 +2,18 @@ package com.ldgd.ld_nfc_ndef_module.util;
 
 import android.content.Context;
 
+import com.ldgd.ld_nfc_ndef_module.entity.json.LampEditData;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.format.Alignment;
 import jxl.format.Colour;
 import jxl.write.Label;
 import jxl.write.WritableCell;
@@ -51,6 +59,7 @@ public class ExcelUtil {
             arial12format = new WritableCellFormat(arial12font);
             //对齐格式
             arial10format.setAlignment(jxl.format.Alignment.CENTRE);
+            arial12format.setAlignment(Alignment.CENTRE); // 设置对齐方式
             //设置边框
             arial12format.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
 
@@ -60,24 +69,25 @@ public class ExcelUtil {
     }
 
     /**
-     * 初始化Excel
+     * 初始化Excel表格
      *
-     * @param fileName 导出excel存放的地址（目录）
-     * @param colName excel中包含的列名（可以有多个）
+     * @param filePath  存放excel文件的路径（path/demo.xls）
+     * @param sheetName Excel表格的表名
+     * @param colName   excel中包含的列名（可以有多个）
      */
-    public static void initExcel(String fileName, String[] colName) {
+    public static void initExcel(String filePath, String sheetName, String[] colName) {
         format();
         WritableWorkbook workbook = null;
         try {
-            File file = new File(fileName);
+            File file = new File(filePath);
             if (!file.exists()) {
                 file.createNewFile();
             }
             workbook = Workbook.createWorkbook(file);
             //设置表格的名字
-            WritableSheet sheet = workbook.createSheet("账单", 0);
+            WritableSheet sheet = workbook.createSheet(sheetName, 0);
             //创建标题栏
-            sheet.addCell((WritableCell) new Label(0, 0, fileName, arial14format));
+            sheet.addCell((WritableCell) new Label(0, 0, filePath, arial14format));
             for (int col = 0; col < colName.length; col++) {
                 sheet.addCell(new Label(col, 0, colName[col], arial10format));
             }
@@ -99,7 +109,7 @@ public class ExcelUtil {
 
     @SuppressWarnings("unchecked")
     public static <T> void writeObjListToExcel(List<T> objList, String fileName, Context c) {
-      /*  if (objList != null && objList.size() > 0) {
+        if (objList != null && objList.size() > 0) {
             WritableWorkbook writebook = null;
             InputStream in = null;
             try {
@@ -111,13 +121,24 @@ public class ExcelUtil {
                 WritableSheet sheet = writebook.getSheet(0);
 
                 for (int j = 0; j < objList.size(); j++) {
-                    ProjectBean projectBean = (ProjectBean) objList.get(j);
+                    LampEditData lampEditData = (LampEditData) objList.get(j);
                     List<String> list = new ArrayList<>();
-                    list.add(projectBean.getName());
-                    list.add(projectBean.getProject());
-                    list.add(projectBean.getMoney());
-                    list.add(projectBean.getYear() + " " + projectBean.getMonth()+" "+projectBean.getDay());
-                    list.add(projectBean.getBeizhu());
+                    list.add(lampEditData.getUUID());
+                    list.add(lampEditData.getLAT());
+                    list.add(lampEditData.getLNG());
+                    list.add(lampEditData.getNAME1() + " " + lampEditData.getNAME2()+" "+lampEditData.getNAME3());
+                    list.add(lampEditData.getLampDiameter());
+                    list.add(lampEditData.getPower_Manufacturer());
+                    list.add(lampEditData.getLamp_RatedCurrent());
+                    list.add(lampEditData.getLamp_Ratedvoltage());
+                    list.add(lampEditData.getLampType());
+                    list.add(lampEditData.getLamp_Manufacturer());
+                    list.add(lampEditData.getLamp_Num());
+                    list.add(lampEditData.getPoleProductionDate());
+                    list.add(lampEditData.getPole_height());
+                    list.add(lampEditData.getRated_power());
+                    list.add(lampEditData.getSubcommunicate_mode());
+
 
                     for (int i = 0; i < list.size(); i++) {
                         sheet.addCell(new Label(i, j + 1, list.get(i), arial12format));
@@ -134,7 +155,7 @@ public class ExcelUtil {
                 }
 
                 writebook.write();
-                Toast.makeText(c, "导出Excel成功", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(c, "导出Excel成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -155,7 +176,7 @@ public class ExcelUtil {
                 }
             }
 
-        }*/
+        }
     }
 
 }

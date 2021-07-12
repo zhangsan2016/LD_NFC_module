@@ -53,6 +53,7 @@ import com.ldgd.ld_nfc_ndef_module.json.LoginJson;
 import com.ldgd.ld_nfc_ndef_module.util.AutoFitKeyBoardUtil;
 import com.ldgd.ld_nfc_ndef_module.util.BytesUtil;
 import com.ldgd.ld_nfc_ndef_module.util.DrawableUtil;
+import com.ldgd.ld_nfc_ndef_module.util.ExcelUtil;
 import com.ldgd.ld_nfc_ndef_module.util.HttpUtil;
 import com.ldgd.ld_nfc_ndef_module.util.LogUtil;
 import com.ldgd.ld_nfc_ndef_module.util.MapHttpConfiguration;
@@ -862,14 +863,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        String fileName =  et.getText().toString().trim();
-                                        if (fileName.equals("")){
+                                        String fileName = et.getText().toString().trim();
+                                        if (fileName.equals("")) {
                                             showToast("文件名不能为空~");
                                             return;
                                         }
 
                                         try {
-                                            File fs = new File(Environment.getExternalStorageDirectory() + "/洛丁光电/" + et.getText().toString().trim()+".xlsx");
+                                            File fs = new File(Environment.getExternalStorageDirectory() + "/洛丁光电/" + et.getText().toString().trim() + ".xlsx");
                                             if (!fs.exists()) {
                                                 //先创建文件夹/目录
                                                 fs.getParentFile().mkdirs();
@@ -880,7 +881,8 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
                                                 SharedPreferences.Editor editor = sharedPrefs.edit();
                                                 editor.putString(Config.KEY_EXCEL_PATH, fs.getPath());
-                                                outputFile =fs;
+                                                editor.commit();
+                                                outputFile = fs;
                                                 tv_path.setText("存储位置：" + fs.getPath());
                                                 showToast("创建 Excel 文件成功~");
 
@@ -888,9 +890,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
-
-
-
 
                                     }
                                 }).setNegativeButton("取消", null).show();
@@ -937,6 +936,14 @@ public class NfcNdefActivity extends BaseNfcActivity {
         et_device_info_subcommunicate_mode = (EditText) this.findViewById(R.id.et_device_info_subcommunicate_mode);
         tv_path = (TextView) this.findViewById(R.id.tv_path);
 
+        // 获取当前存储位置
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
+        String crePath = prefs.getString(Config.KEY_EXCEL_PATH, "");
+        if (!crePath.equals("")) {
+            tv_path.setText("存储位置：" + crePath);
+        }
+
+
         bt_subbt = (ImageView) this.findViewById(R.id.bt_subbt);
         bt_add = (ImageView) this.findViewById(R.id.bt_add);
         bt_subbt.setOnClickListener(new View.OnClickListener() {
@@ -957,7 +964,6 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
 
         // 获取保存数据
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
         String lampData = prefs.getString(Config.KEY_DEVICE_LAMP_DATA, "");
         if (lampData != "") {
             LampEditData lampEditData = gson.fromJson(lampData, LampEditData.class);
@@ -1015,137 +1021,18 @@ public class NfcNdefActivity extends BaseNfcActivity {
                 editor.commit();
 
 
+                String path = tv_path.getText().toString().trim();
+                if (path == null || path.equals("")) {
+                    showToast("请先新建 Excel 文件~");
+                    return;
+                }
+
                 //currentUuid = "83140000862285036010878";
                 currentUuid = lampEditData.getUUID();
                 if (currentUuid != null && !currentUuid.equals("")) {
-                    showProgress();
-                    // 获取 Dialog 中的经纬度
-              /*      String longitude = ((EditText)writeAlertDialog.findViewById(R.id.et_longitude)).getText().toString();
-                    String latitude = ((EditText)writeAlertDialog.findViewById(R.id.et_latitude)).getText().toString();*/
+                    // sendLocationUp();
 
-
-                    //    String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
-                    String url = "https://iot.sz-luoding.com:2890/api/device_lamp/list";
-                    // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
-
-                    JSONStringer jsonstr = null;
-                    try {
-                        jsonstr = new JSONStringer()
-                                .object().key("size").value(2000)
-                                .key("where").object().key("UUID").value(currentUuid)
-                                .endObject().endObject();
-                        LogUtil.e("jsonstr = " + jsonstr.toString());
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
-                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
-
-                    HttpUtil.sendHttpRequest(url, new Callback() {
-
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            NfcNdefActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showToast("连接服务器异常！");
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onResponse(Call call, final Response response) throws IOException {
-                            NfcNdefActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-
-                                        String data = response.body().string();
-                                        DeviceLampData deviceLampSingleData = gson.fromJson(data, DeviceLampData.class);
-                                        if (deviceLampSingleData.getErrno() != 0) {
-                                            showToast("服务器访问异常~");
-                                            return;
-                                        }
-
-                                        //  https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=28
-                                        LogUtil.e("data = " + data);
-                                        String url = "https://iot.sz-luoding.com:2890/api/device_lamp/edit?upsert=1&id=" + deviceLampSingleData.getData().getData().get(0).get_id();
-                                        JSONStringer jsonstr = null;
-                                        try {
-
-                                            LampEditData lampEditData = new LampEditData();
-                                            lampEditData.setUUID(et_device_info_UUID.getText().toString());
-                                            // lampEditData.setUUID("83140000862285036010878");
-
-                                            lampEditData.setNAME1(et_device_info_name1.getText().toString());
-                                            lampEditData.setNAME2(et_device_info_name2.getText().toString());
-                                            lampEditData.setNAME3(et_device_info_name3.getText().toString());
-                                            lampEditData.setLAT(et_device_info_lat.getText().toString());
-                                            lampEditData.setLNG(et_device_info_lng.getText().toString());
-                                            lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
-                                            lampEditData.setPower_Manufacturer(et_device_info_power_manufacturer.getText().toString());
-                                            lampEditData.setLamp_RatedCurrent(et_device_info_lamp_ratedCurrent.getText().toString());
-                                            lampEditData.setLamp_Ratedvoltage(et_device_info_lamp_ratedvoltage.getText().toString());
-                                            lampEditData.setLampType(et_device_info_lampType.getText().toString());
-                                            lampEditData.setLamp_Manufacturer(et_device_info_lamp_manufacturer.getText().toString());
-                                            lampEditData.setLamp_Num(et_device_info_lamp_num.getText().toString());
-                                            lampEditData.setPoleProductionDate(et_device_info_poleProductionDate.getText().toString());
-                                            lampEditData.setPole_height(et_device_info_pole_height.getText().toString());
-                                            lampEditData.setRated_power(et_device_info_rated_power.getText().toString());
-                                            lampEditData.setSubcommunicate_mode(et_device_info_subcommunicate_mode.getText().toString());
-
-                                            jsonstr = new JSONStringer()
-                                                    .object()
-                                                    .key("LAT").value(lampEditData.getLAT())
-                                                    .key("LNG").value(lampEditData.getLNG())
-                                                    .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
-                                                    .key("LampDiameter").value(lampEditData.getLampDiameter())
-                                                    .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
-                                                    .key("Lamp_RatedCurrent").value(lampEditData.getLamp_RatedCurrent())
-                                                    .key("Lamp_Ratedvoltage").value(lampEditData.getLamp_Ratedvoltage())
-                                                    .key("lampType").value(lampEditData.getLampType())
-                                                    .key("Lamp_Manufacturer").value(lampEditData.getLamp_Manufacturer())
-                                                    .key("Lamp_Num").value(lampEditData.getLamp_Num())
-                                                    .key("PoleProductionDate").value(lampEditData.getPoleProductionDate())
-                                                    .key("Pole_height").value(lampEditData.getPole_height())
-                                                    .key("Rated_power").value(lampEditData.getRated_power())
-                                                    .key("Subcommunicate_mode").value(lampEditData.getSubcommunicate_mode())
-                                                    .endObject();
-                                            LogUtil.e("jsonstr = " + jsonstr.toString());
-
-                                            stopProgress();
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        LogUtil.e("jsonstr = " + jsonstr.toString());
-                                        //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
-                                        RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
-                                        HttpUtil.sendHttpRequest(url, new Callback() {
-                                            @Override
-                                            public void onFailure(Call call, IOException e) {
-
-                                            }
-
-                                            @Override
-                                            public void onResponse(Call call, Response response) throws IOException {
-                                                showToast("更新经纬度成功~");
-                                                myHandler.sendEmptyMessage(STOP_WRITE_NFC);
-
-                                            }
-                                        }, token, requestBody);
-
-
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-
-                        }
-                    }, token, requestBody);
+                    saveExcelFile(lampEditData);
 
                 } else {
                     stopProgress();
@@ -1154,6 +1041,164 @@ public class NfcNdefActivity extends BaseNfcActivity {
             }
         });
 
+    }
+
+    List<LampEditData> demoBeanList = new ArrayList<>();
+    private void saveExcelFile(LampEditData lampEditData) {
+        File filePath;
+        try {
+            String path = tv_path.getText().toString().substring(tv_path.getText().toString().lastIndexOf("：") + 1);
+            filePath = new File(path);
+            if (!filePath.exists()) {
+                filePath.mkdirs();
+                //先创建文件夹/目录
+                filePath.getParentFile().mkdirs();
+                //再创建新文件
+                filePath.createNewFile();
+            }
+
+            String[] title = {"UUID", "经度", "纬度","灯杆名称","灯杆直径","电源出厂商","灯具额定电流","灯具额定电压","灯具类型","灯具出厂商","灯具数","灯具出厂日期","灯杆高度","总额定功率","通讯方式"};
+
+            ExcelUtil.initExcel(filePath.getPath(), filePath.getName(), title);
+            demoBeanList.add(lampEditData);
+            ExcelUtil.writeObjListToExcel(demoBeanList, filePath.getPath(), NfcNdefActivity.this);
+
+            showToast("保存成功~");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendLocationUp() {
+        showProgress();
+        // 获取 Dialog 中的经纬度
+              /*      String longitude = ((EditText)writeAlertDialog.findViewById(R.id.et_longitude)).getText().toString();
+                    String latitude = ((EditText)writeAlertDialog.findViewById(R.id.et_latitude)).getText().toString();*/
+
+
+        //    String url = "https://ludeng.stgxy.com:9443/api/device_lamp/edit";
+        String url = "https://iot.sz-luoding.com:2890/api/device_lamp/list";
+        // String postBody = "{\"data\":{ \"LNG\":"+"106.541652"+",\"\"LAT:" +"29.803828" +"},\"where\":{ \"UUID\":"+"000000000000000000000022" +"} }";
+
+        JSONStringer jsonstr = null;
+        try {
+            jsonstr = new JSONStringer()
+                    .object().key("size").value(2000)
+                    .key("where").object().key("UUID").value(currentUuid)
+                    .endObject().endObject();
+            LogUtil.e("jsonstr = " + jsonstr.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
+
+        HttpUtil.sendHttpRequest(url, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast("连接服务器异常！");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                NfcNdefActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+
+                            String data = response.body().string();
+                            DeviceLampData deviceLampSingleData = gson.fromJson(data, DeviceLampData.class);
+                            if (deviceLampSingleData.getErrno() != 0) {
+                                showToast("服务器访问异常~");
+                                return;
+                            }
+
+                            //  https://iot2.sz-luoding.com:2888/api/device_lamp/edit?upsert=1&id=28
+                            LogUtil.e("data = " + data);
+                            String url = "https://iot.sz-luoding.com:2890/api/device_lamp/edit?upsert=1&id=" + deviceLampSingleData.getData().getData().get(0).get_id();
+                            JSONStringer jsonstr = null;
+                            try {
+
+                                LampEditData lampEditData = new LampEditData();
+                                lampEditData.setUUID(et_device_info_UUID.getText().toString());
+                                // lampEditData.setUUID("83140000862285036010878");
+
+                                lampEditData.setNAME1(et_device_info_name1.getText().toString());
+                                lampEditData.setNAME2(et_device_info_name2.getText().toString());
+                                lampEditData.setNAME3(et_device_info_name3.getText().toString());
+                                lampEditData.setLAT(et_device_info_lat.getText().toString());
+                                lampEditData.setLNG(et_device_info_lng.getText().toString());
+                                lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
+                                lampEditData.setPower_Manufacturer(et_device_info_power_manufacturer.getText().toString());
+                                lampEditData.setLamp_RatedCurrent(et_device_info_lamp_ratedCurrent.getText().toString());
+                                lampEditData.setLamp_Ratedvoltage(et_device_info_lamp_ratedvoltage.getText().toString());
+                                lampEditData.setLampType(et_device_info_lampType.getText().toString());
+                                lampEditData.setLamp_Manufacturer(et_device_info_lamp_manufacturer.getText().toString());
+                                lampEditData.setLamp_Num(et_device_info_lamp_num.getText().toString());
+                                lampEditData.setPoleProductionDate(et_device_info_poleProductionDate.getText().toString());
+                                lampEditData.setPole_height(et_device_info_pole_height.getText().toString());
+                                lampEditData.setRated_power(et_device_info_rated_power.getText().toString());
+                                lampEditData.setSubcommunicate_mode(et_device_info_subcommunicate_mode.getText().toString());
+
+                                jsonstr = new JSONStringer()
+                                        .object()
+                                        .key("LAT").value(lampEditData.getLAT())
+                                        .key("LNG").value(lampEditData.getLNG())
+                                        .key("NAME").value(lampEditData.getNAME1() + lampEditData.getNAME2() + lampEditData.getNAME3())
+                                        .key("LampDiameter").value(lampEditData.getLampDiameter())
+                                        .key("Power_Manufacturer").value(lampEditData.getPower_Manufacturer())
+                                        .key("Lamp_RatedCurrent").value(lampEditData.getLamp_RatedCurrent())
+                                        .key("Lamp_Ratedvoltage").value(lampEditData.getLamp_Ratedvoltage())
+                                        .key("lampType").value(lampEditData.getLampType())
+                                        .key("Lamp_Manufacturer").value(lampEditData.getLamp_Manufacturer())
+                                        .key("Lamp_Num").value(lampEditData.getLamp_Num())
+                                        .key("PoleProductionDate").value(lampEditData.getPoleProductionDate())
+                                        .key("Pole_height").value(lampEditData.getPole_height())
+                                        .key("Rated_power").value(lampEditData.getRated_power())
+                                        .key("Subcommunicate_mode").value(lampEditData.getSubcommunicate_mode())
+                                        .endObject();
+                                LogUtil.e("jsonstr = " + jsonstr.toString());
+
+                                stopProgress();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            LogUtil.e("jsonstr = " + jsonstr.toString());
+                            //  String postBody = "{\"data\":{ \"LNG\":\"106.541654\",\"LAT\":\"29.803828\"},\"where\":{ \"UUID\":\"000000000000000000000022\"} }";
+                            RequestBody requestBody = FormBody.create(MediaType.parse("application/json"), jsonstr.toString());
+                            HttpUtil.sendHttpRequest(url, new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    showToast("更新经纬度成功~");
+                                    myHandler.sendEmptyMessage(STOP_WRITE_NFC);
+
+                                }
+                            }, token, requestBody);
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        }, token, requestBody);
     }
 
     /**
