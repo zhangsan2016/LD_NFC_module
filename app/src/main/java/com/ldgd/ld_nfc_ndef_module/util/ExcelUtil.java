@@ -81,6 +81,10 @@ public class ExcelUtil {
         try {
             File file = new File(filePath);
             if (!file.exists()) {
+               // file.createNewFile();
+                //先创建文件夹/目录
+                file.getParentFile().mkdirs();
+                //再创建新文件
                 file.createNewFile();
             }
             workbook = Workbook.createWorkbook(file);
@@ -158,12 +162,14 @@ public class ExcelUtil {
               //  Toast.makeText(c, "导出Excel成功", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
+                LogUtil.e("xxx Exception4 = " + e.getMessage().toString());
             } finally {
                 if (writebook != null) {
                     try {
                         writebook.close();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        LogUtil.e("xxx Exception 5 = " + e.getMessage().toString());
                     }
 
                 }
@@ -172,6 +178,7 @@ public class ExcelUtil {
                         in.close();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        LogUtil.e("xxx Exception 6 = " + e.getMessage().toString());
                     }
                 }
             }

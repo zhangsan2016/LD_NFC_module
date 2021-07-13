@@ -994,50 +994,66 @@ public class NfcNdefActivity extends BaseNfcActivity {
             @Override
             public void onClick(View v) {
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showProgress();
 
-                // 保存数据
-                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
-                SharedPreferences.Editor editor = sharedPrefs.edit();
+                        // 保存数据
+                        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(NfcNdefActivity.this);
+                        SharedPreferences.Editor editor = sharedPrefs.edit();
 
-                LampEditData lampEditData = new LampEditData();
-                lampEditData.setUUID(et_device_info_UUID.getText().toString());
-                lampEditData.setNAME1(et_device_info_name1.getText().toString());
-                lampEditData.setNAME2(et_device_info_name2.getText().toString());
-                lampEditData.setNAME3(et_device_info_name3.getText().toString());
-                lampEditData.setLAT(et_device_info_lat.getText().toString());
-                lampEditData.setLNG(et_device_info_lng.getText().toString());
-                lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
-                lampEditData.setPower_Manufacturer(et_device_info_power_manufacturer.getText().toString());
-                lampEditData.setLamp_RatedCurrent(et_device_info_lamp_ratedCurrent.getText().toString());
-                lampEditData.setLamp_Ratedvoltage(et_device_info_lamp_ratedvoltage.getText().toString());
-                lampEditData.setLampType(et_device_info_lampType.getText().toString());
-                lampEditData.setLamp_Manufacturer(et_device_info_lamp_manufacturer.getText().toString());
-                lampEditData.setLamp_Num(et_device_info_lamp_num.getText().toString());
-                lampEditData.setPoleProductionDate(et_device_info_poleProductionDate.getText().toString());
-                lampEditData.setPole_height(et_device_info_pole_height.getText().toString());
-                lampEditData.setRated_power(et_device_info_rated_power.getText().toString());
-                lampEditData.setSubcommunicate_mode(et_device_info_subcommunicate_mode.getText().toString());
-                editor.putString(Config.KEY_DEVICE_LAMP_DATA, gson.toJson(lampEditData));
-                editor.commit();
+                        LampEditData lampEditData = new LampEditData();
+                        lampEditData.setUUID(et_device_info_UUID.getText().toString());
+                        lampEditData.setNAME1(et_device_info_name1.getText().toString());
+                        lampEditData.setNAME2(et_device_info_name2.getText().toString());
+                        lampEditData.setNAME3(et_device_info_name3.getText().toString());
+                        lampEditData.setLAT(et_device_info_lat.getText().toString());
+                        lampEditData.setLNG(et_device_info_lng.getText().toString());
+                        lampEditData.setLampDiameter(et_device_info_lamp_diameter.getText().toString());
+                        lampEditData.setPower_Manufacturer(et_device_info_power_manufacturer.getText().toString());
+                        lampEditData.setLamp_RatedCurrent(et_device_info_lamp_ratedCurrent.getText().toString());
+                        lampEditData.setLamp_Ratedvoltage(et_device_info_lamp_ratedvoltage.getText().toString());
+                        lampEditData.setLampType(et_device_info_lampType.getText().toString());
+                        lampEditData.setLamp_Manufacturer(et_device_info_lamp_manufacturer.getText().toString());
+                        lampEditData.setLamp_Num(et_device_info_lamp_num.getText().toString());
+                        lampEditData.setPoleProductionDate(et_device_info_poleProductionDate.getText().toString());
+                        lampEditData.setPole_height(et_device_info_pole_height.getText().toString());
+                        lampEditData.setRated_power(et_device_info_rated_power.getText().toString());
+                        lampEditData.setSubcommunicate_mode(et_device_info_subcommunicate_mode.getText().toString());
+                        editor.putString(Config.KEY_DEVICE_LAMP_DATA, gson.toJson(lampEditData));
+                        editor.commit();
 
 
-                String path = tv_path.getText().toString().trim();
-                if (path == null || path.equals("")) {
-                    showToast("请先新建 Excel 文件~");
-                    return;
-                }
+                        String path = tv_path.getText().toString().trim();
+                        if (path == null || path.equals("")) {
+                            stopProgress();
+                            showToast("请先新建 Excel 文件~");
+                            return;
+                        }
 
-                //currentUuid = "83140000862285036010878";
-                currentUuid = lampEditData.getUUID();
-                if (currentUuid != null && !currentUuid.equals("")) {
-                    // sendLocationUp();
+                        //currentUuid = "83140000862285036010878";
+                        currentUuid = lampEditData.getUUID();
+                        if (currentUuid != null && !currentUuid.equals("")) {
+                            // sendLocationUp();
 
-                    saveExcelFile(lampEditData);
+                            try {
+                                saveExcelFile(lampEditData);
+                                Thread.sleep(500);
+                                stopProgress();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                showToast("Exception = " + e.getMessage().toString());
+                            }
 
-                } else {
-                    stopProgress();
-                    showToast("uuid 有误，请先读取uuid");
-                }
+
+                        } else {
+                            stopProgress();
+                            showToast("uuid 有误，请先读取uuid");
+                        }
+                    }
+                }).start();
+
             }
         });
 
@@ -1050,11 +1066,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
             String path = tv_path.getText().toString().substring(tv_path.getText().toString().lastIndexOf("：") + 1);
             filePath = new File(path);
             if (!filePath.exists()) {
-                filePath.mkdirs();
                 //先创建文件夹/目录
                 filePath.getParentFile().mkdirs();
                 //再创建新文件
                 filePath.createNewFile();
+
             }
 
             String[] title = {"UUID", "经度", "纬度","灯杆名称","灯杆直径","电源出厂商","灯具额定电流","灯具额定电压","灯具类型","灯具出厂商","灯具数","灯具出厂日期","灯杆高度","总额定功率","通讯方式"};
@@ -1063,10 +1079,12 @@ public class NfcNdefActivity extends BaseNfcActivity {
             demoBeanList.add(lampEditData);
             ExcelUtil.writeObjListToExcel(demoBeanList, filePath.getPath(), NfcNdefActivity.this);
 
-            showToast("保存成功~");
+            showToast("存储成功~");
 
         } catch (IOException e) {
             e.printStackTrace();
+            stopProgress();
+            showToast("Exception 2 = " + e.getMessage().toString());
         }
     }
 

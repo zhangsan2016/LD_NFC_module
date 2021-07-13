@@ -272,12 +272,24 @@ public class BaseNfcActivity extends AppCompatActivity {
     }
 
     protected void showProgress() {
-        mProgress = ProgressDialog.show(this, "", "请稍等...");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgress = ProgressDialog.show(BaseNfcActivity.this, "", "请稍等...");
+            }
+        });
     }
     protected void stopProgress() {
-        if(mProgress!= null){
-            mProgress.cancel();
-        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mProgress!= null){
+                    mProgress.cancel();
+                }
+            }
+        });
+
 
     }
 
