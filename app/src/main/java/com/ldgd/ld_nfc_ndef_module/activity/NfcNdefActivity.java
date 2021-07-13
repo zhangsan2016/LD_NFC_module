@@ -140,6 +140,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
     private String token = null;
     // Excel 表格导出地址
     private File outputFile;
+    private boolean flag = false;
 
     private String cxml = "\n" +
             "<当前读取信息>\n" +
@@ -994,6 +995,11 @@ public class NfcNdefActivity extends BaseNfcActivity {
             @Override
             public void onClick(View v) {
 
+                if (flag){
+                    return;
+                }
+
+                flag = true;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -1039,8 +1045,9 @@ public class NfcNdefActivity extends BaseNfcActivity {
 
                             try {
                                 saveExcelFile(lampEditData);
-                                Thread.sleep(500);
+                                Thread.sleep(1000);
                                 stopProgress();
+                                flag = false;
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 showToast("Exception = " + e.getMessage().toString());
@@ -1060,32 +1067,28 @@ public class NfcNdefActivity extends BaseNfcActivity {
     }
 
     List<LampEditData> demoBeanList = new ArrayList<>();
-    private void saveExcelFile(LampEditData lampEditData) {
-        File filePath;
-        try {
-            String path = tv_path.getText().toString().substring(tv_path.getText().toString().lastIndexOf("：") + 1);
-            filePath = new File(path);
-            if (!filePath.exists()) {
-                //先创建文件夹/目录
-                filePath.getParentFile().mkdirs();
-                //再创建新文件
-                filePath.createNewFile();
+    private void saveExcelFile(LampEditData lampEditData) throws IOException {
+        String path = tv_path.getText().toString().substring(tv_path.getText().toString().lastIndexOf("：") + 1);
+        File  filePath = new File(path);
+        if (!filePath.exists()) {
+            //先创建文件夹/目录
+            filePath.getParentFile().mkdirs();
+            //再创建新文件
+            filePath.createNewFile();
 
-            }
-
-            String[] title = {"UUID", "经度", "纬度","灯杆名称","灯杆直径","电源出厂商","灯具额定电流","灯具额定电压","灯具类型","灯具出厂商","灯具数","灯具出厂日期","灯杆高度","总额定功率","通讯方式"};
-
-            ExcelUtil.initExcel(filePath.getPath(), filePath.getName(), title);
-            demoBeanList.add(lampEditData);
-            ExcelUtil.writeObjListToExcel(demoBeanList, filePath.getPath(), NfcNdefActivity.this);
-
-            showToast("存储成功~");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            stopProgress();
-            showToast("Exception 2 = " + e.getMessage().toString());
         }
+
+        String[] title = {"UUID", "经度", "纬度","灯杆名称","灯杆直径","电源出厂商","灯具额定电流","灯具额定电压","灯具类型","灯具出厂商","灯具数","灯具出厂日期","灯杆高度","总额定功率","通讯方式"};
+
+        ExcelUtil.initExcel(filePath.getPath(), filePath.getName(), title);
+        for (int i = 0; i < 20000; i++) {
+            lampEditData.setNAME2(i + "");
+            demoBeanList.add(lampEditData);
+        }
+
+        ExcelUtil.writeObjListToExcel(demoBeanList, filePath.getPath(), NfcNdefActivity.this);
+
+        showToast("存储成功~");
     }
 
     private void sendLocationUp() {
