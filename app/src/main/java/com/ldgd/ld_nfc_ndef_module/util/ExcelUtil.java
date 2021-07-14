@@ -124,10 +124,15 @@ public class ExcelUtil {
                 writebook = Workbook.createWorkbook(new File(fileName), workbook);
                 WritableSheet sheet = writebook.getSheet(0);
 
+                LogUtil.e("xxx sheet.getRows() = " + sheet.getRows());
+
+                 WritableCell fromCell = sheet.getWritableCell(15, 2);
+
                 for (int j = 0; j < objList.size(); j++) {
                     LampEditData lampEditData = (LampEditData) objList.get(j);
                     List<String> list = new ArrayList<>();
                     list.add(lampEditData.getUUID());
+
                     list.add(lampEditData.getLAT());
                     list.add(lampEditData.getLNG());
                     list.add(lampEditData.getNAME1() + " " + lampEditData.getNAME2()+" "+lampEditData.getNAME3());
@@ -151,11 +156,11 @@ public class ExcelUtil {
                             sheet.setColumnView(i, list.get(i).length() + 8);
                         } else {
                             //设置列宽
-                            sheet.setColumnView(i, list.get(i).length() + 5);
+                            sheet.setColumnView(i, list.get(i).length() + 16);
                         }
                     }
                     //设置行高
-                    sheet.setRowView(j + 1, 350);
+                    sheet.setRowView(j, 350);
                 }
 
                 writebook.write();

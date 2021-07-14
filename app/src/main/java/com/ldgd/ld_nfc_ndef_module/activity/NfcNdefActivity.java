@@ -1081,11 +1081,7 @@ public class NfcNdefActivity extends BaseNfcActivity {
         String[] title = {"UUID", "经度", "纬度","灯杆名称","灯杆直径","电源出厂商","灯具额定电流","灯具额定电压","灯具类型","灯具出厂商","灯具数","灯具出厂日期","灯杆高度","总额定功率","通讯方式"};
 
         ExcelUtil.initExcel(filePath.getPath(), filePath.getName(), title);
-        for (int i = 0; i < 20000; i++) {
-            lampEditData.setNAME2(i + "");
-            demoBeanList.add(lampEditData);
-        }
-
+        demoBeanList.add(lampEditData);
         ExcelUtil.writeObjListToExcel(demoBeanList, filePath.getPath(), NfcNdefActivity.this);
 
         showToast("存储成功~");
